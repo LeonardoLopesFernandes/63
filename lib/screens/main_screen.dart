@@ -1,9 +1,10 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show TextInputFormatter, SystemNavigator;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:papeleta63/api/endpoints.dart';
+import 'package:papeleta63/api/models.dart';
 import 'package:papeleta63/api/session.dart';
-import 'package:papeleta63/screens/barcode_scanner_screen.dart';
 import 'package:papeleta63/screens/preview_screen.dart';
 import 'package:papeleta63/utils/celulares.dart';
 
@@ -18,14 +19,34 @@ class _MainScreenState extends State<MainScreen> {
   late final List<CelularSpec> _celulares;
   late List<PapeletaFormState> _states;
   bool _loaded = false;
+  bool _atBottom = false;
   List<String> _errors = [];
-  int _scanTargetIndex = -1;
+  final ScrollController _scroll = ScrollController();
+  final Random _random = Random();
 
   @override
   void initState() {
     super.initState();
     _states = List.generate(4, (_) => PapeletaFormState());
+    _scroll.addListener(_onScroll);
     _load();
+  }
+
+  void _onScroll() {
+    final atBottom = _scroll.position.pixels >= _scroll.position.maxScrollExtent - 24;
+    if (atBottom != _atBottom && mounted) setState(() => _atBottom = atBottom);
+  }
+
+  String _randomPriceDigits() {
+    final cents = _random.nextInt(220000) + 80000; // R$ 800,00 a R$ 2.999,00
+    return cents.toString();
+  }
+
+  @override
+  void dispose() {
+    _scroll.removeListener(_onScroll);
+    _scroll.dispose();
+    super.dispose();
   }
 
   Future<void> _load() async {
@@ -44,8 +65,8 @@ class _MainScreenState extends State<MainScreen> {
       }
       _states[i] = PapeletaFormState(
         selectedPhone: phone,
-        priceText: prefs.getString('papeleta_${i}_price') ?? '',
-        discountText: prefs.getString('papeleta_${i}_discount') ?? '',
+        priceText: prefs.getString('papeleta_${i}_price') ?? _randomPriceDigits(),
+        discountText: prefs.getString('papeleta_${i}_discount') ?? '100',
         daSemana: prefs.getBool('papeleta_${i}_semana') ?? false,
       );
     }
@@ -69,6 +90,7 @@ class _MainScreenState extends State<MainScreen> {
   void _onStateChange(int i, PapeletaFormState s) {
     _states[i] = s;
     _saveAll();
+    if (mounted) setState(() {});
   }
 
   void _gerar() async {
@@ -116,68 +138,140 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _onScan(int index) async {
-    _scanTargetIndex = index;
-    final ean = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()),
+  Future<void> _buscar(int index) async {
+    final ctrl = TextEditingController();
+    final results = <PriceSign>[];
+    var loading = false;
+    String? erro;
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setSt) {
+            return AlertDialog(
+              title: const Text('Buscar aparelho na loja'),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: ctrl,
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        hintText: 'Digite a descrição do aparelho',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (q) async {
+                        final query = q.trim();
+                        if (query.length < 2) {
+                          setSt(() {
+                            results.clear();
+                            erro = null;
+                          });
+                          return;
+                        }
+                        setSt(() => loading = true);
+                        try {
+                          final resp = await getPriceSignStandalone(
+                            storeId: Session.getUserStore(),
+                            type: 'PAPELETA_PROMOCIONAL',
+                            description: query,
+                            startDate: _today(),
+                          );
+                          setSt(() {
+                            results
+                              ..clear()
+                              ..addAll(resp.items);
+                            erro = null;
+                          });
+                        } catch (e) {
+                          setSt(() {
+                            results.clear();
+                            erro = e.toString();
+                          });
+                        } finally {
+                          setSt(() => loading = false);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    if (loading) const Center(child: CircularProgressIndicator()),
+                    if (erro != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(erro!, style: const TextStyle(color: Colors.red)),
+                      ),
+                    if (!loading && erro == null && results.isNotEmpty)
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.4),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: results.length,
+                          itemBuilder: (c, idx) {
+                            final item = results[idx];
+                            return ListTile(
+                              title: Text(item.description),
+                              onTap: () {
+                                final matched = findPhoneByDescription(_celulares, item.description);
+                                if (matched != null) {
+                                  _states[index] = _states[index].copyWith(
+                                    selectedPhone: matched,
+                                    priceText: parsePriceToDigits(item.price),
+                                    ean: item.ean,
+                                    codSap: item.sap,
+                                  );
+                                  _saveAll();
+                                  if (mounted) setState(() {});
+                                  Navigator.pop(ctx);
+                                  _toast('${matched.modelo} selecionado');
+                                } else {
+                                  _toast('Modelo não encontrado no catálogo: ${item.description}');
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fechar')),
+              ],
+            );
+          },
+        );
+      },
     );
-    if (ean == null || ean.isEmpty) return;
-    await _consultarEan(ean, index);
-  }
-
-  Future<void> _consultarEan(String ean, int index) async {
-    final token = Session.getToken();
-    if (token == null || token.isEmpty) {
-      _toast('Sessão expirada. Faça login novamente.');
-      return;
-    }
-    try {
-      final date = _today();
-      final resp = await getPriceSignStandalone(
-        storeId: Session.getUserStore(),
-        type: 'PAPELETA_PROMOCIONAL',
-        ean: ean,
-        startDate: date,
-      );
-      if (resp.items.isNotEmpty) {
-        final item = resp.items.first;
-        final matched = findPhoneByDescription(_celulares, item.description);
-        if (matched != null) {
-          final priceDigits = parsePriceToDigits(item.price);
-          final idx = (_scanTargetIndex >= 0 && _scanTargetIndex < 4) ? _scanTargetIndex : (() {
-            final empty = _states.indexWhere((s) => s.selectedPhone == null);
-            return empty >= 0 ? empty : 0;
-          })();
-          _states[idx] = _states[idx].copyWith(
-            selectedPhone: matched,
-            priceText: priceDigits,
-            ean: item.ean,
-            codSap: item.sap,
-          );
-          _saveAll();
-          if (mounted) setState(() {});
-          _toast('${matched.modelo} selecionado na Papeleta ${idx + 1}');
-        } else {
-          _toast('Modelo não encontrado: ${item.description}');
-        }
-      } else {
-        _toast('Nenhum item encontrado para o EAN informado');
-      }
-    } catch (e) {
-      final msg = e.toString();
-      if (msg.contains('401')) {
-        _toast('Sessão expirada.');
-      } else if (msg.contains('403')) {
-        _toast('Acesso negado.');
-      } else {
-        _toast('Erro ao consultar EAN: $msg');
-      }
-    }
   }
 
   String _today() {
     final now = DateTime.now();
     return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  }
+
+  Future<List<PriceSign>> _searchApi(String query) async {
+    final resp = await getPriceSignStandalone(
+      storeId: Session.getUserStore(),
+      type: 'PAPELETA_PROMOCIONAL',
+      description: query,
+      startDate: _today(),
+    );
+    return resp.items;
+  }
+
+  void _applySearchResult(int index, CelularSpec phone, String priceDigits, String ean, String codSap) {
+    _states[index] = _states[index].copyWith(
+      selectedPhone: phone,
+      priceText: priceDigits,
+      ean: ean,
+      codSap: codSap,
+    );
+    _saveAll();
+    if (mounted) setState(() {});
+    _toast('${phone.modelo} selecionado');
   }
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
@@ -238,8 +332,11 @@ class _MainScreenState extends State<MainScreen> {
                   state: _states[i],
                   motorolaPhones: motorola,
                   samsungPhones: samsung,
+                  allPhones: _celulares,
                   onStateChange: (s) => _onStateChange(i, s),
-                  onScan: () => _onScan(i),
+                  onScan: () => _buscar(i),
+                  onSearch: _searchApi,
+                  onPhoneSelectedFromSearch: _applySearchResult,
                   onWeekToggle: (checked) {
                     if (checked) {
                       for (var j = 0; j < 4; j++) {
@@ -271,12 +368,17 @@ class _MainScreenState extends State<MainScreen> {
             ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _gerar,
-        backgroundColor: const Color(0xFF0D47A1),
-        label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        icon: const Icon(Icons.check, color: Colors.white),
-      ),
+      floatingActionButton: _atBottom
+          ? SizedBox(
+              width: MediaQuery.of(context).size.width - 32,
+              child: FloatingActionButton.extended(
+                onPressed: _gerar,
+                backgroundColor: const Color(0xFF0D47A1),
+                label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                icon: const Icon(Icons.check, color: Colors.white),
+              ),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
@@ -288,8 +390,11 @@ class FormRow extends StatefulWidget {
   final PapeletaFormState state;
   final List<CelularSpec> motorolaPhones;
   final List<CelularSpec> samsungPhones;
+  final List<CelularSpec> allPhones;
   final void Function(PapeletaFormState) onStateChange;
   final VoidCallback onScan;
+  final Future<List<PriceSign>> Function(String) onSearch;
+  final void Function(int, CelularSpec, String, String, String) onPhoneSelectedFromSearch;
   final void Function(bool) onWeekToggle;
 
   const FormRow({
@@ -298,8 +403,11 @@ class FormRow extends StatefulWidget {
     required this.state,
     required this.motorolaPhones,
     required this.samsungPhones,
+    required this.allPhones,
     required this.onStateChange,
     required this.onScan,
+    required this.onSearch,
+    required this.onPhoneSelectedFromSearch,
     required this.onWeekToggle,
   });
 
@@ -310,6 +418,9 @@ class FormRow extends StatefulWidget {
 class _FormRowState extends State<FormRow> {
   late TextEditingController _priceCtrl;
   late TextEditingController _discountCtrl;
+  final TextEditingController _searchCtrl = TextEditingController();
+  List<PriceSign> _searchResults = [];
+  bool _searching = false;
 
   @override
   void initState() {
@@ -329,10 +440,37 @@ class _FormRowState extends State<FormRow> {
     if (df != _discountCtrl.text) _discountCtrl.text = df;
   }
 
+  Future<void> _onSearchChanged(String q) async {
+    final query = q.trim();
+    if (query.length < 2) {
+      if (mounted) setState(() => _searchResults = []);
+      return;
+    }
+    if (mounted) setState(() => _searching = true);
+    try {
+      final results = await widget.onSearch(query);
+      if (mounted) setState(() => _searchResults = results);
+    } catch (_) {
+      if (mounted) setState(() => _searchResults = []);
+    } finally {
+      if (mounted) setState(() => _searching = false);
+    }
+  }
+
+  void _pickResult(PriceSign item) {
+    final matched = findPhoneByDescription(widget.allPhones, item.description);
+    if (matched != null) {
+      widget.onPhoneSelectedFromSearch(widget.index, matched, parsePriceToDigits(item.price), item.ean, item.sap);
+      _searchCtrl.clear();
+      if (mounted) setState(() => _searchResults = []);
+    }
+  }
+
   @override
   void dispose() {
     _priceCtrl.dispose();
     _discountCtrl.dispose();
+    _searchCtrl.dispose();
     super.dispose();
   }
 
@@ -352,9 +490,26 @@ class _FormRowState extends State<FormRow> {
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('PAPELETA ${widget.index + 1}', style: const TextStyle(color: Color(0xFF0D47A1), fontWeight: FontWeight.bold, fontSize: 18)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _searchCtrl,
+                    onChanged: _onSearchChanged,
+                    style: const TextStyle(fontSize: 14),
+                    decoration: InputDecoration(
+                      hintText: 'Buscar aparelho na loja',
+                      hintStyle: const TextStyle(fontSize: 13),
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      prefixIcon: const Icon(Icons.search, size: 18),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                    ),
+                  ),
+                ),
                 IconButton.filled(
                   onPressed: widget.onScan,
                   style: IconButton.styleFrom(backgroundColor: Color(0xFF0D47A1)),
@@ -363,6 +518,26 @@ class _FormRowState extends State<FormRow> {
               ],
             ),
           ),
+          if (_searchResults.isNotEmpty || _searching)
+            Container(
+              margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+              constraints: const BoxConstraints(maxHeight: 220),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Color(0xFFBBDEFB))),
+              child: _searching
+                  ? const Center(child: Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator()))
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _searchResults.length,
+                      itemBuilder: (c, idx) {
+                        final item = _searchResults[idx];
+                        return ListTile(
+                          dense: true,
+                          title: Text(item.description, style: const TextStyle(fontSize: 14)),
+                          onTap: () => _pickResult(item),
+                        );
+                      },
+                    ),
+            ),
           const Divider(height: 1, color: Color(0xFFBBDEFB)),
           Padding(
             padding: const EdgeInsets.all(20),
