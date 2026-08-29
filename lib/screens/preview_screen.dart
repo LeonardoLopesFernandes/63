@@ -5,6 +5,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:papeleta63/api/endpoints.dart';
+import 'package:papeleta63/api/models.dart';
+import 'package:papeleta63/api/session.dart';
 import 'package:papeleta63/utils/a4_painter.dart';
 import 'package:papeleta63/utils/celulares.dart';
 
@@ -31,6 +34,39 @@ class _PreviewScreenState extends State<PreviewScreen> {
       await Share.shareXFiles([XFile(file.path)], subject: 'Papeleta A4', text: 'Papeleta A4');
     } catch (e) {
       _toast('Erro ao compartilhar: ${e.toString()}');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _enviar() async {
+    setState(() => _busy = true);
+    try {
+      final now = DateTime.now();
+      final date = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+      final products = widget.dados.map((d) {
+        return PapeletaPrintingData(
+          productName: '${d.modelo} ${d.armazenamento}',
+          price: parsePrice(d.precoComDesconto),
+          installmentPrice: parsePrice(d.valorParcela),
+          installmentQuantity: d.qtdParcelas,
+          codSap: d.codSap,
+          ean: d.ean,
+          referenceDate: date,
+          unit: 'UN',
+        );
+      }).toList();
+      await sendPriceSigns(storeId: Session.getUserStore(), request: SendPriceSignRequest(products: products));
+      _toast('Enviado com sucesso!');
+    } catch (e) {
+      final msg = e.toString();
+      if (msg.contains('401')) {
+        _toast('Sessão expirada.');
+      } else if (msg.contains('403')) {
+        _toast('Acesso negado.');
+      } else {
+        _toast('Erro ao enviar: $msg');
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -103,6 +139,18 @@ class _PreviewScreenState extends State<PreviewScreen> {
               children: [
                 Expanded(
                   child: OutlinedButton(
+                    onPressed: _busy ? null : _enviar,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF0D47A1),
+                      side: const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
+                      fixedSize: const Size.fromHeight(48),
+                    ),
+                    child: const Text('Enviar', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
                     onPressed: _busy ? null : _imprimir,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF2E7D32),
@@ -112,7 +160,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     child: Text(_busy ? 'IMPRIMINDO...' : 'Imprimir PDF', style: const TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _busy ? null : _compartilhar,

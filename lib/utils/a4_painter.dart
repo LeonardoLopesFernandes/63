@@ -127,18 +127,20 @@ class PapeletaPainter extends CustomPainter {
     final valorParcNum = (rawParc * 100).ceil() / 100;
     final valorParcFmt = _brCurrency(valorParcNum);
 
-    // logo (top-right, painted black) — placeholder texto "PAPELETA"
-    final logoSize = w * 0.05;
-    _drawText(
-      canvas,
-      'PAPELETA',
-      w - 22,
-      20 + logoSize,
-      fontSize: logoSize,
-      fontWeight: FontWeight.bold,
-      color: Colors.black,
-      align: TextAlign.right,
-    );
+    // logo (top-right, pintado de preto) — espelha carregarLogo do Kotlin
+    final logoImg = logo;
+    if (logoImg != null) {
+      const logoW = 48.0;
+      final logoH = logoW * logoImg.height / logoImg.width;
+      final logoPaint = Paint()
+        ..colorFilter = const ColorFilter.mode(Colors.black, BlendMode.srcIn);
+      canvas.drawImageRect(
+        logoImg,
+        Rect.fromLTWH(0, 0, logoImg.width.toDouble(), logoImg.height.toDouble()),
+        Rect.fromLTWH(w - 22 - logoW, 20, logoW, logoH),
+        logoPaint,
+      );
+    }
 
     // title
     _drawText(canvas, '${item.modelo} ${item.armazenamento}', cx, h * 0.10, fontSize: w * 0.06,

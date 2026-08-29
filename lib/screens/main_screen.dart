@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show TextInputFormatter;
+import 'package:flutter/services.dart' show TextInputFormatter, SystemNavigator;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:papeleta63/api/endpoints.dart';
 import 'package:papeleta63/api/session.dart';
@@ -179,6 +179,31 @@ class _MainScreenState extends State<MainScreen> {
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
+  Future<void> _onBackPressed(BuildContext context) async {
+    final sair = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF111111),
+        title: const Text(
+          'Deseja sair do aplicativo',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('NÃO', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('SIM, SAIR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+    if (sair == true) SystemNavigator.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_loaded) {
@@ -186,9 +211,12 @@ class _MainScreenState extends State<MainScreen> {
     }
     final motorola = _celulares.where((c) => c.marca == 'Motorola').toList();
     final samsung = _celulares.where((c) => c.marca == 'Samsung').toList();
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F8FE),
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) => _onBackPressed(context),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF4F8FE),
+        appBar: AppBar(
         title: const Text('Plano de Telefonia', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
         backgroundColor: Colors.transparent,
         foregroundColor: const Color(0xFF1D1B20),
@@ -247,6 +275,7 @@ class _MainScreenState extends State<MainScreen> {
         icon: const Icon(Icons.check, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
     );
   }
 }
