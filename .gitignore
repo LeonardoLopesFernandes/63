@@ -19,8 +19,6 @@ migrate_working_dir/
 .classpath
 .project
 .settings/
-*.kt
-*.kts
 
 # Flutter/Dart/Pub related
 **/doc/api/
