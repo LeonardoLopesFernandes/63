@@ -1,0 +1,1315 @@
+[
+  {
+    "id": "moto-g04-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G04 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 16 Mp",
+      "câmera frontal 5MP",
+      "4GB + 4GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g04s-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G04S 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp",
+      "câmera frontal 5MP",
+      "4GB + 4GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g05-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G05 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp",
+      "câmera frontal 8MP",
+      "4GB + 4GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g05-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G05 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp",
+      "câmera frontal 8MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g06-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G06 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp",
+      "câmera frontal 8MP",
+      "4GB + 4GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g06-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G06 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp",
+      "câmera frontal 8MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g14-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G14 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 2 Mp",
+      "câmera frontal 8MP",
+      "4GB + 4GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.0 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g15-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G15 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 5 Mp",
+      "câmera frontal 8MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g15-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G15 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 5 Mp",
+      "câmera frontal 8MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5200 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g15s-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G15S 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 8MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5200 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g15s-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G15S 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 8MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5200 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g16-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G16 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 8MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g16-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G16 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 8MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g17-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G17 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 5 Mp + 32 Mp",
+      "câmera frontal 8MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5200 mAh",
+      "processador 8 Core 2.0 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g17-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G17 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 5 Mp + 32 Mp",
+      "câmera frontal 8MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5200 mAh",
+      "processador 8 Core 2.0 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g17-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G17 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 5 Mp + 32 Mp",
+      "câmera frontal 8MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5200 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g17-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G17 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 5 Mp + 32 Mp",
+      "câmera frontal 8MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5200 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g24-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G24 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 2 Mp",
+      "câmera frontal 8MP",
+      "4GB + 4GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g24-power-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G24 POWER 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "4GB + 4GB Ram Boost de RAM",
+      "bateria 6000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g26-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G26 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 8MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g26-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G26 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 8MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g34-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G34 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "4GB + 4GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g35-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G35 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g35-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G35 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g35-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G35 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g36-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G36 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 8MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g36-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G36 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 8MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g36-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G36 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 8MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g45-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G45 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g45-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G45 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g46-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G46 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g46-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G46 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g47-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G47 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "4GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g47-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G47 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g47-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G47 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g47-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G47 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g55-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G55 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g55-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G55 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g56-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G56 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 16MP",
+      "6GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g56-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G56 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 16MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g56-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G56 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 16MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g66-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G66 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 64 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g66-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G66 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 64 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g75-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G75 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g75-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G75 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g76-4g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G76 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp + 10 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g76-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G76 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp + 10 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g76-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G76 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp + 10 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g85-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G85 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g85-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G85 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g86-4g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G86 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp + 10 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g86-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G86 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp + 10 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5500 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "moto-g86-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G86 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp + 10 Mp",
+      "câmera frontal 32MP",
+      "12GB + 8GB Ram Boost de RAM",
+      "bateria 5500 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "moto-edge40-neo-5g-256",
+    "marca": "Motorola",
+    "modelo": "EDGE 40 NEO 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-edge50-5g-256",
+    "marca": "Motorola",
+    "modelo": "EDGE 50 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 10 Mp + 10 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "moto-edge50-neo-5g-256",
+    "marca": "Motorola",
+    "modelo": "EDGE 50 NEO 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 10 Mp + 10 Mp",
+      "câmera frontal 32MP",
+      "12GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "moto-edge50-fusion-5g-256",
+    "marca": "Motorola",
+    "modelo": "EDGE 50 FUSION 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-edge60-5g-256",
+    "marca": "Motorola",
+    "modelo": "EDGE 60 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 10 Mp + 12 Mp",
+      "câmera frontal 50MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5500 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "moto-edge60-neo-5g-256",
+    "marca": "Motorola",
+    "modelo": "EDGE 60 NEO 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5500 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a05-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A05 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 2.0 MP",
+      "câmera frontal 5MP",
+      "4 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.0 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a06-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A06 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 2.0 MP",
+      "câmera frontal 5MP",
+      "4 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.0 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a07-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A07 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 2.0 MP",
+      "câmera frontal 8MP",
+      "4 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.0 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a07-4g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A07 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 2.0 MP",
+      "câmera frontal 8MP",
+      "4 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.0 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a15-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A15 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "4 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a15-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A15 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "4 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a16-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A16 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "4 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a16-4g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A16 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a16-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A16 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "4 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a16-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A16 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a17-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A17 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a17-4g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A17 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a17-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A17 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a17-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A17 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.3 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a25-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A25 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a25-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A25 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a25-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A25 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a26-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A26 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a26-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A26 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a26-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A26 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a27-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A27 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a27-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A27 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a27-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A27 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a35-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A35 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a35-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A35 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a35-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A35 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a36-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A36 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a36-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A36 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a36-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A36 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a37-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A37 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "6 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a37-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A37 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a37-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A37 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a55-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A55 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+      "câmera frontal 32MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a55-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A55 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+      "câmera frontal 32MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a56-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A56 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a56-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A56 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a57-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY A57 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-a57-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY A57 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-m15-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY M15 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "4 GB de RAM",
+      "bateria 6000 mAh",
+      "processador 8 Core 2.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-m35-4g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY M35 4G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 13MP",
+      "6 GB de RAM",
+      "bateria 6000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-m55-5g-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY M55 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 50MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-m55-5g-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY M55 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 50MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  }
+]
