@@ -49,7 +49,10 @@ class _MainScreenState extends State<MainScreen> {
         daSemana: prefs.getBool('papeleta_${i}_semana') ?? false,
       );
     }
-    if (mounted) setState(() => _loaded = true);
+    if (mounted) setState(() {
+      _celulares = celulares;
+      _loaded = true;
+    });
   }
 
   Future<void> _saveAll() async {
