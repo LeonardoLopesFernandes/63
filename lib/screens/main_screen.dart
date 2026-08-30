@@ -33,8 +33,12 @@ class _MainScreenState extends State<MainScreen> {
     _load();
   }
 
-  void _onScroll() {
-    final atBottom = _scroll.position.pixels >= _scroll.position.maxScrollExtent - 24;
+  void _onScroll() => _evaluateBottom();
+
+  void _evaluateBottom() {
+    if (!_scroll.hasClients) return;
+    final max = _scroll.position.maxScrollExtent;
+    final atBottom = max <= 0 || _scroll.position.pixels >= max - 24;
     if (atBottom != _atBottom && mounted) setState(() => _atBottom = atBottom);
   }
 
@@ -71,10 +75,13 @@ class _MainScreenState extends State<MainScreen> {
         daSemana: prefs.getBool('papeleta_${i}_semana') ?? false,
       );
     }
-    if (mounted) setState(() {
-      _celulares = celulares;
-      _loaded = true;
-    });
+    if (mounted) {
+      setState(() {
+        _celulares = celulares;
+        _loaded = true;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) => _evaluateBottom());
+    }
   }
 
   Future<void> _saveAll() async {
@@ -197,9 +204,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<List<PriceSign>> _searchApi(String query) async {
-    final resp = await getPriceSignStandalone(
+    final resp = await getSingleLabelPrinting(
       storeId: Session.getUserStore(),
-      type: 'PAPELETA_PROMOCIONAL',
       description: query,
       startDate: _today(),
     );
@@ -267,6 +273,7 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scroll,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               itemCount: 4,
               itemBuilder: (ctx, i) => Padding(

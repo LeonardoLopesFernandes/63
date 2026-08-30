@@ -31,6 +31,29 @@ Future<PapeletaStandaloneResponse> getPriceSignStandalone({
   );
 }
 
+/// GET web/price-tag/store/{storeId}/single-label-printing (busca por descrição)
+Future<PapeletaStandaloneResponse> getSingleLabelPrinting({
+  required String storeId,
+  required String description,
+  required String startDate,
+}) async {
+  final response = await apiClient.get(
+    'web/price-tag/store/$storeId/single-label-printing',
+    queryParameters: {
+      'description': description,
+      'startDate': startDate,
+    },
+  );
+  if (response.statusCode == 200) {
+    return PapeletaStandaloneResponse.fromJson(response.data as Map<String, dynamic>);
+  }
+  throw DioException(
+    requestOptions: response.requestOptions,
+    response: response,
+    message: 'HTTP ${response.statusCode}',
+  );
+}
+
 /// POST web/price-sign/store/{storeId}/send
 Future<void> sendPriceSigns({
   required String storeId,
