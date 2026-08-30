@@ -189,6 +189,7 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
+        Session.clearToken();
         _toast('Sessão expirada. Faça login novamente.');
       } else if (msg.contains('403')) {
         _toast('Acesso negado.');
