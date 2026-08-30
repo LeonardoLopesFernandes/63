@@ -151,15 +151,6 @@ class _MainScreenState extends State<MainScreen> {
       MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()),
     );
     if (ean == null || ean.isEmpty) return;
-    await _consultarEan(ean, index);
-  }
-
-  Future<void> _consultarEan(String ean, int index) async {
-    final token = Session.getToken();
-    if (token == null || token.isEmpty) {
-      _toast('Sessão expirada. Faça login novamente.');
-      return;
-    }
     try {
       final resp = await getPriceSignStandalone(
         storeId: Session.getUserStore(),
@@ -167,25 +158,7 @@ class _MainScreenState extends State<MainScreen> {
         ean: ean,
         startDate: _today(),
       );
-      if (resp.items.isNotEmpty) {
-        final item = resp.items.first;
-        final matched = findPhoneByDescription(_celulares, item.description);
-        if (matched != null) {
-          _states[index] = _states[index].copyWith(
-            selectedPhone: matched,
-            priceText: parsePriceToDigits(item.price),
-            ean: item.ean,
-            codSap: item.sap,
-          );
-          _saveAll();
-          if (mounted) setState(() {});
-          _toast('${matched.modelo} selecionado na Papeleta ${index + 1}');
-        } else {
-          _toast('Modelo não encontrado: ${item.description}');
-        }
-      } else {
-        _toast('Nenhum item encontrado para o EAN informado');
-      }
+      await _mostrarDialogoResultados(index, resp.items);
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
@@ -198,30 +171,76 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  Future<void> _abrirBuscaDescricao(int index, String query) async {
+    final q = query.trim();
+    if (q.length < 2) {
+      _toast('Digite ao menos 2 caracteres');
+      return;
+    }
+    _toast('Buscando...');
+    try {
+      final resp = await getSingleLabelPrinting(
+        storeId: Session.getUserStore(),
+        description: q,
+        startDate: _today(),
+      );
+      await _mostrarDialogoResultados(index, resp.items);
+    } catch (e) {
+      _toast('Erro na busca: ${e.toString()}');
+    }
+  }
+
+  Future<void> _mostrarDialogoResultados(int index, List<PriceSign> items) async {
+    if (!mounted) return;
+    if (items.isEmpty) {
+      _toast('Nenhum resultado encontrado');
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Selecione o aparelho'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: items.length,
+            itemBuilder: (c, i) {
+              final item = items[i];
+              return ListTile(
+                title: Text(item.description),
+                subtitle: Text('R\$ ${item.price}'),
+                onTap: () {
+                  final matched = findPhoneByDescription(_celulares, item.description);
+                  if (matched != null) {
+                    _states[index] = _states[index].copyWith(
+                      selectedPhone: matched,
+                      priceText: parsePriceToDigits(item.price),
+                      ean: item.ean,
+                      codSap: item.sap,
+                    );
+                    _saveAll();
+                    if (mounted) setState(() {});
+                    Navigator.pop(ctx);
+                    _toast('${matched.modelo} selecionado');
+                  } else {
+                    _toast('Modelo não encontrado no catálogo: ${item.description}');
+                  }
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fechar')),
+        ],
+      ),
+    );
+  }
+
   String _today() {
     final now = DateTime.now();
     return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-  }
-
-  Future<List<PriceSign>> _searchApi(String query) async {
-    final resp = await getSingleLabelPrinting(
-      storeId: Session.getUserStore(),
-      description: query,
-      startDate: _today(),
-    );
-    return resp.items;
-  }
-
-  void _applySearchResult(int index, CelularSpec phone, String priceDigits, String ean, String codSap) {
-    _states[index] = _states[index].copyWith(
-      selectedPhone: phone,
-      priceText: priceDigits,
-      ean: ean,
-      codSap: codSap,
-    );
-    _saveAll();
-    if (mounted) setState(() {});
-    _toast('${phone.modelo} selecionado');
   }
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
@@ -264,6 +283,10 @@ class _MainScreenState extends State<MainScreen> {
       child: Scaffold(
         backgroundColor: const Color(0xFFF4F8FE),
         appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Image.asset('assets/ic_papeleta.png', width: 36, height: 36),
+        ),
         title: const Text('Plano de Telefonia', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
         backgroundColor: Colors.transparent,
         foregroundColor: const Color(0xFF1D1B20),
@@ -286,8 +309,7 @@ class _MainScreenState extends State<MainScreen> {
                   allPhones: _celulares,
                   onStateChange: (s) => _onStateChange(i, s),
                   onScan: () => _openScanner(i),
-                  onSearch: _searchApi,
-                  onPhoneSelectedFromSearch: _applySearchResult,
+                  onSearchSubmit: _abrirBuscaDescricao,
                   onWeekToggle: (checked) {
                     if (checked) {
                       for (var j = 0; j < 4; j++) {
@@ -344,8 +366,7 @@ class FormRow extends StatefulWidget {
   final List<CelularSpec> allPhones;
   final void Function(PapeletaFormState) onStateChange;
   final VoidCallback onScan;
-  final Future<List<PriceSign>> Function(String) onSearch;
-  final void Function(int, CelularSpec, String, String, String) onPhoneSelectedFromSearch;
+  final void Function(int, String) onSearchSubmit;
   final void Function(bool) onWeekToggle;
 
   const FormRow({
@@ -357,8 +378,7 @@ class FormRow extends StatefulWidget {
     required this.allPhones,
     required this.onStateChange,
     required this.onScan,
-    required this.onSearch,
-    required this.onPhoneSelectedFromSearch,
+    required this.onSearchSubmit,
     required this.onWeekToggle,
   });
 
@@ -370,8 +390,6 @@ class _FormRowState extends State<FormRow> {
   late TextEditingController _priceCtrl;
   late TextEditingController _discountCtrl;
   final TextEditingController _searchCtrl = TextEditingController();
-  List<PriceSign> _searchResults = [];
-  bool _searching = false;
 
   @override
   void initState() {
@@ -389,32 +407,6 @@ class _FormRowState extends State<FormRow> {
     final df = _format(widget.state.discountText);
     if (pf != _priceCtrl.text) _priceCtrl.text = pf;
     if (df != _discountCtrl.text) _discountCtrl.text = df;
-  }
-
-  Future<void> _onSearchChanged(String q) async {
-    final query = q.trim();
-    if (query.length < 2) {
-      if (mounted) setState(() => _searchResults = []);
-      return;
-    }
-    if (mounted) setState(() => _searching = true);
-    try {
-      final results = await widget.onSearch(query);
-      if (mounted) setState(() => _searchResults = results);
-    } catch (_) {
-      if (mounted) setState(() => _searchResults = []);
-    } finally {
-      if (mounted) setState(() => _searching = false);
-    }
-  }
-
-  void _pickResult(PriceSign item) {
-    final matched = findPhoneByDescription(widget.allPhones, item.description);
-    if (matched != null) {
-      widget.onPhoneSelectedFromSearch(widget.index, matched, parsePriceToDigits(item.price), item.ean, item.sap);
-      _searchCtrl.clear();
-      if (mounted) setState(() => _searchResults = []);
-    }
   }
 
   @override
@@ -447,7 +439,7 @@ class _FormRowState extends State<FormRow> {
                 Expanded(
                   child: TextField(
                     controller: _searchCtrl,
-                    onChanged: _onSearchChanged,
+                    onSubmitted: (q) => widget.onSearchSubmit(widget.index, q),
                     style: const TextStyle(fontSize: 14),
                     decoration: InputDecoration(
                       hintText: 'Buscar aparelho na loja',
@@ -462,6 +454,11 @@ class _FormRowState extends State<FormRow> {
                   ),
                 ),
                 IconButton.filled(
+                  onPressed: () => widget.onSearchSubmit(widget.index, _searchCtrl.text),
+                  style: IconButton.styleFrom(backgroundColor: const Color(0xFF0D47A1)),
+                  icon: const Icon(Icons.search, color: Colors.white, size: 22),
+                ),
+                IconButton.filled(
                   onPressed: widget.onScan,
                   style: IconButton.styleFrom(backgroundColor: Color(0xFF0D47A1)),
                   icon: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 22),
@@ -469,26 +466,6 @@ class _FormRowState extends State<FormRow> {
               ],
             ),
           ),
-          if (_searchResults.isNotEmpty || _searching)
-            Container(
-              margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-              constraints: const BoxConstraints(maxHeight: 220),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Color(0xFFBBDEFB))),
-              child: _searching
-                  ? const Center(child: Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator()))
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _searchResults.length,
-                      itemBuilder: (c, idx) {
-                        final item = _searchResults[idx];
-                        return ListTile(
-                          dense: true,
-                          title: Text(item.description, style: const TextStyle(fontSize: 14)),
-                          onTap: () => _pickResult(item),
-                        );
-                      },
-                    ),
-            ),
           const Divider(height: 1, color: Color(0xFFBBDEFB)),
           Padding(
             padding: const EdgeInsets.all(20),

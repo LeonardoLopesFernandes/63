@@ -45,7 +45,25 @@ Future<PapeletaStandaloneResponse> getSingleLabelPrinting({
     },
   );
   if (response.statusCode == 200) {
-    return PapeletaStandaloneResponse.fromJson(response.data as Map<String, dynamic>);
+    final data = response.data;
+    List<dynamic> list;
+    if (data is List) {
+      list = data;
+    } else if (data is Map) {
+      list = data['items'] as List? ??
+          data['content'] as List? ??
+          data['data'] as List? ??
+          data['results'] as List? ??
+          data['value'] as List? ??
+          data['labels'] as List? ??
+          data['products'] as List? ??
+          [];
+    } else {
+      list = [];
+    }
+    return PapeletaStandaloneResponse(
+      items: list.map((e) => PriceSign.fromJson(e as Map<String, dynamic>)).toList(),
+    );
   }
   throw DioException(
     requestOptions: response.requestOptions,

@@ -30,12 +30,8 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Escanear EAN'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-      ),
       body: Stack(
+        fit: StackFit.expand,
         children: [
           MobileScanner(
             controller: _controller,
@@ -51,13 +47,15 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
               ),
             ),
           ),
-          const Positioned(
-            bottom: 32,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Text('Aponte para o código de barras do produto',
-                  style: TextStyle(color: Colors.black, backgroundColor: Colors.white70, fontSize: 14)),
+          Positioned(
+            top: 8,
+            left: 8,
+            child: SafeArea(
+              child: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close, color: Colors.white),
+                style: IconButton.styleFrom(backgroundColor: Colors.black45),
+              ),
             ),
           ),
         ],

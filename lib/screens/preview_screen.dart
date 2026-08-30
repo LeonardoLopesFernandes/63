@@ -24,6 +24,14 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
+  Widget _badgeLabel(String l1, String l2) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(l1, style: const TextStyle(fontWeight: FontWeight.bold, height: 1.1), textAlign: TextAlign.center),
+          Text(l2, style: const TextStyle(fontWeight: FontWeight.bold, height: 1.1), textAlign: TextAlign.center),
+        ],
+      );
+
   Future<void> _compartilhar() async {
     setState(() => _busy = true);
     try {
@@ -115,7 +123,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 12),
               child: Center(
                 child: FutureBuilder<Uint8List>(
                   future: renderA4Png(widget.dados),
@@ -143,9 +151,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF0D47A1),
                       side: const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
-                      fixedSize: const Size.fromHeight(48),
+                      fixedSize: const Size.fromHeight(56),
                     ),
-                    child: const Text('Enviar', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: _badgeLabel('ENVIAR', 'PAPELETA'),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -155,9 +163,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF2E7D32),
                       side: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
-                      fixedSize: const Size.fromHeight(48),
+                      fixedSize: const Size.fromHeight(56),
                     ),
-                    child: Text(_busy ? 'IMPRIMINDO...' : 'Imprimir PDF', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    child: _busy ? const Text('IMPRIMINDO...', style: TextStyle(fontWeight: FontWeight.bold)) : _badgeLabel('IMPRIMIR', 'PDF'),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -167,9 +175,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF111111),
                       foregroundColor: Colors.white,
-                      fixedSize: const Size.fromHeight(48),
+                      fixedSize: const Size.fromHeight(56),
                     ),
-                    child: Text(_busy ? 'Compartilhando...' : 'Compartilhar PDF', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    child: _busy ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold)) : _badgeLabel('COMPARTILHAR', 'PDF'),
                   ),
                 ),
               ],
