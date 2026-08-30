@@ -66,9 +66,10 @@ void setupApiInterceptors() {
   apiClient.interceptors.clear();
   apiClient.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) {
-      if (_authToken != null && _authToken!.isNotEmpty) {
-        options.headers['Authorization'] = 'Bearer $_authToken';
-        options.headers['Cookie'] = 'rc-newToken=$_authToken';
+      String? token = _authToken ?? Session.getToken();
+      if (token != null && token.isNotEmpty) {
+        options.headers['Authorization'] = 'Bearer $token';
+        options.headers['Cookie'] = 'rc-newToken=$token';
       }
       return handler.next(options);
     },
