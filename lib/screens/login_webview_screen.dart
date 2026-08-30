@@ -31,7 +31,7 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
         NavigationDelegate(
           onNavigationRequest: (request) {
             final url = request.url;
-            if (!_done && url.contains('?token=')) {
+            if (!_done && _hasToken(url)) {
               _done = true;
               final token = _extractToken(url);
               if (token != null && mounted) {
@@ -43,6 +43,7 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
           },
           onPageFinished: (url) {
             _maybeInjectCredentials(url);
+            _maybeExtractTokenFromPage();
           },
         ),
       )
@@ -79,13 +80,34 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
     return "'$escaped'";
   }
 
+  bool _hasToken(String url) =>
+      url.contains(RegExp(r'[?&](newToken|token)=')) ||
+      url.contains('minhaloja.americanas.io');
+
   String? _extractToken(String url) {
-    final idx = url.indexOf('?token=');
-    if (idx < 0) return null;
-    var token = url.substring(idx + '?token='.length);
-    final amp = token.indexOf('&');
-    if (amp >= 0) token = token.substring(0, amp);
-    return token.trim().isNotEmpty ? token.trim() : null;
+    final m = RegExp(r'[?&](newToken|token)=([^&]+)').firstMatch(url);
+    if (m == null) return null;
+    final token = m.group(2)!.trim();
+    return token.isNotEmpty ? token : null;
+  }
+
+  void _maybeExtractTokenFromPage() {
+    if (_done) return;
+    _controller.runJavaScriptReturningResult('''
+      (function() {
+        try {
+          var t = localStorage.getItem('newToken') || localStorage.getItem('token') ||
+                  sessionStorage.getItem('newToken') || sessionStorage.getItem('token') ||
+                  window.newToken || window.token;
+          return (t && t.length > 20) ? t : '';
+        } catch(e){ return ''; }
+      })();
+    ''').then((value) {
+      if (!_done && value is String && value.isNotEmpty) {
+        _done = true;
+        if (mounted) Navigator.of(context).pop(value);
+      }
+    });
   }
 
   @override

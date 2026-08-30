@@ -179,14 +179,22 @@ class _MainScreenState extends State<MainScreen> {
     }
     _toast('Buscando...');
     try {
-      final resp = await getSingleLabelPrinting(
+      final resp = await getPriceSignStandalone(
         storeId: Session.getUserStore(),
+        type: 'PAPELETA_PROMOCIONAL',
         description: q,
         startDate: _today(),
       );
       await _mostrarDialogoResultados(index, resp.items);
     } catch (e) {
-      _toast('Erro na busca: ${e.toString()}');
+      final msg = e.toString();
+      if (msg.contains('401')) {
+        _toast('Sessão expirada. Faça login novamente.');
+      } else if (msg.contains('403')) {
+        _toast('Acesso negado.');
+      } else {
+        _toast('Erro na busca: $msg');
+      }
     }
   }
 

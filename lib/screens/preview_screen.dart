@@ -177,7 +177,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       foregroundColor: Colors.white,
                       fixedSize: const Size.fromHeight(56),
                     ),
-                    child: _busy ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold)) : _badgeLabel('COMPARTILHAR', 'PDF'),
+                    child: _busy ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold)) : _badgeLabel('COMPART.', 'PDF'),
                   ),
                 ),
               ],
