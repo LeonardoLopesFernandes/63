@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:papeleta63/api/endpoints.dart';
 import 'package:papeleta63/api/models.dart';
 import 'package:papeleta63/api/session.dart';
+import 'package:papeleta63/screens/barcode_scanner_screen.dart';
 import 'package:papeleta63/screens/preview_screen.dart';
 import 'package:papeleta63/utils/celulares.dart';
 
@@ -138,113 +139,56 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  Future<void> _buscar(int index) async {
-    final ctrl = TextEditingController();
-    final results = <PriceSign>[];
-    var loading = false;
-    String? erro;
-    if (!mounted) return;
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setSt) {
-            return AlertDialog(
-              title: const Text('Buscar aparelho na loja'),
-              content: SizedBox(
-                width: double.maxFinite,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: ctrl,
-                      autofocus: true,
-                      decoration: const InputDecoration(
-                        hintText: 'Digite a descrição do aparelho',
-                        prefixIcon: Icon(Icons.search),
-                      ),
-                      onChanged: (q) async {
-                        final query = q.trim();
-                        if (query.length < 2) {
-                          setSt(() {
-                            results.clear();
-                            erro = null;
-                          });
-                          return;
-                        }
-                        setSt(() => loading = true);
-                        try {
-                          final resp = await getPriceSignStandalone(
-                            storeId: Session.getUserStore(),
-                            type: 'PAPELETA_PROMOCIONAL',
-                            description: query,
-                            startDate: _today(),
-                          );
-                          setSt(() {
-                            results
-                              ..clear()
-                              ..addAll(resp.items);
-                            erro = null;
-                          });
-                        } catch (e) {
-                          setSt(() {
-                            results.clear();
-                            erro = e.toString();
-                          });
-                        } finally {
-                          setSt(() => loading = false);
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    if (loading) const Center(child: CircularProgressIndicator()),
-                    if (erro != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(erro!, style: const TextStyle(color: Colors.red)),
-                      ),
-                    if (!loading && erro == null && results.isNotEmpty)
-                      ConstrainedBox(
-                        constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.4),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: results.length,
-                          itemBuilder: (c, idx) {
-                            final item = results[idx];
-                            return ListTile(
-                              title: Text(item.description),
-                              onTap: () {
-                                final matched = findPhoneByDescription(_celulares, item.description);
-                                if (matched != null) {
-                                  _states[index] = _states[index].copyWith(
-                                    selectedPhone: matched,
-                                    priceText: parsePriceToDigits(item.price),
-                                    ean: item.ean,
-                                    codSap: item.sap,
-                                  );
-                                  _saveAll();
-                                  if (mounted) setState(() {});
-                                  Navigator.pop(ctx);
-                                  _toast('${matched.modelo} selecionado');
-                                } else {
-                                  _toast('Modelo não encontrado no catálogo: ${item.description}');
-                                }
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fechar')),
-              ],
-            );
-          },
-        );
-      },
+  void _openScanner(int index) async {
+    final ean = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()),
     );
+    if (ean == null || ean.isEmpty) return;
+    await _consultarEan(ean, index);
+  }
+
+  Future<void> _consultarEan(String ean, int index) async {
+    final token = Session.getToken();
+    if (token == null || token.isEmpty) {
+      _toast('Sessão expirada. Faça login novamente.');
+      return;
+    }
+    try {
+      final resp = await getPriceSignStandalone(
+        storeId: Session.getUserStore(),
+        type: 'PAPELETA_PROMOCIONAL',
+        ean: ean,
+        startDate: _today(),
+      );
+      if (resp.items.isNotEmpty) {
+        final item = resp.items.first;
+        final matched = findPhoneByDescription(_celulares, item.description);
+        if (matched != null) {
+          _states[index] = _states[index].copyWith(
+            selectedPhone: matched,
+            priceText: parsePriceToDigits(item.price),
+            ean: item.ean,
+            codSap: item.sap,
+          );
+          _saveAll();
+          if (mounted) setState(() {});
+          _toast('${matched.modelo} selecionado na Papeleta ${index + 1}');
+        } else {
+          _toast('Modelo não encontrado: ${item.description}');
+        }
+      } else {
+        _toast('Nenhum item encontrado para o EAN informado');
+      }
+    } catch (e) {
+      final msg = e.toString();
+      if (msg.contains('401')) {
+        _toast('Sessão expirada.');
+      } else if (msg.contains('403')) {
+        _toast('Acesso negado.');
+      } else {
+        _toast('Erro ao consultar EAN: $msg');
+      }
+    }
   }
 
   String _today() {
@@ -280,20 +224,20 @@ class _MainScreenState extends State<MainScreen> {
     final sair = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF111111),
+        backgroundColor: Colors.white,
         title: const Text(
-          'Deseja sair do aplicativo',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+          'Deseja sair do aplicativo?',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
           textAlign: TextAlign.center,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('NÃO', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: const Text('NÃO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('SIM, SAIR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: const Text('SIM, SAIR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -334,7 +278,7 @@ class _MainScreenState extends State<MainScreen> {
                   samsungPhones: samsung,
                   allPhones: _celulares,
                   onStateChange: (s) => _onStateChange(i, s),
-                  onScan: () => _buscar(i),
+                  onScan: () => _openScanner(i),
                   onSearch: _searchApi,
                   onPhoneSelectedFromSearch: _applySearchResult,
                   onWeekToggle: (checked) {
