@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _loading = false;
+  bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -116,55 +117,78 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F8FE),
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                 const Icon(Icons.badge, size: 72, color: Color(0xFFD32F2F)),
-                 const SizedBox(height: 16),
-                 const Text('Papeleta63', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFFD32F2F))),
-                 const SizedBox(height: 32),
-                 TextField(
-                   controller: _emailController,
-                   keyboardType: TextInputType.emailAddress,
-                   decoration: _dec('E-mail (Microsoft)'),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Center(
+              child: Text(
+                '63',
+                style: TextStyle(
+                  fontSize: 280,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.withAlpha(25),
+                ),
+              ),
+            ),
+            Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                     Image.asset('assets/ic_papeleta.png', width: 96, height: 96),
+                     const SizedBox(height: 16),
+                     const Text('Papeleta63', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFFD32F2F))),
+                     const SizedBox(height: 32),
+                     TextField(
+                       controller: _emailController,
+                       keyboardType: TextInputType.emailAddress,
+                       decoration: _dec('E-mail (Microsoft)'),
+                     ),
+                     const SizedBox(height: 16),
+                     TextField(
+                       controller: _passwordController,
+                       obscureText: _obscurePassword,
+                       decoration: _dec('Senha').copyWith(
+                         suffixIcon: IconButton(
+                           icon: Icon(
+                             _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                             color: const Color(0xFFD32F2F),
+                           ),
+                           onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                         ),
+                       ),
+                     ),
+                     const SizedBox(height: 24),
+                     SizedBox(
+                       width: double.infinity,
+                       height: 50,
+                       child: ElevatedButton(
+                         onPressed: _loading ? null : _abrirWebView,
+                         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
+                         child: _loading
+                             ? const CircularProgressIndicator(color: Colors.white)
+                             : const Text('ENTRAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                       ),
+                     ),
+                     const SizedBox(height: 12),
+                     TextButton(
+                       onPressed: _entrarComToken,
+                       child: const Text('ENTRAR COM TOKEN', style: TextStyle(color: Color(0xFFD32F2F), fontWeight: FontWeight.bold)),
+                     ),
+                     TextButton(
+                       onPressed: _entrarViaNavegador,
+                       child: const Text('ENTRAR VIA NAVEGADOR', style: TextStyle(color: Color(0xFFD32F2F))),
+                     ),
+                   ],
                  ),
-                 const SizedBox(height: 16),
-                 TextField(
-                   controller: _passwordController,
-                   obscureText: true,
-                   decoration: _dec('Senha'),
-                 ),
-                 const SizedBox(height: 24),
-                 SizedBox(
-                   width: double.infinity,
-                   height: 50,
-                   child: ElevatedButton(
-                     onPressed: _loading ? null : _abrirWebView,
-                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
-                     child: _loading
-                         ? const CircularProgressIndicator(color: Colors.white)
-                         : const Text('ENTRAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                   ),
-                 ),
-                 const SizedBox(height: 12),
-                 TextButton(
-                   onPressed: _entrarComToken,
-                   child: const Text('ENTRAR COM TOKEN', style: TextStyle(color: Color(0xFFD32F2F), fontWeight: FontWeight.bold)),
-                 ),
-                 TextButton(
-                   onPressed: _entrarViaNavegador,
-                   child: const Text('ENTRAR VIA NAVEGADOR', style: TextStyle(color: Color(0xFFD32F2F))),
-                 ),
-               ],
+               ),
              ),
-           ),
-         ),
-       ),
-     );
-   }
+          ],
+        ),
+      ),
+    );
+  }
 
    InputDecoration _dec(String label) => InputDecoration(
          labelText: label,
