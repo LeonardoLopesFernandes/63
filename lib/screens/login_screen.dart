@@ -34,20 +34,41 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final parts = token.split('.');
       if (parts.length >= 2) {
-        String payload = parts[1];
-        while (payload.length % 4 != 0) {
-          payload += '=';
+        var p = parts[1];
+        p = p.padRight(p.length + (4 - p.length % 4) % 4, '=');
+        final decoded = utf8.decode(base64Url.decode(p));
+        final j = jsonDecode(decoded);
+        Map<String, dynamic>? claims;
+        if (j is Map) claims = Map<String, dynamic>.from(j);
+
+        final user = claims?['user'] is Map ? Map<String, dynamic>.from(claims!['user']) : null;
+
+        String email = (user?['email'] ??
+                claims?['email'] ??
+                claims?['preferred_username'] ??
+                claims?['upn'])
+            ?.toString() ??
+            _emailController.text.trim();
+
+        String nome = (user?['nome'] ??
+                user?['name'] ??
+                claims?['name'] ??
+                claims?['given_name'])
+            ?.toString() ??
+            '';
+
+        final stores = user?['stores'] ?? claims?['stores'];
+        final loja = user?['loja']?.toString() ??
+            claims?['loja']?.toString() ??
+            (stores is List && stores.isNotEmpty ? stores.first.toString() : null);
+
+        if (email.isEmpty) email = 'usuario@americanas.io';
+        if (nome.isEmpty) {
+          nome = email.split('@').first.replaceAll('.', ' ').replaceAll('_', ' ');
+          nome = nome.split(' ').map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : w).join(' ');
         }
-        final decoded = utf8.decode(base64Url.decode(payload));
-        final map = json.decode(decoded) as Map<String, dynamic>;
-        final email = map['email']?.toString() ?? map['upn']?.toString() ?? _emailController.text.trim();
-        var name = map['name']?.toString() ?? map['given_name']?.toString() ?? '';
-        if (name.isEmpty) {
-          name = email.split('@').first.replaceAll('.', ' ').replaceAll('_', ' ');
-          name = name.split(' ').map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : w).join(' ');
-        }
-        final store = map['loja']?.toString() ?? 'L291';
-        Session.saveUserInfo(email, name, store);
+
+        Session.saveUserInfo(email, nome, loja ?? Session.getUserStore());
       } else {
         Session.saveUserInfo(_emailController.text.trim(), 'Usuário', 'L291');
       }
