@@ -99,55 +99,55 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.badge, size: 72, color: Color(0xFF0D47A1)),
-                const SizedBox(height: 16),
-                const Text('Papeleta63', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFF0D47A1))),
-                const SizedBox(height: 32),
-                TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: _dec('E-mail (Microsoft)'),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: _dec('Senha'),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: _loading ? null : _abrirWebView,
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0D47A1)),
-                    child: _loading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text('ENTRAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: _entrarComToken,
-                  child: const Text('ENTRAR COM TOKEN', style: TextStyle(color: Color(0xFF0D47A1), fontWeight: FontWeight.bold)),
-                ),
-                TextButton(
-                  onPressed: _entrarViaNavegador,
-                  child: const Text('ENTRAR VIA NAVEGADOR', style: TextStyle(color: Color(0xFF0D47A1))),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+                 const Icon(Icons.badge, size: 72, color: Color(0xFFD32F2F)),
+                 const SizedBox(height: 16),
+                 const Text('Papeleta63', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFFD32F2F))),
+                 const SizedBox(height: 32),
+                 TextField(
+                   controller: _emailController,
+                   keyboardType: TextInputType.emailAddress,
+                   decoration: _dec('E-mail (Microsoft)'),
+                 ),
+                 const SizedBox(height: 16),
+                 TextField(
+                   controller: _passwordController,
+                   obscureText: true,
+                   decoration: _dec('Senha'),
+                 ),
+                 const SizedBox(height: 24),
+                 SizedBox(
+                   width: double.infinity,
+                   height: 50,
+                   child: ElevatedButton(
+                     onPressed: _loading ? null : _abrirWebView,
+                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
+                     child: _loading
+                         ? const CircularProgressIndicator(color: Colors.white)
+                         : const Text('ENTRAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                   ),
+                 ),
+                 const SizedBox(height: 12),
+                 TextButton(
+                   onPressed: _entrarComToken,
+                   child: const Text('ENTRAR COM TOKEN', style: TextStyle(color: Color(0xFFD32F2F), fontWeight: FontWeight.bold)),
+                 ),
+                 TextButton(
+                   onPressed: _entrarViaNavegador,
+                   child: const Text('ENTRAR VIA NAVEGADOR', style: TextStyle(color: Color(0xFFD32F2F))),
+                 ),
+               ],
+             ),
+           ),
+         ),
+       ),
+     );
+   }
 
-  InputDecoration _dec(String label) => InputDecoration(
-        labelText: label,
-        filled: true,
-        fillColor: const Color(0xFFF0F4F9),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFF0D47A1))),
-      );
+   InputDecoration _dec(String label) => InputDecoration(
+         labelText: label,
+         filled: true,
+         fillColor: const Color(0xFFFFEBEE),
+         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+         focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFFD32F2F))),
+       );
 }

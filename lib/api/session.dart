@@ -10,6 +10,8 @@ class Session {
   static const String _kUserName = 'USER_NAME';
   static const String _kUserStore = 'USER_STORE';
   static const String _kMsPassword = 'MS_PASSWORD';
+  static const String _kPrinterIp = 'PRINTER_IP';
+  static const String _kProfilePhoto = 'PROFILE_PHOTO';
 
   static VoidCallback? onLoginChange;
 
@@ -57,4 +59,13 @@ class Session {
   static void clearCredentials() {
     _prefs.remove(_kMsPassword);
   }
+
+  static void savePrinterIp(String ip) => _prefs.setString(_kPrinterIp, ip);
+  static String getPrinterIp() => _prefs.getString(_kPrinterIp) ?? '192.168.1.100';
+
+  static void saveProfilePhoto(String path) => _prefs.setString(_kProfilePhoto, path);
+  static String? getProfilePhoto() => _prefs.getString(_kProfilePhoto);
+  static void clearProfilePhoto() => _prefs.remove(_kProfilePhoto);
+
+  static void clearAll() => _prefs.clear();
 }

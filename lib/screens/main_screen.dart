@@ -7,6 +7,7 @@ import 'package:papeleta63/api/models.dart';
 import 'package:papeleta63/api/session.dart';
 import 'package:papeleta63/screens/barcode_scanner_screen.dart';
 import 'package:papeleta63/screens/preview_screen.dart';
+import 'package:papeleta63/screens/profile_screen.dart';
 import 'package:papeleta63/utils/celulares.dart';
 
 class MainScreen extends StatefulWidget {
@@ -185,7 +186,8 @@ class _MainScreenState extends State<MainScreen> {
         description: q,
         startDate: _today(),
       );
-      await _mostrarDialogoResultados(index, resp.items);
+      final dept63Items = resp.items.where((item) => item.department.contains("63")).toList();
+      await _mostrarDialogoResultados(index, dept63Items);
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
@@ -292,15 +294,23 @@ class _MainScreenState extends State<MainScreen> {
       child: Scaffold(
         backgroundColor: const Color(0xFFF4F8FE),
         appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: Image.asset('assets/ic_papeleta.png', width: 36, height: 36),
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Image.asset('assets/ic_papeleta.png', width: 36, height: 36),
+          ),
+          title: const Text('Plano de Telefonia', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+          backgroundColor: Colors.transparent,
+          foregroundColor: const Color(0xFF1D1B20),
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.person, color: Color(0xFFD32F2F)),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              ),
+            ),
+          ],
         ),
-        title: const Text('Plano de Telefonia', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-        backgroundColor: Colors.transparent,
-        foregroundColor: const Color(0xFF1D1B20),
-        elevation: 0,
-      ),
       body: Column(
         children: [
           Expanded(
@@ -350,17 +360,17 @@ class _MainScreenState extends State<MainScreen> {
             ),
         ],
       ),
-      floatingActionButton: _atBottom
-          ? SizedBox(
-              width: MediaQuery.of(context).size.width - 32,
-              child: FloatingActionButton.extended(
-                onPressed: _gerar,
-                backgroundColor: const Color(0xFF0D47A1),
-                label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                icon: const Icon(Icons.check, color: Colors.white),
-              ),
-            )
-          : null,
+       floatingActionButton: _atBottom
+           ? SizedBox(
+               width: MediaQuery.of(context).size.width - 32,
+               child: FloatingActionButton.extended(
+                 onPressed: _gerar,
+                 backgroundColor: const Color(0xFFD32F2F),
+                 label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                 icon: const Icon(Icons.check, color: Colors.white),
+               ),
+             )
+           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
@@ -428,59 +438,50 @@ class _FormRowState extends State<FormRow> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: Color(0x1A0D47A1))),
-      color: Colors.white,
-      elevation: 4,
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            decoration: const BoxDecoration(
-              color: Color(0xFFE3F2FD),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('PAPELETA ${widget.index + 1}', style: const TextStyle(color: Color(0xFFD32F2F), fontWeight: FontWeight.bold, fontSize: 16)),
+            IconButton.filled(
+              onPressed: widget.onScan,
+              style: IconButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
+              icon: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 20),
             ),
-            child: Row(
-              children: [
-                Text('PAPELETA ${widget.index + 1}', style: const TextStyle(color: Color(0xFF0D47A1), fontWeight: FontWeight.bold, fontSize: 18)),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _searchCtrl,
-                    onSubmitted: (q) => widget.onSearchSubmit(widget.index, q),
-                    style: const TextStyle(fontSize: 14),
-                    decoration: InputDecoration(
-                      hintText: 'Buscar aparelho na loja',
-                      hintStyle: const TextStyle(fontSize: 13),
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      prefixIcon: const Icon(Icons.search, size: 18),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-                    ),
-                  ),
-                ),
-                IconButton.filled(
-                  onPressed: () => widget.onSearchSubmit(widget.index, _searchCtrl.text),
-                  style: IconButton.styleFrom(backgroundColor: const Color(0xFF0D47A1)),
-                  icon: const Icon(Icons.search, color: Colors.white, size: 22),
-                ),
-                IconButton.filled(
-                  onPressed: widget.onScan,
-                  style: IconButton.styleFrom(backgroundColor: Color(0xFF0D47A1)),
-                  icon: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 22),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xFFBBDEFB)),
-          Padding(
+          ],
+        ),
+        const SizedBox(height: 6),
+        Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: Color(0x1AD32F2F))),
+          color: Colors.white,
+          elevation: 4,
+          child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                TextField(
+                  controller: _searchCtrl,
+                  onSubmitted: (q) => widget.onSearchSubmit(widget.index, q),
+                  style: const TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    hintText: 'Buscar aparelho (Depto 63)...',
+                    hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    prefixIcon: const Icon(Icons.search, color: Color(0xFFD32F2F), size: 20),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.arrow_forward, color: Color(0xFFD32F2F), size: 18),
+                      onPressed: () => widget.onSearchSubmit(widget.index, _searchCtrl.text),
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFFFFEBEE).withOpacity(0.5),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 const Text('Modelo', style: TextStyle(color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 13)),
                 const SizedBox(height: 6),
                 PhoneDropdown(
@@ -500,7 +501,7 @@ class _FormRowState extends State<FormRow> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(color: const Color(0xFFE8EEF5), borderRadius: BorderRadius.circular(12)),
+                  decoration: BoxDecoration(color: const Color(0xFFFFEBEE), borderRadius: BorderRadius.circular(12)),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     child: Row(
@@ -589,7 +590,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(child: Text(selectedText.isEmpty ? 'Selecione o modelo...' : selectedText, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
-                const Icon(Icons.arrow_drop_down, color: Color(0xFF0D47A1)),
+                const Icon(Icons.arrow_drop_down, color: Color(0xFFD32F2F)),
               ],
             ),
           ),
