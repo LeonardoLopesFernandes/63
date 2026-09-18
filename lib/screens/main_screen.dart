@@ -513,7 +513,8 @@ class _FormRowState extends State<FormRow> {
                         Switch(
                           value: widget.state.daSemana,
                           onChanged: widget.onWeekToggle,
-                          activeThumbColor: const Color(0xFF0D47A1),
+                          activeColor: Colors.white,
+                          activeTrackColor: const Color(0xFFD32F2F),
                         ),
                       ],
                     ),
@@ -522,8 +523,8 @@ class _FormRowState extends State<FormRow> {
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
