@@ -8,7 +8,6 @@ import 'package:papeleta63/api/session.dart';
 import 'package:papeleta63/screens/barcode_scanner_screen.dart';
 import 'package:papeleta63/screens/preview_screen.dart';
 import 'package:papeleta63/screens/profile_screen.dart';
-import 'package:papeleta63/screens/login_screen.dart';
 import 'package:papeleta63/utils/celulares.dart';
 
 class MainScreen extends StatefulWidget {
@@ -165,12 +164,7 @@ class _MainScreenState extends State<MainScreen> {
       final msg = e.toString();
       if (msg.contains('401')) {
         Session.clearAll();
-        if (mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
-            (_) => false,
-          );
-        }
+        Session.onLoginChange?.call();
         return;
       } else if (msg.contains('403')) {
         _toast('Acesso negado.');
@@ -203,12 +197,7 @@ class _MainScreenState extends State<MainScreen> {
       final msg = e.toString();
       if (msg.contains('401')) {
         Session.clearAll();
-        if (mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
-            (_) => false,
-          );
-        }
+        Session.onLoginChange?.call();
         return;
       } else if (msg.contains('403')) {
         _toast('Acesso negado.');
