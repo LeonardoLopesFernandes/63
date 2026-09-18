@@ -30,8 +30,8 @@ String? _extractToken(String link) {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initCronetTransport();
-  setupApiInterceptors();
   await Session.init();
+  setupApiInterceptors();
   _appLinks.getInitialLink().then(_handleDeepLink);
   _appLinks.uriLinkStream.listen(_handleDeepLink);
   runApp(const MyApp());
