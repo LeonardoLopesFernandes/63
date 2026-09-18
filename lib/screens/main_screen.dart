@@ -189,8 +189,7 @@ class _MainScreenState extends State<MainScreen> {
       );
       final dept63Items = resp.items.where((item) {
         final dept = item.department.toLowerCase();
-        final printDept = item.printingData?.department?.toLowerCase() ?? '';
-        return dept.contains('63') || printDept.contains('63') || dept.contains('telefonia') || printDept.contains('telefonia');
+        return dept.contains('63') || dept.contains('telefonia');
       }).toList();
       await _mostrarDialogoResultados(index, dept63Items.isNotEmpty ? dept63Items : resp.items);
     } catch (e) {
