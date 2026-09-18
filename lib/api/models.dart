@@ -41,9 +41,7 @@ class PriceSign {
       startDate: (json['startDate'] ?? '').toString(),
       endDate: (json['endDate'] ?? '').toString(),
       duration: (json['duration'] ?? '').toString(),
-      price: (json['price'] is Map<String, dynamic>
-          ? (json['price'] as Map<String, dynamic>)['value']?.toString() ?? ''
-          : (json['price'] ?? '').toString()),
+      price: (json['price'] ?? '').toString(),
       movement: (json['movement'] ?? '').toString(),
       status: (json['status'] ?? '').toString(),
       checkbox: json['checkbox'] as bool? ?? false,
