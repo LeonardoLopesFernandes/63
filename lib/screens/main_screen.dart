@@ -8,6 +8,7 @@ import 'package:papeleta63/api/session.dart';
 import 'package:papeleta63/screens/barcode_scanner_screen.dart';
 import 'package:papeleta63/screens/preview_screen.dart';
 import 'package:papeleta63/screens/profile_screen.dart';
+import 'package:papeleta63/screens/login_screen.dart';
 import 'package:papeleta63/utils/celulares.dart';
 
 class MainScreen extends StatefulWidget {
@@ -163,7 +164,14 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
-        _toast('Sessão expirada.');
+        Session.clearAll();
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+            (_) => false,
+          );
+        }
+        return;
       } else if (msg.contains('403')) {
         _toast('Acesso negado.');
       } else {
@@ -185,13 +193,23 @@ class _MainScreenState extends State<MainScreen> {
         description: q,
         startDate: _today(),
       );
-      final dept63Items = resp.items.where((item) => item.department.contains("63")).toList();
-      await _mostrarDialogoResultados(index, dept63Items);
+      final dept63Items = resp.items.where((item) {
+        final dept = item.department.toLowerCase();
+        final printDept = item.printingData?.department?.toLowerCase() ?? '';
+        return dept.contains('63') || printDept.contains('63') || dept.contains('telefonia') || printDept.contains('telefonia');
+      }).toList();
+      await _mostrarDialogoResultados(index, dept63Items.isNotEmpty ? dept63Items : resp.items);
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
-        Session.clearToken();
-        _toast('Sessão expirada. Faça login novamente.');
+        Session.clearAll();
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+            (_) => false,
+          );
+        }
+        return;
       } else if (msg.contains('403')) {
         _toast('Acesso negado.');
       } else {
