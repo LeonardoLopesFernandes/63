@@ -180,9 +180,8 @@ class _MainScreenState extends State<MainScreen> {
     }
     _toast('Buscando...');
     try {
-      final resp = await getPriceSignStandalone(
+      final resp = await getSingleLabelPrinting(
         storeId: Session.getUserStore(),
-        type: 'PAPELETA_PROMOCIONAL',
         description: q,
         startDate: _today(),
       );

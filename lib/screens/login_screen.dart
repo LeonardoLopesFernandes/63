@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:papeleta63/api/client.dart';
 import 'package:papeleta63/api/session.dart';
@@ -26,10 +27,32 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _onLoggedIn(String token, {String name = '', String store = 'L291'}) {
+  void _onLoggedIn(String token) {
     setAuthToken(token);
     Session.saveToken(token);
-    Session.saveUserInfo(_emailController.text.trim(), name, store);
+    try {
+      final parts = token.split('.');
+      if (parts.length >= 2) {
+        String payload = parts[1];
+        while (payload.length % 4 != 0) {
+          payload += '=';
+        }
+        final decoded = utf8.decode(base64Url.decode(payload));
+        final map = json.decode(decoded) as Map<String, dynamic>;
+        final email = map['email']?.toString() ?? map['upn']?.toString() ?? _emailController.text.trim();
+        var name = map['name']?.toString() ?? map['given_name']?.toString() ?? '';
+        if (name.isEmpty) {
+          name = email.split('@').first.replaceAll('.', ' ').replaceAll('_', ' ');
+          name = name.split(' ').map((w) => w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : w).join(' ');
+        }
+        final store = map['loja']?.toString() ?? 'L291';
+        Session.saveUserInfo(email, name, store);
+      } else {
+        Session.saveUserInfo(_emailController.text.trim(), 'Usuário', 'L291');
+      }
+    } catch (e) {
+      Session.saveUserInfo(_emailController.text.trim(), 'Usuário', 'L291');
+    }
     if (mounted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const MainScreen()),
