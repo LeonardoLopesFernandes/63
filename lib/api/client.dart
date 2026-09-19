@@ -5,7 +5,7 @@ import 'package:papeleta63/api/session.dart';
 const String slBaseUrl = 'https://sl-bff.americanas.io/';
 const String appOrigin = 'https://sl-bff.americanas.io';
 const String msLoginUrl =
-    'https://sl-authorization.americanas.io/rotina-comercial';
+    'https://sl-authorization.americanas.io/minha-loja';
 
 String? _authToken;
 bool _autoLoginTriggered = false;
