@@ -226,8 +226,8 @@ class _MainScreenState extends State<MainScreen> {
               return ListTile(
                 title: Text(item.description),
                 subtitle: Text('R\$ ${item.price}'),
-                onTap: () {
-                  final matched = findPhoneByDescription(_celulares, item.description);
+                onTap: () async {
+                  final matched = await getOrCreateSpecs(item.description, _celulares);
                   if (matched != null) {
                     _states[index] = _states[index].copyWith(
                       selectedPhone: matched,

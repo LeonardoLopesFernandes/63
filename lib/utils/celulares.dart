@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class CelularSpec {
   final String id;
@@ -170,7 +172,64 @@ CelularSpec? findPhoneByDescription(List<CelularSpec> celulares, String descript
     if (score > bestScore) {
       bestScore = score;
       best = phone;
-    }
+}
+
+// Persisted phones file helpers
+
+Future<List<CelularSpec>> loadSavedPhones() async {
+  final dir = await getApplicationDocumentsDirectory();
+  final file = File('${dir.path}/phones.json');
+  if (!await file.exists()) return [];
+  final str = await file.readAsString();
+  final list = json.decode(str) as List;
+  return list.map((e) => CelularSpec.fromJson(e as Map<String, dynamic>)).toList();
+}
+
+Future<void> addSavedPhone(CelularSpec phone) async {
+  final phones = await loadSavedPhones();
+  phones.add(phone);
+  final dir = await getApplicationDocumentsDirectory();
+  final file = File('${dir.path}/phones.json');
+  await file.writeAsString(json.encode(phones.map((p) => {
+      return {
+        'id': p.id,
+        'marca': p.marca,
+        'modelo': p.modelo,
+        'armazenamento': p.armazenamento,
+        'specs': p.specs,
+      };
+    }).toList()));
+}
+
+Future<CelularSpec?> fetchSpecsFromApi(String description) async {
+  // Placeholder fake data; in production replace with real API call
+  return CelularSpec(
+    id: DateTime.now().millisecondsSinceEpoch.toString(),
+    marca: "Desconhecido",
+    modelo: description,
+    armazenamento: "Unknown",
+    specs: [
+      'Câmera frontal 12MP',
+      'Câmera traseira 48MP',
+      'RAM 6GB',
+      'Bateria 4000mAh',
+      'Processador Snapdragon 720G',
+    ],
+  );
+}
+
+Future<CelularSpec?> getOrCreateSpecs(String description, List<CelularSpec> baseList) async {
+  final local = findPhoneByDescription(baseList, description);
+  if (local != null) return local;
+  final saved = await loadSavedPhones();
+  final localSaved = findPhoneByDescription(saved, description);
+  if (localSaved != null) return localSaved;
+  final fetched = await fetchSpecsFromApi(description);
+  if (fetched == null) return null;
+  await addSavedPhone(fetched);
+  return fetched;
+}
+
   }
   if (bestScore >= 1) return best;
   return null;

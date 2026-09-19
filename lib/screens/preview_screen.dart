@@ -24,13 +24,13 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
-  Widget _badgeLabel(String l1, String l2) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(l1, style: const TextStyle(fontWeight: FontWeight.bold, height: 1.1), textAlign: TextAlign.center),
-          Text(l2, style: const TextStyle(fontWeight: FontWeight.bold, height: 1.1), textAlign: TextAlign.center),
-        ],
-      );
+Widget _badgeLabel(String l1, String l2) => Column(
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    Text(l1, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, height: 1.1), textAlign: TextAlign.center),
+    Text(l2, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, height: 1.1), textAlign: TextAlign.center),
+  ],
+);
 
   Future<void> _compartilhar() async {
     setState(() => _busy = true);
@@ -177,7 +177,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       foregroundColor: Colors.white,
                       fixedSize: const Size.fromHeight(44),
                     ),
-                    child: _busy ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold)) : const Text('COMPART PDF', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    child: _busy ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold)) : const Text('COMPART PDF', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
                   ),
                 ),
               ],
