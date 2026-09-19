@@ -13,19 +13,39 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _loading = false;
   bool _obscurePassword = true;
+  bool _autenticando = false;
+
+  late final AnimationController _pulseController;
+  late final Animation<double> _pulseAnim;
 
   @override
   void initState() {
     super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
+    _pulseAnim = Tween<double>(begin: 0.85, end: 1.15).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
     if (Session.hasSavedCredentials()) {
       _emailController.text = Session.getUserEmail() ?? '';
       _passwordController.text = Session.getSavedPassword() ?? '';
     }
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   void _onLoggedIn(String token) {
@@ -127,6 +147,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (email.isNotEmpty && password.isNotEmpty) {
         Session.saveCredentials(email, password);
       }
+      setState(() => _autenticando = true);
+      await Future.delayed(const Duration(milliseconds: 1500));
       _onLoggedIn(result);
     }
   }
@@ -135,6 +157,33 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_autenticando) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF4F8FE),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ScaleTransition(
+                scale: _pulseAnim,
+                child: Image.asset('assets/ic_papeleta.png', width: 96, height: 96),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Autenticando...',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFFD32F2F)),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Carregando credenciais...',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F8FE),
       body: SafeArea(
