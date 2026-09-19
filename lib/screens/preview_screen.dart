@@ -151,7 +151,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF0D47A1),
                       side: const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
-                      fixedSize: const Size.fromHeight(56),
+                      fixedSize: const Size.fromHeight(44),
                     ),
                     child: _badgeLabel('ENVIAR', 'PAPELETA'),
                   ),
@@ -163,7 +163,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF2E7D32),
                       side: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
-                      fixedSize: const Size.fromHeight(56),
+                      fixedSize: const Size.fromHeight(44),
                     ),
                     child: _busy ? const Text('IMPRIMINDO...', style: TextStyle(fontWeight: FontWeight.bold)) : _badgeLabel('IMPRIMIR', 'PDF'),
                   ),
@@ -175,7 +175,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF111111),
                       foregroundColor: Colors.white,
-                      fixedSize: const Size.fromHeight(56),
+                      fixedSize: const Size.fromHeight(44),
                     ),
                     child: _busy ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold)) : const Text('COMPART PDF', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                   ),
