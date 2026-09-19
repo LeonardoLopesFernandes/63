@@ -1,0 +1,59 @@
+name: Build Papeleta63 APK
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Flutter clean
+        run: flutter clean
+
+      - name: Build arm64-v8a APK (release, instalável)
+        run: flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm64 --build-number=${{ github.run_number }} --build-name=1.0.0
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: papeleta63-arm64-v8a
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Papeleta63 ${{ github.ref_name }}
+          files: build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Your project will need to have tests in test/ and a dependency on
+      # package:test for this step to succeed. Note that Flutter projects will
+      # want to change this to 'flutter test'.
+      - name: Run tests
+        run: dart test
