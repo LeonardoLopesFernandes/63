@@ -1,3 +1,56 @@
+double? _parseDouble(dynamic v) {
+  if (v == null) return null;
+  if (v is num) return v.toDouble();
+  if (v is String) {
+    final s = v.trim().replaceAll(RegExp(r'[^0-9,.-]'), '');
+    if (s.isEmpty) return null;
+    final normalized = s.contains(',') && s.lastIndexOf(',') > s.lastIndexOf('.')
+        ? s.replaceAll('.', '').replaceAll(',', '.')
+        : s.replaceAll(',', '');
+    return double.tryParse(normalized);
+  }
+  if (v is Map) {
+    for (final key in ['value', 'price', 'amount', 'valor', 'preco']) {
+      final r = _parseDouble(v[key]);
+      if (r != null) return r;
+    }
+  }
+  return null;
+}
+
+int? _parseInt(dynamic v) {
+  final d = _parseDouble(v);
+  if (d == null) return null;
+  return d.round();
+}
+
+bool? _parseBool(dynamic v) {
+  if (v == null) return null;
+  if (v is bool) return v;
+  if (v is num) return v != 0;
+  if (v is String) {
+    final s = v.toLowerCase().trim();
+    if (s == 'true' || s == '1' || s == 'yes' || s == 'sim') return true;
+    if (s == 'false' || s == '0' || s == 'no' || s == 'nao') return false;
+  }
+  return null;
+}
+
+String _parsePriceString(dynamic v) {
+  if (v == null) return '';
+  if (v is num) return v.toString();
+  if (v is String) return v;
+  if (v is Map) {
+    final d = _parseDouble(v);
+    if (d != null) return d.toString();
+    for (final key in ['value', 'price', 'amount', 'valor', 'preco']) {
+      final inner = v[key];
+      if (inner is num || inner is String) return inner.toString();
+    }
+  }
+  return '';
+}
+
 class PriceSign {
   final String id;
   final String sap;
@@ -41,14 +94,14 @@ class PriceSign {
       startDate: (json['startDate'] ?? '').toString(),
       endDate: (json['endDate'] ?? '').toString(),
       duration: (json['duration'] ?? '').toString(),
-      price: (json['price'] ?? '').toString(),
+      price: _parsePriceString(json['price']),
       movement: (json['movement'] ?? '').toString(),
       status: (json['status'] ?? '').toString(),
-      checkbox: json['checkbox'] as bool? ?? false,
-      quantity: json['quantity'] as int? ?? 1,
-      printingData: json['_printingData'] == null
-          ? null
-          : PapeletaPrintingData.fromJson(json['_printingData'] as Map<String, dynamic>),
+      checkbox: _parseBool(json['checkbox']) ?? false,
+      quantity: _parseInt(json['quantity']) ?? 1,
+      printingData: json['_printingData'] is Map
+          ? PapeletaPrintingData.fromJson(Map<String, dynamic>.from(json['_printingData'] as Map))
+          : null,
     );
   }
 }
@@ -90,20 +143,20 @@ class PapeletaPrintingData {
 
   factory PapeletaPrintingData.fromJson(Map<String, dynamic> json) {
     return PapeletaPrintingData(
-      template: json['template'] as String?,
+      template: json['template'] is String ? json['template'] as String : null,
       productName: (json['productName'] ?? '').toString(),
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
-      promotionPrice: (json['promotionPrice'] as num?)?.toDouble(),
-      takeAndWinQuantity: json['takeAndWinQuantity'] as int?,
-      takeAndWinPrice: (json['takeAndWinPrice'] as num?)?.toDouble(),
-      takeAndWinPercent: json['takeAndWinPercent'] as int?,
-      installmentPrice: (json['installmentPrice'] as num?)?.toDouble(),
-      installmentQuantity: json['installmentQuantity'] as int?,
+      price: _parseDouble(json['price']) ?? 0.0,
+      promotionPrice: _parseDouble(json['promotionPrice']),
+      takeAndWinQuantity: _parseInt(json['takeAndWinQuantity']),
+      takeAndWinPrice: _parseDouble(json['takeAndWinPrice']),
+      takeAndWinPercent: _parseInt(json['takeAndWinPercent']),
+      installmentPrice: _parseDouble(json['installmentPrice']),
+      installmentQuantity: _parseInt(json['installmentQuantity']),
       codSap: (json['codSap'] ?? '').toString(),
       ean: (json['ean'] ?? '').toString(),
       referenceDate: (json['referenceDate'] ?? '').toString(),
-      size: json['size'] as String?,
-      quantity: json['quantity'] as int?,
+      size: json['size'] is String ? json['size'] as String : null,
+      quantity: _parseInt(json['quantity']),
       unit: (json['unit'] ?? '').toString(),
     );
   }
@@ -137,7 +190,10 @@ class PapeletaStandaloneResponse {
   factory PapeletaStandaloneResponse.fromJson(Map<String, dynamic> json) {
     final list = (json['items'] as List?) ?? [];
     return PapeletaStandaloneResponse(
-      items: list.map((e) => PriceSign.fromJson(e as Map<String, dynamic>)).toList(),
+      items: list
+          .whereType<Map>()
+          .map((e) => PriceSign.fromJson(Map<String, dynamic>.from(e)))
+          .toList(),
     );
   }
 }
