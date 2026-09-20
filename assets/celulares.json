@@ -1454,5 +1454,278 @@
       "bateria 5100 mAh",
       "processador 8 Core 2.4 GHZ"
     ]
+  },
+  {
+    "id": "samsung-s26-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 12 Mp + 10 Mp",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 4000 mAh",
+      "processador 8 Core 3.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 12 Mp + 10 Mp",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 4000 mAh",
+      "processador 8 Core 3.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-512",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 12 Mp + 10 Mp",
+      "câmera frontal 12MP",
+      "12 GB de RAM",
+      "bateria 4000 mAh",
+      "processador 8 Core 3.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-plus-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26+",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 12 Mp + 10 Mp",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 4900 mAh",
+      "processador 8 Core 3.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-plus-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26+",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 12 Mp + 10 Mp",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 4900 mAh",
+      "processador 8 Core 3.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-plus-512",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26+",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 12 Mp + 10 Mp",
+      "câmera frontal 12MP",
+      "12 GB de RAM",
+      "bateria 4900 mAh",
+      "processador 8 Core 3.2 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-ultra-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26 ULTRA",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 200 Mp + 50 Mp + 12 Mp + 10 Mp",
+      "câmera frontal 12MP",
+      "12 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 3.3 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-ultra-512",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26 ULTRA",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 200 Mp + 50 Mp + 12 Mp + 10 Mp",
+      "câmera frontal 12MP",
+      "12 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 3.3 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-ultra-1tb",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26 ULTRA",
+    "armazenamento": "1TB",
+    "specs": [
+      "câmera 200 Mp + 50 Mp + 12 Mp + 10 Mp",
+      "câmera frontal 12MP",
+      "16 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 3.3 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-fe-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26 FE",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 12 Mp + 8 Mp",
+      "câmera frontal 10MP",
+      "8 GB de RAM",
+      "bateria 4500 mAh",
+      "processador 8 Core 2.9 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s26-fe-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY S26 FE",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 12 Mp + 8 Mp",
+      "câmera frontal 10MP",
+      "8 GB de RAM",
+      "bateria 4500 mAh",
+      "processador 8 Core 2.9 GHZ"
+    ]
+  },
+  {
+    "id": "motorola-g84-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G84 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "motorola-g84-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G84 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "12 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "motorola-edge50-256",
+    "marca": "Motorola",
+    "modelo": "EDGE 50 PRO",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp + 10 Mp",
+      "câmera frontal 50MP",
+      "12 GB de RAM",
+      "bateria 4500 mAh",
+      "processador 8 Core 3.0 GHZ"
+    ]
+  },
+  {
+    "id": "motorola-edge50-512",
+    "marca": "Motorola",
+    "modelo": "EDGE 50 PRO",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp + 10 Mp",
+      "câmera frontal 50MP",
+      "12 GB de RAM",
+      "bateria 4500 mAh",
+      "processador 8 Core 3.0 GHZ"
+    ]
+  },
+  {
+    "id": "xiaomi-14-128",
+    "marca": "Xiaomi",
+    "modelo": "XIAOMI 14",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 50 Mp + 50 Mp",
+      "câmera frontal 32MP",
+      "8 GB de RAM",
+      "bateria 4610 mAh",
+      "processador 8 Core 3.2 GHZ"
+    ]
+  },
+  {
+    "id": "xiaomi-14-256",
+    "marca": "Xiaomi",
+    "modelo": "XIAOMI 14",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 50 Mp + 50 Mp",
+      "câmera frontal 32MP",
+      "12 GB de RAM",
+      "bateria 4610 mAh",
+      "processador 8 Core 3.2 GHZ"
+    ]
+  },
+  {
+    "id": "xiaomi-14-512",
+    "marca": "Xiaomi",
+    "modelo": "XIAOMI 14",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 50 Mp + 50 Mp",
+      "câmera frontal 32MP",
+      "16 GB de RAM",
+      "bateria 4610 mAh",
+      "processador 8 Core 3.2 GHZ"
+    ]
+  },
+  {
+    "id": "xiaomi-14-ultra-256",
+    "marca": "Xiaomi",
+    "modelo": "XIAOMI 14 ULTRA",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 50 Mp + 50 Mp + 50 Mp",
+      "câmera frontal 32MP",
+      "16 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 3.3 GHZ"
+    ]
+  },
+  {
+    "id": "xiaomi-14-ultra-512",
+    "marca": "Xiaomi",
+    "modelo": "XIAOMI 14 ULTRA",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 50 Mp + 50 Mp + 50 Mp",
+      "câmera frontal 32MP",
+      "16 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 3.3 GHZ"
+    ]
+  },
+  {
+    "id": "xiaomi-14-ultra-1tb",
+    "marca": "Xiaomi",
+    "modelo": "XIAOMI 14 ULTRA",
+    "armazenamento": "1TB",
+    "specs": [
+      "câmera 50 Mp + 50 Mp + 50 Mp + 50 Mp",
+      "câmera frontal 32MP",
+      "16 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 3.3 GHZ"
+    ]
   }
 ]
