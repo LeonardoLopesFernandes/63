@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 
-// ---------------------------------------------------------------------
-// Modelo de celular
-// ---------------------------------------------------------------------
 class CelularSpec {
   final String id;
   final String marca;
@@ -14,7 +12,7 @@ class CelularSpec {
   final String armazenamento;
   final List<String> specs;
 
-  CelularSpec({
+  const CelularSpec({
     required this.id,
     required this.marca,
     required this.modelo,
@@ -24,11 +22,11 @@ class CelularSpec {
 
   factory CelularSpec.fromJson(Map<String, dynamic> json) {
     return CelularSpec(
-      id: (json['id'] ?? '').toString(),
-      marca: (json['marca'] ?? '').toString(),
-      modelo: (json['modelo'] ?? '').toString(),
-      armazenamento: (json['armazenamento'] ?? '').toString(),
-      specs: (json['specs'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      id: (json['id'] ?? json['slug'] ?? '').toString(),
+      marca: _firstText(json, const ['marca', 'brand', 'manufacturer', 'vendor']),
+      modelo: _firstText(json, const ['modelo', 'model', 'name', 'device']),
+      armazenamento: _firstText(json, const ['armazenamento', 'storage', 'internalMemory', 'memory']),
+      specs: _readSpecs(json),
     );
   }
 
@@ -41,9 +39,6 @@ class CelularSpec {
       };
 }
 
-// ---------------------------------------------------------------------
-// Dados da papeleta (classe auxiliar apenas para compilar)
-// ---------------------------------------------------------------------
 class PapeletaData {
   final String modelo;
   final String armazenamento;
@@ -57,7 +52,7 @@ class PapeletaData {
   final String codSap;
   final bool daSemana;
 
-  PapeletaData({
+  const PapeletaData({
     required this.modelo,
     required this.armazenamento,
     required this.specs,
@@ -72,18 +67,15 @@ class PapeletaData {
   });
 }
 
-// ---------------------------------------------------------------------
-// Estado da papeleta (classe auxiliar apenas para compilar)
-// ---------------------------------------------------------------------
 class PapeletaFormState {
-  CelularSpec? selectedPhone;
-  String priceText;
-  String discountText;
-  String ean;
-  String codSap;
-  bool daSemana;
+  final CelularSpec? selectedPhone;
+  final String priceText;
+  final String discountText;
+  final String ean;
+  final String codSap;
+  final bool daSemana;
 
-  PapeletaFormState({
+  const PapeletaFormState({
     this.selectedPhone,
     this.priceText = '',
     this.discountText = '',
@@ -99,197 +91,244 @@ class PapeletaFormState {
     String? ean,
     String? codSap,
     bool? daSemana,
-  }) => PapeletaFormState(
-        selectedPhone: selectedPhone ?? this.selectedPhone,
-        priceText: priceText ?? this.priceText,
-        discountText: discountText ?? this.discountText,
-        ean: ean ?? this.ean,
-        codSap: codSap ?? this.codSap,
-        daSemana: daSemana ?? this.daSemana,
-      );
-}
-
-// ---------------------------------------------------------------------
-// Funções utilitárias de cálculo
-// ---------------------------------------------------------------------
-double parsePrice(String str) {
-  final digits = str.replaceAll(RegExp(r'[^0-9]'), '');
-  final cents = int.tryParse(digits) ?? 0;
-  return cents / 100.0;
-}
-
-String formatCurrencyInput(String digits) {
-  if (digits.isEmpty) return '';
-  final cents = int.tryParse(digits) ?? 0;
-  final reais = cents ~/ 100;
-  final centavos = cents % 100;
-  final reaisStr = _brInt(reais);
-  return 'R\$ $reaisStr,${centavos.toString().padLeft(2, '0')}';
-}
-
-String _brInt(int value) {
-  final s = value.toString();
-  final rev = s.split('').reversed.toList();
-  final out = <String>[];
-  for (var i = 0; i < rev.length; i++) {
-    if (i != 0 && i % 3 == 0) out.add('.');
-    out.add(rev[i]);
+  }) {
+    return PapeletaFormState(
+      selectedPhone: selectedPhone ?? this.selectedPhone,
+      priceText: priceText ?? this.priceText,
+      discountText: discountText ?? this.discountText,
+      ean: ean ?? this.ean,
+      codSap: codSap ?? this.codSap,
+      daSemana: daSemana ?? this.daSemana,
+    );
   }
-  return out.reversed.join('');
 }
 
-Pair<int, double> calcParcelas(double price, {bool daSemana = false}) {
-  const minParcela = 49.99;
-  final maxQty = daSemana ? 15 : 12;
-  var qty = (price / minParcela).floor();
-  if (qty > maxQty) qty = maxQty;
-  if (qty < 1) qty = 1;
-  return Pair(qty, price / qty);
-}
-
-class Pair<T1, T2> {
-  final T1 first;
-  final T2 second;
-  Pair(this.first, this.second);
-}
-
-String fmtPrice(double value) => value.toStringAsFixed(2).replaceAll('.', ',');
-
-String formatarMoeda(String valorStr) {
-  final limpo = valorStr.replaceAll('.', '').replaceAll(',', '.').trim();
-  final num = double.tryParse(limpo) ?? 0.0;
-  return _brCurrency(num);
-}
-
-String _brCurrency(double numero) {
-  final reais = numero.floor();
-  final centavos = ((numero - reais) * 100).round();
-  return '${_brInt(reais)},${centavos.toString().padLeft(2, '0')}';
-}
-
-// ---------------------------------------------------------------------
-// Carregamento de celulares internos
-// ---------------------------------------------------------------------
 Future<List<CelularSpec>> loadCelulares() async {
   try {
-    final str = await rootBundle.loadString('assets/celulares.json');
-    final list = json.decode(str) as List;
-    return list.map((e) => CelularSpec.fromJson(e as Map<String, dynamic>)).toList();
+    final content = await rootBundle.loadString('assets/celulares.json');
+    final decoded = json.decode(content);
+    if (decoded is! List) return [];
+    return decoded
+        .whereType<Map>()
+        .map((item) => CelularSpec.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
   } catch (_) {
     return [];
   }
 }
 
-// ---------------------------------------------------------------------
-// Busca por descrição (local)
-// ---------------------------------------------------------------------
+double parsePrice(String value) {
+  final digits = value.replaceAll(RegExp(r'[^0-9]'), '');
+  return (int.tryParse(digits) ?? 0) / 100.0;
+}
+
+String parsePriceToDigits(String price) {
+  final lastDot = price.lastIndexOf('.');
+  final lastComma = price.lastIndexOf(',');
+  final decimalIndex = lastDot > lastComma ? lastDot : lastComma;
+  if (decimalIndex >= 0) {
+    final integerPart = price.substring(0, decimalIndex).replaceAll(RegExp(r'[^0-9]'), '');
+    var decimalPart = price.substring(decimalIndex + 1).replaceAll(RegExp(r'[^0-9]'), '');
+    decimalPart = decimalPart.padRight(2, '0');
+    if (decimalPart.length > 2) decimalPart = decimalPart.substring(0, 2);
+    return '$integerPart$decimalPart';
+  }
+  return '${price.replaceAll(RegExp(r'[^0-9]'), '')}00';
+}
+
+String formatCurrencyInput(String digits) {
+  final onlyDigits = digits.replaceAll(RegExp(r'[^0-9]'), '');
+  if (onlyDigits.isEmpty) return '';
+  final cents = int.tryParse(onlyDigits) ?? 0;
+  return 'R\$ ${_brInt(cents ~/ 100)},${(cents % 100).toString().padLeft(2, '0')}';
+}
+
+String _brInt(int value) {
+  final reversed = value.toString().split('').reversed.toList();
+  final output = <String>[];
+  for (var i = 0; i < reversed.length; i++) {
+    if (i != 0 && i % 3 == 0) output.add('.');
+    output.add(reversed[i]);
+  }
+  return output.reversed.join();
+}
+
+String fmtPrice(double value) => value.toStringAsFixed(2).replaceAll('.', ',');
+
+String formatarMoeda(String value) {
+  final normalized = value.replaceAll('R\$', '').replaceAll(' ', '').trim();
+  if (normalized.isEmpty) return '0,00';
+  final lastDot = normalized.lastIndexOf('.');
+  final lastComma = normalized.lastIndexOf(',');
+  final decimalIndex = lastDot > lastComma ? lastDot : lastComma;
+  final integerPart = decimalIndex >= 0
+      ? normalized.substring(0, decimalIndex).replaceAll(RegExp(r'[^0-9]'), '')
+      : normalized.replaceAll(RegExp(r'[^0-9]'), '');
+  var decimalPart = decimalIndex >= 0
+      ? normalized.substring(decimalIndex + 1).replaceAll(RegExp(r'[^0-9]'), '')
+      : '00';
+  decimalPart = decimalPart.padRight(2, '0').substring(0, 2);
+  return '${_brInt(int.tryParse(integerPart.isEmpty ? '0' : integerPart) ?? 0)},$decimalPart';
+}
+
+class Pair<T1, T2> {
+  final T1 first;
+  final T2 second;
+  const Pair(this.first, this.second);
+}
+
+Pair<int, double> calcParcelas(double price, {bool daSemana = false}) {
+  const minParcela = 49.99;
+  final maxQuantity = daSemana ? 15 : 12;
+  var quantity = (price / minParcela).floor();
+  if (quantity > maxQuantity) quantity = maxQuantity;
+  if (quantity < 1) quantity = 1;
+  return Pair(quantity, price / quantity);
+}
+
 CelularSpec? findPhoneByDescription(List<CelularSpec> celulares, String description) {
-  final desc = description.toLowerCase().trim();
+  final search = description.toLowerCase().trim();
   CelularSpec? best;
   var bestScore = 0;
   for (final phone in celulares) {
-    final searchStr = '${phone.marca} ${phone.modelo} ${phone.armazenamento}'.toLowerCase();
-    final words = searchStr.split(' ').where((w) => w.length > 1);
-    final score = words.where((w) => desc.contains(w)).length;
+    final text = '${phone.marca} ${phone.modelo} ${phone.armazenamento}'.toLowerCase();
+    final words = text.split(RegExp(r'\s+')).where((word) => word.length > 1);
+    final score = words.where((word) => search.contains(word)).length;
     if (score > bestScore) {
       bestScore = score;
       best = phone;
     }
   }
-  return bestScore >= 1 ? best : null;
+  return bestScore > 0 ? best : null;
 }
 
-// ---------------------------------------------------------------------
-// Persistência local (phones.json)
-// ---------------------------------------------------------------------
 Future<List<CelularSpec>> loadSavedPhones() async {
-  final dir = await getApplicationDocumentsDirectory();
-  final file = File('${dir.path}/phones.json');
-  if (!await file.exists()) return [];
-  final str = await file.readAsString();
-  final list = json.decode(str) as List;
-  return list.map((e) => CelularSpec.fromJson(e as Map<String, dynamic>)).toList();
+  try {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/phones.json');
+    if (!await file.exists()) return [];
+    final decoded = json.decode(await file.readAsString());
+    if (decoded is! List) return [];
+    return decoded
+        .whereType<Map>()
+        .map((item) => CelularSpec.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+  } catch (_) {
+    return [];
+  }
 }
 
 Future<void> addSavedPhone(CelularSpec phone) async {
   final phones = await loadSavedPhones();
+  if (phones.any((item) => item.modelo.toLowerCase() == phone.modelo.toLowerCase() && item.armazenamento.toLowerCase() == phone.armazenamento.toLowerCase())) return;
   phones.add(phone);
-  final dir = await getApplicationDocumentsDirectory();
-  final file = File('${dir.path}/phones.json');
-  await file.writeAsString(json.encode(phones.map((p) => p.toJson()).toList()));
+  final directory = await getApplicationDocumentsDirectory();
+  await File('${directory.path}/phones.json').writeAsString(json.encode(phones.map((item) => item.toJson()).toList()));
 }
 
-// ---------------------------------------------------------------------
-// Consulta à MobileAPI.dev
-// ---------------------------------------------------------------------
+final Dio _mobileApi = Dio(BaseOptions(
+  baseUrl: 'https://api.mobileapi.dev/v1/',
+  connectTimeout: const Duration(seconds: 15),
+  receiveTimeout: const Duration(seconds: 15),
+  headers: {'Accept': 'application/json'},
+));
+
 Future<CelularSpec?> fetchSpecsFromApi(String description) async {
-  final query = Uri.encodeComponent(description);
-  final url = 'https://api.mobileapi.dev/v1/devices?search=$query';
+  final query = description.trim();
+  if (query.isEmpty) return null;
+
   try {
-    final resp = await http.get(Uri.parse(url));
-    if (resp.statusCode == 200) {
-      final data = json.decode(resp.body);
-      if (data['results'] is List) {
-        final devs = data['results'] as List;
-        if (devs.isNotEmpty) {
-          final dev = devs[0] as Map<String, dynamic>;
-          final specs = <String>[];
-          if (dev['camera_front'] != null) {
-            specs.add("Câmera frontal ${dev['camera_front']}MP");
-          }
-          if (dev['camera_back'] != null) {
-            specs.add("Câmera traseira ${dev['camera_back']}MP");
-          }
-          if (dev['ram'] != null) {
-            specs.add("RAM ${dev['ram']}GB");
-          }
-          if (dev['battery'] != null) {
-            specs.add("Bateria ${dev['battery']}mAh");
-          }
-          if (dev['processor'] != null) {
-            specs.add("Processador ${dev['processor']}");
-          }
-          return CelularSpec(
-            id: dev['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
-            marca: dev['brand']?.toString() ?? '',
-            modelo: dev['model']?.toString() ?? description,
-            armazenamento: dev['storage']?.toString() ?? 'Unknown',
-            specs: specs,
-          );
-        }
-      }
-    }
-  } catch (_) {}
-  return null;
+    final response = await _mobileApi.get(
+      'devices',
+      queryParameters: {'search': query},
+    );
+
+    final candidates = _deviceMaps(response.data);
+    if (candidates.isEmpty) return null;
+
+    final device = candidates.first;
+    final name = _firstText(device, const ['name', 'model', 'modelo', 'device']);
+    final brand = _firstText(device, const ['brand', 'marca', 'manufacturer', 'vendor']);
+    final storage = _firstText(device, const ['storage', 'armazenamento', 'internalMemory', 'memory']);
+    final specs = _readSpecs(device);
+
+    if (name.isEmpty && brand.isEmpty) return null;
+
+    return CelularSpec(
+      id: _firstText(device, const ['id', 'slug', 'uid']).isEmpty
+          ? DateTime.now().millisecondsSinceEpoch.toString()
+          : _firstText(device, const ['id', 'slug', 'uid']),
+      marca: brand.isEmpty ? 'Desconhecido' : brand,
+      modelo: name.isEmpty ? query : name,
+      armazenamento: storage.isEmpty ? 'Não informado' : storage,
+      specs: specs.isEmpty ? ['Especificações não disponíveis'] : specs,
+    );
+  } on DioException {
+    return null;
+  } catch (_) {
+    return null;
+  }
 }
 
-// ---------------------------------------------------------------------
-// Interface pública usada pela UI
-// ---------------------------------------------------------------------
+List<Map<String, dynamic>> _deviceMaps(dynamic data) {
+  if (data is List) {
+    return data.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+  }
+  if (data is Map) {
+    for (final key in const ['devices', 'items', 'results', 'data', 'content', 'value']) {
+      final nested = _deviceMaps(data[key]);
+      if (nested.isNotEmpty) return nested;
+    }
+    return [Map<String, dynamic>.from(data)];
+  }
+  return [];
+}
+
+String _firstText(Map<String, dynamic> data, List<String> keys) {
+  for (final key in keys) {
+    final value = data[key];
+    if (value is String && value.trim().isNotEmpty) return value.trim();
+    if (value is num) return value.toString();
+  }
+  return '';
+}
+
+List<String> _readSpecs(Map<String, dynamic> data) {
+  final output = <String>[];
+  final specs = data['specs'] ?? data['specifications'];
+  if (specs is List) {
+    output.addAll(specs.map((e) => e.toString()).where((e) => e.trim().isNotEmpty));
+  } else if (specs is Map) {
+    specs.forEach((key, value) {
+      if (value != null && value.toString().trim().isNotEmpty) {
+        output.add('$key: $value');
+      }
+    });
+  }
+  for (final entry in <String, String>{
+    'RAM': _firstText(data, const ['ram', 'memoryRam']),
+    'Tela': _nestedText(data, 'display', const ['size', 'screenSize']),
+    'Câmera': _nestedText(data, 'camera', const ['main', 'primary']),
+    'Bateria': _nestedText(data, 'battery', const ['capacity', 'size']),
+    'Processador': _nestedText(data, 'processor', const ['chipset', 'cpu']),
+  }.entries) {
+    if (entry.value.isNotEmpty) output.add('${entry.key}: ${entry.value}');
+  }
+  return output.toSet().toList();
+}
+
+String _nestedText(Map<String, dynamic> data, String parent, List<String> keys) {
+  final value = data[parent];
+  if (value is Map) return _firstText(Map<String, dynamic>.from(value), keys);
+  return value is String ? value : '';
+}
+
 Future<CelularSpec?> getOrCreateSpecs(String description, List<CelularSpec> baseList) async {
   final local = findPhoneByDescription(baseList, description);
   if (local != null) return local;
-  final saved = await loadSavedPhones();
-  final localSaved = findPhoneByDescription(saved, description);
-  if (localSaved != null) return localSaved;
+  final saved = findPhoneByDescription(await loadSavedPhones(), description);
+  if (saved != null) return saved;
   final fetched = await fetchSpecsFromApi(description);
-  if (fetched == null) return null;
-  await addSavedPhone(fetched);
+  if (fetched != null) await addSavedPhone(fetched);
   return fetched;
-}
-
-// ---------------------------------------------------------------------
-// Formatação de preço (útil em algumas telas)
-// ---------------------------------------------------------------------
-String parsePriceToDigits(String price) {
-  final lastDot = price.lastIndexOf('.');
-  final lastComma = price.lastIndexOf(',');
-  final decIdx = lastDot > lastComma ? lastDot : lastComma;
-  if (decIdx >= 0) {
-    final integerPart = price.substring(0, decIdx).replaceAll(RegExp(r'[^0-9]'), '');
-    var decimalPart = price.substring(decIdx + 1).replaceAll(RegExp(r'[^0-9]'), '');
-    decimalPart = decimalPart.padRight(2, '0').substring(0, 2);
-    return integerPart + decimalPart;
-  }
-  return price.replaceAll(RegExp(r'[^0-9]'), '') + '00';
 }
