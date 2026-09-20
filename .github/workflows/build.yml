@@ -53,6 +53,9 @@ jobs:
       - name: Flutter clean
         run: flutter clean
 
+      - name: Flutter pub get (after clean)
+        run: flutter pub get
+
       - name: Build arm64-v8a APK (release, instalável)
         env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
