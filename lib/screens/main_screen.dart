@@ -180,7 +180,8 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
-        Session.clearAll();
+        // Limpa só o token (mantém credenciais p/ o auto-login relogar sozinho).
+        Session.clearToken();
         Session.onLoginChange?.call();
         return;
       } else if (msg.contains('403')) {
@@ -212,7 +213,8 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
-        Session.clearAll();
+        // Limpa só o token (mantém credenciais p/ o auto-login relogar sozinho).
+        Session.clearToken();
         Session.onLoginChange?.call();
         return;
       } else if (msg.contains('403')) {

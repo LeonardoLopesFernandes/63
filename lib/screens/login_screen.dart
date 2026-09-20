@@ -109,7 +109,13 @@ class _LoginScreenState extends State<LoginScreen>
         }),
         builder: (_) => LoginWebViewScreen(prefillEmail: email, prefillPassword: senha),
       ),
-    );
+    ).then((result) {
+      // A WebView pode voltar com o token via pop: conclui o login aqui.
+      if (!mounted) return;
+      if (result is String && result.trim().length > 50) {
+        _onLoggedIn(result.trim());
+      }
+    });
   }
 
   @override

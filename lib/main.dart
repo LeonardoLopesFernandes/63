@@ -56,9 +56,7 @@ class _MyAppState extends State<MyApp> {
       if (mounted) setState(() => _loggedIn = false);
     });
     Session.onLoginChange = () {
-      if (mounted) {
-        setState(() => _loggedIn = Session.isLoggedIn() ? _loggedIn : false);
-      }
+      if (mounted) setState(() => _loggedIn = Session.isLoggedIn());
     };
     _bootCheck();
   }
