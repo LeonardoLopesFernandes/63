@@ -96,7 +96,7 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
         ..loadRequest(Uri.parse(msLoginUrl));
 
       if (_silencioso) {
-        _timeoutTimer = Timer(const Duration(seconds: 25), () {
+        _timeoutTimer = Timer(const Duration(seconds: 15), () {
           if (mounted && !_saved) {
             setState(() => _reveal = true);
           }
@@ -260,9 +260,15 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
     Session.saveUserInfo(email, nome, loja ?? Session.getUserStore());
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login realizado com sucesso!')),
-      );
+      if (_silencioso) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Auto-login realizado com sucesso!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login realizado com sucesso!')),
+        );
+      }
 
       // Se foi aberto como pop (ex: Navigator.push com return de String)
       if (Navigator.of(context).canPop() && !_silencioso) {
@@ -294,7 +300,7 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
             ),
             const SizedBox(height: 24),
             const Text(
-              'Autenticando...',
+              'Conectando...',
               style: TextStyle(
                 color: Color(0xFFD32F2F),
                 fontSize: 20,
@@ -303,7 +309,7 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
             ),
             const SizedBox(height: 8),
             const Text(
-              'Carregando credenciais...',
+              'Entrando automaticamente...',
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 14,
