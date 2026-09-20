@@ -1311,5 +1311,148 @@
       "bateria 5000 mAh",
       "processador 8 Core 2.4 GHZ"
     ]
+  },
+  {
+    "id": "samsung-s23-128",
+    "marca": "Samsung",
+    "modelo": "GALAXY S23",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 10 Mp + 12 Mp",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 3900 mAh",
+      "processador 8 Core 3.36 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s23-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY S23",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 10 Mp + 12 Mp",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 3900 mAh",
+      "processador 8 Core 3.36 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s23-512",
+    "marca": "Samsung",
+    "modelo": "GALAXY S23",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 10 Mp + 12 Mp",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 3900 mAh",
+      "processador 8 Core 3.36 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s23-ultra-256",
+    "marca": "Samsung",
+    "modelo": "GALAXY S23 ULTRA",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 200 Mp + 10 Mp + 12 Mp",
+      "câmera frontal 12MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 3.36 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s23-ultra-512",
+    "marca": "Samsung",
+    "modelo": "GALAXY S23 ULTRA",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 200 Mp + 10 Mp + 12 Mp",
+      "câmera frontal 12MP",
+      "12 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 3.36 GHZ"
+    ]
+  },
+  {
+    "id": "samsung-s23-ultra-1tb",
+    "marca": "Samsung",
+    "modelo": "GALAXY S23 ULTRA",
+    "armazenamento": "1TB",
+    "specs": [
+      "câmera 200 Mp + 10 Mp + 12 Mp",
+      "câmera frontal 12MP",
+      "12 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 3.36 GHZ"
+    ]
+  },
+  {
+    "id": "motorola-g55-5g-128",
+    "marca": "Motorola",
+    "modelo": "MOTO G55 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "motorola-g55-5g-256",
+    "marca": "Motorola",
+    "modelo": "MOTO G55 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 8 Mp",
+      "câmera frontal 16MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "xiaomi-redmi-note13-pro-128",
+    "marca": "Xiaomi",
+    "modelo": "REDMI NOTE 13 PRO",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 200 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "8 GB de RAM",
+      "bateria 5100 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "xiaomi-redmi-note13-pro-256",
+    "marca": "Xiaomi",
+    "modelo": "REDMI NOTE 13 PRO",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 200 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "8 GB de RAM",
+      "bateria 5100 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
+  },
+  {
+    "id": "xiaomi-redmi-note13-pro-512",
+    "marca": "Xiaomi",
+    "modelo": "REDMI NOTE 13 PRO",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 200 Mp + 8 Mp + 2 Mp",
+      "câmera frontal 16MP",
+      "12 GB de RAM",
+      "bateria 5100 mAh",
+      "processador 8 Core 2.4 GHZ"
+    ]
   }
 ]
