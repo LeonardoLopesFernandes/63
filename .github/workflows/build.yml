@@ -32,7 +32,17 @@ jobs:
         run: flutter pub get
 
       - name: Setup keystore from Secrets
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload.keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | tr -d '\n\r ' | base64 --decode > android/app/upload.keystore
+          echo "Keystore size: $(wc -c < android/app/upload.keystore) bytes"
+          file android/app/upload.keystore
+
+      - name: Verify keystore
+        run: |
+          keytool -list -v -keystore android/app/upload.keystore \
+            -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
+            -alias ${{ secrets.KEY_ALIAS }} \
+            -keypass ${{ secrets.KEY_PASSWORD }} 2>&1 | head -20
 
       - name: Flutter clean
         run: flutter clean
@@ -42,6 +52,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_PATH: android/app/upload.keystore
         run: flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm64 --build-number=${{ github.run_number }} --build-name=1.0.0
 
       - name: Upload APK artifact
