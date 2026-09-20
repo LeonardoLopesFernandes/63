@@ -6,6 +6,7 @@ import 'package:papeleta63/api/endpoints.dart';
 import 'package:papeleta63/api/models.dart';
 import 'package:papeleta63/api/session.dart';
 import 'package:papeleta63/screens/barcode_scanner_screen.dart';
+import 'package:papeleta63/screens/login_screen.dart';
 import 'package:papeleta63/screens/preview_screen.dart';
 import 'package:papeleta63/screens/profile_screen.dart';
 import 'package:papeleta63/utils/celulares.dart';
@@ -18,7 +19,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late final List<CelularSpec> _celulares;
+  List<CelularSpec> _celulares = [];
   late List<PapeletaFormState> _states;
   bool _loaded = false;
   bool _atBottom = false;
@@ -56,7 +57,23 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _load() async {
-    final celulares = await loadCelulares();
+    // Sessão expirada enquanto o app estava aberto/fechado: volta ao
+    // login, que reloga sozinho com as credenciais salvas.
+    if (!Session.hasValidToken()) {
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+            (route) => false,
+          );
+        });
+      }
+      return;
+    }
+    // Inclui assets + já buscados via MobileAPI (phones.json) para que
+    // S23 etc., uma vez buscados, apareçam na lista.
+    final celulares = await loadAllCelulares();
     final prefs = await SharedPreferences.getInstance();
     for (var i = 0; i < 4; i++) {
       final phoneId = prefs.getString('papeleta_${i}_phone');
@@ -227,8 +244,16 @@ class _MainScreenState extends State<MainScreen> {
                 title: Text(item.description),
                 subtitle: Text('R\$ ${item.price}'),
                 onTap: () async {
+                  // Feedback imediato: busca local primeiro, senão internet.
+                  _toast('Verificando catálogo...');
                   final matched = await getOrCreateSpecs(item.description, _celulares);
                   if (matched != null) {
+                    final already = _celulares.any((c) =>
+                        c.modelo.toLowerCase() == matched.modelo.toLowerCase() &&
+                        c.armazenamento.toLowerCase() == matched.armazenamento.toLowerCase());
+                    if (!already && mounted) {
+                      setState(() => _celulares = [..._celulares, matched]);
+                    }
                     _states[index] = _states[index].copyWith(
                       selectedPhone: matched,
                       priceText: parsePriceToDigits(item.price),
@@ -238,9 +263,9 @@ class _MainScreenState extends State<MainScreen> {
                     _saveAll();
                     if (mounted) setState(() {});
                     Navigator.pop(ctx);
-                    _toast('${matched.modelo} selecionado');
+                    _toast('${matched.modelo} ${matched.armazenamento} selecionado');
                   } else {
-                    _toast('Modelo não encontrado no catálogo: ${item.description}');
+                    _toast('Modelo não encontrado nem na internet: ${item.description}');
                   }
                 },
               );
@@ -293,6 +318,9 @@ class _MainScreenState extends State<MainScreen> {
     }
     final motorola = _celulares.where((c) => c.marca == 'Motorola').toList();
     final samsung = _celulares.where((c) => c.marca == 'Samsung').toList();
+    final outros = _celulares
+        .where((c) => c.marca != 'Motorola' && c.marca != 'Samsung')
+        .toList();
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) => _onBackPressed(context),
@@ -330,6 +358,7 @@ class _MainScreenState extends State<MainScreen> {
                   state: _states[i],
                   motorolaPhones: motorola,
                   samsungPhones: samsung,
+                  outrosPhones: outros,
                   allPhones: _celulares,
                   onStateChange: (s) => _onStateChange(i, s),
                   onScan: () => _openScanner(i),
@@ -387,6 +416,7 @@ class FormRow extends StatefulWidget {
   final PapeletaFormState state;
   final List<CelularSpec> motorolaPhones;
   final List<CelularSpec> samsungPhones;
+  final List<CelularSpec> outrosPhones;
   final List<CelularSpec> allPhones;
   final void Function(PapeletaFormState) onStateChange;
   final VoidCallback onScan;
@@ -399,6 +429,7 @@ class FormRow extends StatefulWidget {
     required this.state,
     required this.motorolaPhones,
     required this.samsungPhones,
+    this.outrosPhones = const [],
     required this.allPhones,
     required this.onStateChange,
     required this.onScan,
@@ -493,6 +524,7 @@ class _FormRowState extends State<FormRow> {
                   selectedPhone: widget.state.selectedPhone,
                   motorolaPhones: widget.motorolaPhones,
                   samsungPhones: widget.samsungPhones,
+                  outrosPhones: widget.outrosPhones,
                   onPhoneSelected: (p) => widget.onStateChange(widget.state.copyWith(selectedPhone: p)),
                 ),
                 const SizedBox(height: 16),
@@ -560,6 +592,7 @@ class PhoneDropdown extends StatefulWidget {
   final CelularSpec? selectedPhone;
   final List<CelularSpec> motorolaPhones;
   final List<CelularSpec> samsungPhones;
+  final List<CelularSpec> outrosPhones;
   final void Function(CelularSpec?) onPhoneSelected;
 
   const PhoneDropdown({
@@ -567,6 +600,7 @@ class PhoneDropdown extends StatefulWidget {
     required this.selectedPhone,
     required this.motorolaPhones,
     required this.samsungPhones,
+    this.outrosPhones = const [],
     required this.onPhoneSelected,
   });
 
@@ -606,15 +640,25 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
             margin: const EdgeInsets.only(top: 4),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade300)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(padding: EdgeInsets.all(8), child: Text('Motorola', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
-                ...widget.motorolaPhones.map((p) => _item(p)),
-                const Divider(),
-                const Padding(padding: EdgeInsets.all(8), child: Text('Samsung', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
-                ...widget.samsungPhones.map((p) => _item(p)),
-              ],
+            constraints: const BoxConstraints(maxHeight: 320),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(padding: EdgeInsets.all(8), child: Text('Motorola', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
+                  ...widget.motorolaPhones.map((p) => _item(p)),
+                  const Divider(),
+                  const Padding(padding: EdgeInsets.all(8), child: Text('Samsung', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
+                  ...widget.samsungPhones.map((p) => _item(p)),
+                  if (widget.outrosPhones.isNotEmpty) ...[
+                    const Divider(),
+                    const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text('Buscados na internet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
+                    ...widget.outrosPhones.map((p) => _item(p)),
+                  ],
+                ],
+              ),
             ),
           ),
       ],

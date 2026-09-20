@@ -74,7 +74,7 @@ void setupApiInterceptors() {
       return handler.next(options);
     },
     onError: (error, handler) async {
-      if (error.response?.statusCode == 401 && _authToken != null) {
+      if (error.response?.statusCode == 401) {
         await _handleSessionExpired();
       }
       return handler.next(error);

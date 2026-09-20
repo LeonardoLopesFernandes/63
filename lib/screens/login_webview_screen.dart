@@ -158,24 +158,20 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
     final tokenUrl = _extrairTokenDaUrl(url);
     if (tokenUrl != null) return tokenUrl;
 
+    // Lê cookies via JS (WebViewCookieManager desta versão não expõe getCookies).
     try {
-      final cookies = await WebViewCookieManager().getCookies(
-          domain: Uri.parse('https://sl-authorization.americanas.io'));
-      for (final c in cookies) {
-        if ((c.name == 'newToken' || c.name == 'token') &&
-            (c.value?.length ?? 0) > 50) {
-          return c.value;
-        }
-      }
-    } catch (_) {}
-
-    try {
-      final cookies = await WebViewCookieManager().getCookies(
-          domain: Uri.parse('https://minhaloja.americanas.io'));
-      for (final c in cookies) {
-        if ((c.name == 'newToken' || c.name == 'token') &&
-            (c.value?.length ?? 0) > 50) {
-          return c.value;
+      final result = await _controller.runJavaScriptReturningResult(
+        "(()=>{try{return document.cookie||'';}catch(e){return '';}})()",
+      );
+      if (result is String) {
+        final cookies = result.replaceAll('"', '');
+        for (final part in cookies.split(';')) {
+          final kv = part.trim().split('=');
+          if (kv.length >= 2 &&
+              (kv[0].trim() == 'newToken' || kv[0].trim() == 'token')) {
+            final value = kv.sublist(1).join('=').trim();
+            if (value.length > 50) return value;
+          }
         }
       }
     } catch (_) {}
@@ -213,6 +209,10 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
 
     setAuthToken(token);
     Session.saveToken(token);
+    // Garante auto-login nas próximas aberturas.
+    if (_email.isNotEmpty && _senha.isNotEmpty) {
+      Session.saveCredentials(_email, _senha);
+    }
 
     Map<String, dynamic>? claims;
     try {

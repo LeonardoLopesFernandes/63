@@ -53,7 +53,9 @@ class _LoginScreenState extends State<LoginScreen>
     );
     _controller.forward();
 
-    if (Session.isLoggedIn()) {
+    // Só pula direto p/ Main se o token ainda é válido.
+    // Expirado -> cai no fluxo abaixo e reloga sozinho (silencioso).
+    if (Session.hasValidToken()) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           Navigator.of(context).pushReplacement(
@@ -91,7 +93,9 @@ class _LoginScreenState extends State<LoginScreen>
   void _abrirWebView({required bool autoLogin, bool silencioso = false}) {
     final email = _emailController.text.trim();
     final senha = _senhaController.text;
-    if (_salvarCredenciais && email.isNotEmpty && senha.isNotEmpty) {
+    // Sempre persiste p/ o auto-login funcionar na próxima abertura,
+    // mesmo se o checkbox estiver desmarcado nesta vez.
+    if (email.isNotEmpty && senha.isNotEmpty) {
       Session.saveCredentials(email, senha);
     }
     Navigator.push(

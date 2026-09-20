@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:app_links/app_links.dart';
 import 'package:papeleta63/api/client.dart';
 import 'package:papeleta63/api/cronet_adapter.dart';
+import 'package:papeleta63/api/endpoints.dart';
 import 'package:papeleta63/api/session.dart';
 import 'package:papeleta63/screens/login_screen.dart';
 import 'package:papeleta63/screens/main_screen.dart';
@@ -45,15 +46,53 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late bool _loggedIn;
+  /// null = verificando sessão (splash); true/false = destino.
+  bool? _loggedIn;
 
   @override
   void initState() {
     super.initState();
-    _loggedIn = Session.isLoggedIn();
+    setOnSessionExpiredHandler(() {
+      if (mounted) setState(() => _loggedIn = false);
+    });
     Session.onLoginChange = () {
-      if (mounted) setState(() => _loggedIn = Session.isLoggedIn());
+      if (mounted) {
+        setState(() => _loggedIn = Session.isLoggedIn() ? _loggedIn : false);
+      }
     };
+    _bootCheck();
+  }
+
+  /// Leitura na abertura: 1) JWT local (instantâneo); 2) se houver token,
+  /// uma chamada leve à API confirma que não expirou no servidor.
+  /// Se expirou e há credenciais salvas, vai ao Login que reloga sozinho.
+  Future<void> _bootCheck() async {
+    if (!Session.isLoggedIn()) {
+      if (mounted) setState(() => _loggedIn = false);
+      return;
+    }
+    if (Session.isTokenExpired()) {
+      // Não limpa aqui: LoginScreen usa o token/credenciais p/ relogar.
+      if (mounted) setState(() => _loggedIn = false);
+      return;
+    }
+    if (mounted) setState(() => _loggedIn = true);
+    try {
+      final now = DateTime.now();
+      final today =
+          '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+      final ok = await validateSession(
+        storeId: Session.getUserStore(),
+        startDate: today,
+      ).timeout(const Duration(seconds: 15));
+      if (ok == false && mounted) {
+        // 401 confirmado no servidor: força fluxo de auto-login.
+        Session.clearToken();
+        setState(() => _loggedIn = false);
+      }
+    } catch (_) {
+      // Sem rede/timeout: mantém decisão do JWT local.
+    }
   }
 
   @override
@@ -79,7 +118,28 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: const Color(0xFFF4F8FE),
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0D47A1)),
       ),
-      home: _loggedIn ? const MainScreen() : const LoginScreen(),
+      home: _buildHome(),
     );
+  }
+
+  Widget _buildHome() {
+    if (_loggedIn == null) {
+      // Splash enquanto valida a sessão na abertura.
+      return const Scaffold(
+        backgroundColor: Color(0xFFF4F8FE),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Verificando sessão...',
+                  style: TextStyle(color: Colors.black54)),
+            ],
+          ),
+        ),
+      );
+    }
+    return _loggedIn! ? const MainScreen() : const LoginScreen();
   }
 }

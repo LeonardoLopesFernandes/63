@@ -72,6 +72,31 @@ Future<PapeletaStandaloneResponse> getSingleLabelPrinting({
   );
 }
 
+/// Leitura leve usada na abertura do app para saber se a sessão expirou.
+/// Retorna true se o token ainda é aceito (qualquer 200, mesmo sem itens),
+/// false se a API respondeu 401. Outros erros (rede etc.) retornam null
+/// para não forçar logout à toa — o JWT local decide nesses casos.
+Future<bool?> validateSession({
+  required String storeId,
+  required String startDate,
+}) async {
+  try {
+    await apiClient.get(
+      'web/price-tag/store/$storeId/single-label-printing',
+      queryParameters: {
+        'description': '__health__',
+        'startDate': startDate,
+      },
+    );
+    return true;
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 401) return false;
+    return null;
+  } catch (_) {
+    return null;
+  }
+}
+
 /// POST web/price-sign/store/{storeId}/send
 Future<void> sendPriceSigns({
   required String storeId,
