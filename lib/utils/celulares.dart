@@ -544,7 +544,17 @@ List<String> _specsFromGsmTable(
     if (chip.isNotEmpty && chip.length <= 60) out.add('processador $chip');
   }
 
-  return out.toSet().toList().take(8).toList();
+  // Ordem fixa: câmera, câmera frontal, bateria, RAM, processador.
+  final ordered = <String>[];
+  final want = ['câmera ', 'câmera frontal ', 'bateria ', 'GB de RAM', 'processador '];
+  for (final prefix in want) {
+    final found = out.firstWhere(
+      (s) => s.startsWith(prefix),
+      orElse: () => '',
+    );
+    if (found.isNotEmpty) ordered.add(found);
+  }
+  return ordered;
 }
 
 /// Remove tags HTML e entidades (ex: "&amp;", "<sup>").
@@ -699,9 +709,17 @@ List<String> _buildAppSpecs(Map<String, dynamic> device, String selectedStorage)
     if (chip.isNotEmpty && chip.length <= 60) out.add('processador $chip');
   }
 
-  // Completa com specs genéricas da API se ainda faltar.
-  if (out.length < 3) out.addAll(_readSpecs(device));
-  return out.toSet().toList().take(8).toList();
+  // Ordem fixa exigida pelo app: câmera, câmera frontal, bateria, RAM, processador.
+  final ordered = <String>[];
+  final want = ['câmera ', 'câmera frontal ', 'bateria ', 'GB de RAM', 'processador '];
+  for (final prefix in want) {
+    final found = out.firstWhere(
+      (s) => s.startsWith(prefix),
+      orElse: () => '',
+    );
+    if (found.isNotEmpty) ordered.add(found);
+  }
+  return ordered;
 }
 
 /// Lê texto de um sub-objeto (ex: device['platform']['cpu']).
