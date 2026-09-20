@@ -312,7 +312,21 @@ final Dio _mobileApi = Dio(BaseOptions(
 /// Busca specs na MobileAPI.dev para a descrição EXATA selecionada no
 /// diálogo da 1ª API. A descrição verbosa é limpa antes de enviar
 /// (`GET /devices/search/?name=<modelo limpo>&manufacturer=<marca>`).
+/// Se a MobileAPI falhar (cota/rate-limit/sem resultado), cai para a
+/// API gratuita do GSMArena (sem key) como fallback.
 Future<CelularSpec?> fetchSpecsFromApi(String description) async {
+  if (description.trim().isEmpty) return null;
+  final viaMobile = await _fetchFromMobileApi(description);
+  if (viaMobile != null &&
+      viaMobile.specs.length >= 3 &&
+      viaMobile.specs.any((s) => s != 'Especificações não disponíveis')) {
+    return viaMobile;
+  }
+  final viaGsm = await _fetchFromGsmFallback(description);
+  return viaGsm ?? viaMobile;
+}
+
+Future<CelularSpec?> _fetchFromMobileApi(String description) async {
   if (description.trim().isEmpty) return null;
   final query = _cleanApiQuery(description);
   final manufacturer = _detectManufacturer(description);
@@ -350,28 +364,12 @@ Future<CelularSpec?> fetchSpecsFromApi(String description) async {
       return null;
     }
 
-    // Tenta enriquecer com detalhe completo /devices/{id}/ (1 crédito extra).
+    // Detalhe completo /devices/{id}/ (traz CPU octa, frontal, RAM por
+    // variante...). Plano Free limita ritmo: em 429 espera e tenta 1x.
     Map<String, dynamic> device = best;
     final detailId = best['id'];
     if (detailId != null) {
-      try {
-        final detail = await _mobileApi.get(
-          'devices/$detailId/',
-          queryParameters: {
-            if (mobileApiKey.isNotEmpty) 'key': mobileApiKey,
-          },
-          options: Options(
-            headers: {
-              if (mobileApiKey.isNotEmpty) 'Authorization': 'Token $mobileApiKey',
-            },
-          ),
-        );
-        if (detail.data is Map) {
-          device = Map<String, dynamic>.from(detail.data as Map);
-        }
-      } catch (_) {
-        // Mantém o resultado da busca se o detalhe falhar.
-      }
+      device = await _fetchDetail(detailId, fallback: best);
     }
 
     return _buildSpec(device, description);
@@ -382,10 +380,193 @@ Future<CelularSpec?> fetchSpecsFromApi(String description) async {
   }
 }
 
+/// Busca o detalhe com 1 retry em caso de 429 (rate-limit do plano Free).
+Future<Map<String, dynamic>> _fetchDetail(
+    dynamic detailId, {required Map<String, dynamic> fallback}) async {
+  Future<Map<String, dynamic>?> once() async {
+    try {
+      final detail = await _mobileApi.get(
+        'devices/$detailId/',
+        queryParameters: {
+          if (mobileApiKey.isNotEmpty) 'key': mobileApiKey,
+        },
+        options: Options(
+          headers: {
+            if (mobileApiKey.isNotEmpty) 'Authorization': 'Token $mobileApiKey',
+          },
+        ),
+      );
+      if (detail.data is Map) {
+        return Map<String, dynamic>.from(detail.data as Map);
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 429) rethrow;
+    } catch (_) {}
+    return null;
+  }
+
+  try {
+    final first = await once();
+    if (first != null) return first;
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 429) {
+      await Future.delayed(const Duration(seconds: 12));
+      try {
+        final second = await once();
+        if (second != null) return second;
+      } catch (_) {}
+    }
+  } catch (_) {}
+  return fallback;
+}
+
+/// Base da API gratuita (GSMArena, sem key). Pode apontar p/ deploy próprio:
+/// `flutter build apk --dart-define=GSM_API_URL=https://seu-deploy.vercel.app/`.
+const String gsmArenaBaseUrl = String.fromEnvironment(
+  'GSM_API_URL',
+  defaultValue: 'https://mobile-specs-api-sandy.vercel.app/',
+);
+
+final Dio _gsmApi = Dio(BaseOptions(
+  baseUrl: gsmArenaBaseUrl,
+  connectTimeout: const Duration(seconds: 30),
+  receiveTimeout: const Duration(seconds: 30),
+  headers: {'Accept': 'application/json'},
+));
+
+/// Fallback gratuito: tabela completa do GSMArena via `/phone?name=`
+/// (processador octa, frontal, bateria, RAM da variante...).
+Future<CelularSpec?> _fetchFromGsmFallback(String description) async {
+  final query = _cleanApiQuery(description);
+  if (query.isEmpty) return null;
+  try {
+    final resp = await _gsmApi.get(
+      'phone',
+      queryParameters: {'name': query},
+    );
+    final data = resp.data;
+    if (data is! Map || data['status'] != true) return null;
+    final infoRaw = data['data'];
+    if (infoRaw is! Map) return null;
+    final info = Map<String, dynamic>.from(infoRaw);
+
+    // Confere se o pareado é mesmo o selecionado (anti-cruzamento).
+    final matched = _normalizeDesc(
+        '${data['matched'] ?? ''} ${info['model'] ?? ''}');
+    final tokens = query.split(' ').where((t) => t.length > 2).toList();
+    if (tokens.isNotEmpty && !tokens.any(matched.contains)) return null;
+
+    final model = (info['model'] ?? '').toString().trim();
+    if (model.isEmpty) return null;
+    final specs = _specsFromGsmTable(info, description);
+    return CelularSpec(
+      id: 'gsm-${DateTime.now().millisecondsSinceEpoch}',
+      marca: _guessBrand(model),
+      modelo: model.toUpperCase(),
+      armazenamento: _extractStorageFromText(description),
+      specs: specs.isEmpty ? ['Especificações não disponíveis'] : specs,
+    );
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Extrai as 5 specs da tabela do GSMArena (chaves de câmera variam:
+/// Single/Dual/Triple/Quad; valores podem conter HTML).
+List<String> _specsFromGsmTable(
+    Map<String, dynamic> info, String description) {
+  final out = <String>[];
+  final tablesRaw = info['specifications'];
+  final tables =
+      tablesRaw is Map ? Map<String, dynamic>.from(tablesRaw) : {};
+
+  String tableValue(String table, List<String> preferKeys) {
+    final t = tables[table];
+    if (t is! Map) return '';
+    final m = Map<String, dynamic>.from(t);
+    for (final k in preferKeys) {
+      final v = _stripHtml((m[k] ?? '').toString());
+      if (v.isNotEmpty) return v;
+    }
+    return '';
+  }
+
+  String firstMpValue(String table) {
+    final t = tables[table];
+    if (t is! Map) return '';
+    for (final v in Map<String, dynamic>.from(t).values) {
+      final s = _stripHtml((v ?? '').toString());
+      if (s.toUpperCase().contains('MP')) return s;
+    }
+    return '';
+  }
+
+  // 1. Câmera principal.
+  final mainMps = _mpList(firstMpValue('Main Camera')).take(3).toList();
+  if (mainMps.isNotEmpty) {
+    out.add('câmera ${mainMps.map((m) => '$m Mp').join(' + ')}');
+  }
+
+  // 2. Frontal (chave "Selfie camera").
+  var front = firstMpValue('Selfie camera');
+  if (front.isEmpty) front = firstMpValue('Selfie Camera');
+  final frontMps = _mpList(front);
+  if (frontMps.isNotEmpty) out.add('câmera frontal ${frontMps.first}MP');
+
+  // 3. RAM da variante selecionada.
+  var mem = tableValue('Memory', const ['Internal']);
+  if (mem.isEmpty) mem = _stripHtml((info['storage'] ?? '').toString());
+  final ram = _ramForVariant(mem, _extractStorageFromText(description));
+  if (ram.isNotEmpty) out.add(ram);
+
+  // 4. Bateria.
+  var bat = '';
+  final bt = tables['Battery'];
+  if (bt is Map) {
+    for (final v in Map<String, dynamic>.from(bt).values) {
+      final s = _stripHtml((v ?? '').toString());
+      if (RegExp(r'\d{3,5}\s?MAH').hasMatch(s.toUpperCase())) {
+        bat = s;
+        break;
+      }
+    }
+  }
+  final batMatch = RegExp(r'(\d{3,5})\s?MAH').firstMatch(bat.toUpperCase());
+  if (batMatch != null) out.add('bateria ${batMatch.group(1)} mAh');
+
+  // 5. Processador.
+  final cpu = _cpuLine(_stripHtml(tableValue('Platform', const ['CPU'])));
+  if (cpu.isNotEmpty) {
+    out.add(cpu);
+  } else {
+    final chip =
+        _stripHtml(tableValue('Platform', const ['Chipset'])).split('(').first.trim();
+    if (chip.isNotEmpty && chip.length <= 60) out.add('processador $chip');
+  }
+
+  return out.toSet().toList().take(8).toList();
+}
+
+/// Remove tags HTML e entidades (ex: "&amp;", "<sup>").
+String _stripHtml(String s) {
+  var out = s.replaceAll(RegExp(r'<[^>]*>'), ' ');
+  const entities = {
+    '&amp;': '&',
+    '&nbsp;': ' ',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&lt;': '<',
+    '&gt;': '>',
+  };
+  entities.forEach((k, v) => out = out.replaceAll(k, v));
+  return out.replaceAll(RegExp(r'\s+'), ' ').trim();
+}
+
 /// Monta um [CelularSpec] no padrão do app (5 linhas: câmera, frontal,
 /// RAM, bateria, processador) a partir do JSON da MobileAPI.
 CelularSpec? _buildSpec(Map<String, dynamic> device, String fallbackQuery) {
   final brand = _firstText(device, const [
+    'manufacturer_name',
     'manufacturer',
     'brand',
     'marca',
@@ -401,9 +582,9 @@ CelularSpec? _buildSpec(Map<String, dynamic> device, String fallbackQuery) {
   ]);
   if (name.isEmpty) name = fallbackQuery;
 
-  var storage = _extractStorage(device, fallbackQuery);
+  final storage = _extractStorage(device, fallbackQuery);
 
-  final specs = _buildAppSpecs(device);
+  final specs = _buildAppSpecs(device, storage);
   if (brand.isEmpty && name.isEmpty) return null;
 
   final rawId = _firstText(device, const ['id', 'slug', 'uid']);
@@ -463,107 +644,141 @@ String _extractStorageFromText(String text) {
   return '${best}GB';
 }
 
-/// Gera as 5 specs no mesmo padrão do assets/celulares.json.
-List<String> _buildAppSpecs(Map<String, dynamic> device) {
-  final mainCam = _firstText(device, const [
-        'main_camera',
-        'mainCamera',
-        'rear_camera',
-        'camera_back',
-        'camera',
-      ]) +
-      _stringify(device['mainCamera']) +
-      _stringify(device['rearCamera']);
-  final selfie = _firstText(device, const [
-    'selfie_camera',
-    'selfieCamera',
-    'front_camera',
-    'camera_front',
-  ]);
-  final ram = _firstText(device, const [
-    'ram',
-    'memory_ram',
-    'memoryRam',
-  ]) +
-      _stringify((device['memory'] is Map)
-          ? (Map<String, dynamic>.from(device['memory']))['ram']
-          : null);
-  final battery = _firstText(device, const [
-        'battery',
-        'battery_capacity',
-        'batteryCapacity',
-      ]) +
-      _stringify((device['battery'] is Map)
-          ? (Map<String, dynamic>.from(device['battery']))['capacity']
-          : null);
-  final cpu = _firstText(device, const [
-    'chipset',
-    'processor',
-    'cpu',
-    'soc',
-    'platform',
-  ]);
-
+/// Gera as specs no padrão do app a partir do schema real da MobileAPI:
+/// `main_camera.modules` (ex: "50 MP, f/1.8...10 MP..."), `selfie_camera.modules`,
+/// `memory.internal` ("128GB 8GB RAM, 256GB 8GB RAM..."), `battery.type`
+/// ("Li-Ion 3900 mAh") e `platform.cpu` ("Octa-core (1x3.36 GHz...)").
+/// Quando só há o item da busca, usa `camera`, `battery_capacity` e `hardware`.
+List<String> _buildAppSpecs(Map<String, dynamic> device, String selectedStorage) {
   final out = <String>[];
-  final camLine = _normCamera(mainCam, frontal: false);
-  if (camLine.isNotEmpty) out.add(camLine);
-  final frontLine = _normCamera(selfie, frontal: true);
-  if (frontLine.isNotEmpty) out.add(frontLine);
-  final ramLine = _normRam(_stringify(device['memory']).isNotEmpty
-      ? _stringify(device['memory'])
-      : ram);
+
+  // 1. Câmera principal (até 3 módulos).
+  var mainRaw = _subText(device, 'main_camera', const ['modules']);
+  if (mainRaw.isEmpty) {
+    mainRaw = _firstText(device, const ['camera', 'mainCamera', 'rear_camera']);
+  }
+  final mainMps = _mpList(mainRaw).take(3).toList();
+  if (mainMps.isNotEmpty) {
+    out.add('câmera ${mainMps.map((m) => '$m Mp').join(' + ')}');
+  }
+
+  // 2. Câmera frontal.
+  var frontRaw = _subText(device, 'selfie_camera', const ['modules']);
+  if (frontRaw.isEmpty) {
+    frontRaw = _firstText(device, const ['selfieCamera', 'front_camera', 'camera_front']);
+  }
+  final frontMps = _mpList(frontRaw);
+  if (frontMps.isNotEmpty) {
+    out.add('câmera frontal ${frontMps.first}MP');
+  }
+
+  // 3. RAM da variante selecionada (ex: "256GB 8GB RAM" -> "8 GB de RAM").
+  var memRaw = _subText(device, 'memory', const ['internal']);
+  if (memRaw.isEmpty) memRaw = _firstText(device, const ['hardware', 'ram']);
+  final ramLine = _ramForVariant(memRaw, selectedStorage);
   if (ramLine.isNotEmpty) out.add(ramLine);
-  final batLine = _normBattery(
-      _stringify(device['battery']).isNotEmpty ? _stringify(device['battery']) : battery);
-  if (batLine.isNotEmpty) out.add(batLine);
-  final cpuLine = _normCpu(_stringify(device['platform']).isNotEmpty
-      ? _stringify(device['platform'])
-      : cpu);
-  if (cpuLine.isNotEmpty) out.add(cpuLine);
+
+  // 4. Bateria.
+  var batRaw = _subText(device, 'battery', const ['type']);
+  if (batRaw.isEmpty) {
+    batRaw = _firstText(device, const ['battery_capacity', 'battery']);
+  }
+  final batMatch = RegExp(r'(\d{3,5})\s?MAH').firstMatch(batRaw.toUpperCase());
+  if (batMatch != null) out.add('bateria ${batMatch.group(1)} mAh');
+
+  // 5. Processador (núcleos + clock máx, ex: "Octa-core (1x3.36 GHz...)"
+  // -> "processador 8 Core 3.36 GHZ").
+  final cpuRaw = _subText(device, 'platform', const ['cpu']);
+  final cpuLine = _cpuLine(cpuRaw);
+  if (cpuLine.isNotEmpty) {
+    out.add(cpuLine);
+  } else {
+    var chip = _subText(device, 'platform', const ['chipset']);
+    if (chip.isEmpty) chip = _chipFromHardware(_firstText(device, const ['hardware']));
+    chip = chip.split('(').first.trim();
+    if (chip.isNotEmpty && chip.length <= 60) out.add('processador $chip');
+  }
 
   // Completa com specs genéricas da API se ainda faltar.
   if (out.length < 3) out.addAll(_readSpecs(device));
   return out.toSet().toList().take(8).toList();
 }
 
-String _normCamera(String raw, {required bool frontal}) {
-  if (raw.trim().isEmpty) return '';
-  final mps =
-      RegExp(r'(\d+(?:[.,]\d+)?)\s?MP').allMatches(raw.toUpperCase()).toList();
-  if (mps.isEmpty) {
-    final short = raw.trim();
-    if (short.length < 4 || short.length > 80) return '';
-    return frontal ? 'câmera frontal $short' : 'câmera $short';
+/// Lê texto de um sub-objeto (ex: device['platform']['cpu']).
+String _subText(Map<String, dynamic> data, String parent, List<String> keys) {
+  final value = data[parent];
+  if (value is Map) {
+    return _firstText(Map<String, dynamic>.from(value), keys);
   }
-  final joined = mps.map((m) => '${m.group(1)!.replaceAll(',', '.')} Mp').join(' + ');
-  return frontal ? 'câmera frontal ${joined.replaceAll(' Mp', 'MP')}' : 'câmera $joined';
+  return '';
 }
 
-String _normRam(String raw) {
-  if (raw.trim().isEmpty) return '';
-  final m = RegExp(r'(\d{1,2})\s?GB').firstMatch(raw.toUpperCase());
-  if (m == null) return '';
-  return '${m.group(1)} GB de RAM';
+/// Todos os "NN MP" do texto (ex: ["50", "10", "12"]).
+List<String> _mpList(String raw) {
+  return RegExp(r'(\d+(?:[.,]\d+)?)\s?MP')
+      .allMatches(raw.toUpperCase())
+      .map((m) => m.group(1)!.replaceAll(',', '.'))
+      .toList();
 }
 
-String _normBattery(String raw) {
-  if (raw.trim().isEmpty) return '';
-  final m = RegExp(r'(\d{3,5})').firstMatch(raw.replaceAll(RegExp(r'[^0-9]'), ' ').trim());
-  final digits = RegExp(r'(\d{3,5})\s?MAH').firstMatch(raw.toUpperCase());
-  final val = digits?.group(1) ?? m?.group(1);
-  if (val == null) return '';
-  return 'bateria $val mAh';
-}
-
-String _normCpu(String raw) {
-  if (raw.trim().isEmpty) return '';
-  final ghz = RegExp(r'(\d(?:[.,]\d)?)\s?GHZ').firstMatch(raw.toUpperCase());
-  if (ghz != null) {
-    return 'processador 8 Core ${ghz.group(1)!.replaceAll(',', '.')} GHZ';
+/// RAM da variante (ex: texto "128GB 8GB RAM, 256GB 12GB RAM" + variante
+/// "256GB" -> "12 GB de RAM"). Sem variante, usa o primeiro "NGB RAM".
+String _ramForVariant(String raw, String storage) {
+  final upper = raw.toUpperCase();
+  if (upper.isEmpty) return '';
+  final storageDigits = RegExp(r'(\d+)').firstMatch(storage)?.group(1);
+  if (storageDigits != null) {
+    final m = RegExp('${storageDigits}GB\\s*(\\d{1,2})GB RAM').firstMatch(upper);
+    if (m != null) return '${m.group(1)} GB de RAM';
   }
-  final short = raw.split(',').first.trim();
-  if (short.isEmpty || short.length > 60) return '';
-  return 'processador $short';
+  final m = RegExp(r'(\d{1,2})GB RAM').firstMatch(upper);
+  if (m != null) return '${m.group(1)} GB de RAM';
+  return '';
+}
+
+/// "Octa-core (1x3.36 GHz Cortex-X3 & ...)" -> "processador 8 Core 3.36 GHZ".
+String _cpuLine(String raw) {
+  final upper = raw.toUpperCase();
+  if (upper.trim().isEmpty) return '';
+  const cores = {
+    'DUAL-CORE': 2, 'DUAL CORE': 2,
+    'QUAD-CORE': 4, 'QUAD CORE': 4,
+    'HEXA-CORE': 6, 'HEXA CORE': 6,
+    'OCTA-CORE': 8, 'OCTA CORE': 8,
+    'DECA-CORE': 10, 'DECA CORE': 10,
+  };
+  int? coreCount;
+  for (final entry in cores.entries) {
+    if (upper.contains(entry.key)) {
+      coreCount = entry.value;
+      break;
+    }
+  }
+  double best = 0;
+  for (final m in RegExp(r'(\d(?:[.,]\d+)?)\s?GHZ').allMatches(upper)) {
+    final v = double.tryParse(m.group(1)!.replaceAll(',', '.')) ?? 0;
+    if (v > best) best = v;
+  }
+  if (coreCount != null && best > 0) {
+    return 'processador $coreCount Core ${_trimGhz(best)} GHZ';
+  }
+  if (coreCount != null) return 'processador $coreCount Core';
+  return '';
+}
+
+String _trimGhz(double v) =>
+    v == v.roundToDouble() ? '${v.toInt()}' : '$v';
+
+/// Chipset a partir do "hardware" da busca (ex: "8GB RAM, Snapdragon 8 Gen 2").
+String _chipFromHardware(String hardware) {
+  final parts = hardware.split(',');
+  for (final p in parts) {
+    final t = p.trim();
+    if (t.isEmpty) continue;
+    if (RegExp(r'\dGB RAM', caseSensitive: false).hasMatch(t)) continue;
+    return t;
+  }
+  return '';
 }
 
 String _guessBrand(String name) {
