@@ -272,10 +272,9 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ),
                 )),
-              ],
+],
             ),
           ),
-      ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -1073,7 +1072,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
           ),
         ],
       ),
-    ));
+    );
   }
 
   void _confirmDelete(CelularSpec phone) {
