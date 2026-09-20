@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 
@@ -21,11 +22,11 @@ class CelularSpec {
 
   factory CelularSpec.fromJson(Map<String, dynamic> json) {
     return CelularSpec(
-      id: (json['id'] ?? '').toString(),
-      marca: (json['marca'] ?? '').toString(),
-      modelo: (json['modelo'] ?? '').toString(),
-      armazenamento: (json['armazenamento'] ?? '').toString(),
-      specs: (json['specs'] as List?)?.map((e) => e.toString()).toList() ?? const [],
+      id: (json['id'] ?? json['slug'] ?? '').toString(),
+      marca: _firstText(json, const ['marca', 'brand', 'manufacturer', 'vendor']),
+      modelo: _firstText(json, const ['modelo', 'model', 'name', 'device']),
+      armazenamento: _firstText(json, const ['armazenamento', 'storage', 'internalMemory', 'memory']),
+      specs: _readSpecs(json),
     );
   }
 
@@ -192,7 +193,7 @@ CelularSpec? findPhoneByDescription(List<CelularSpec> celulares, String descript
   for (final phone in celulares) {
     final text = '${phone.marca} ${phone.modelo} ${phone.armazenamento}'.toLowerCase();
     final words = text.split(RegExp(r'\s+')).where((word) => word.length > 1);
-    final score = words.where(search.contains).length;
+    final score = words.where((word) => search.contains(word)).length;
     if (score > bestScore) {
       bestScore = score;
       best = phone;
@@ -225,14 +226,101 @@ Future<void> addSavedPhone(CelularSpec phone) async {
   await File('${directory.path}/phones.json').writeAsString(json.encode(phones.map((item) => item.toJson()).toList()));
 }
 
+final Dio _mobileApi = Dio(BaseOptions(
+  baseUrl: 'https://api.mobileapi.dev/v1/',
+  connectTimeout: const Duration(seconds: 15),
+  receiveTimeout: const Duration(seconds: 15),
+  headers: {'Accept': 'application/json'},
+));
+
 Future<CelularSpec?> fetchSpecsFromApi(String description) async {
-  return CelularSpec(
-    id: DateTime.now().millisecondsSinceEpoch.toString(),
-    marca: 'Desconhecido',
-    modelo: description,
-    armazenamento: 'Não informado',
-    specs: const ['Especificações não disponíveis'],
-  );
+  final query = description.trim();
+  if (query.isEmpty) return null;
+
+  try {
+    final response = await _mobileApi.get(
+      'devices',
+      queryParameters: {'search': query},
+    );
+
+    final candidates = _deviceMaps(response.data);
+    if (candidates.isEmpty) return null;
+
+    final device = candidates.first;
+    final name = _firstText(device, const ['name', 'model', 'modelo', 'device']);
+    final brand = _firstText(device, const ['brand', 'marca', 'manufacturer', 'vendor']);
+    final storage = _firstText(device, const ['storage', 'armazenamento', 'internalMemory', 'memory']);
+    final specs = _readSpecs(device);
+
+    if (name.isEmpty && brand.isEmpty) return null;
+
+    return CelularSpec(
+      id: _firstText(device, const ['id', 'slug', 'uid']).isEmpty
+          ? DateTime.now().millisecondsSinceEpoch.toString()
+          : _firstText(device, const ['id', 'slug', 'uid']),
+      marca: brand.isEmpty ? 'Desconhecido' : brand,
+      modelo: name.isEmpty ? query : name,
+      armazenamento: storage.isEmpty ? 'Não informado' : storage,
+      specs: specs.isEmpty ? ['Especificações não disponíveis'] : specs,
+    );
+  } on DioException {
+    return null;
+  } catch (_) {
+    return null;
+  }
+}
+
+List<Map<String, dynamic>> _deviceMaps(dynamic data) {
+  if (data is List) {
+    return data.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+  }
+  if (data is Map) {
+    for (final key in const ['devices', 'items', 'results', 'data', 'content', 'value']) {
+      final nested = _deviceMaps(data[key]);
+      if (nested.isNotEmpty) return nested;
+    }
+    return [Map<String, dynamic>.from(data)];
+  }
+  return [];
+}
+
+String _firstText(Map<String, dynamic> data, List<String> keys) {
+  for (final key in keys) {
+    final value = data[key];
+    if (value is String && value.trim().isNotEmpty) return value.trim();
+    if (value is num) return value.toString();
+  }
+  return '';
+}
+
+List<String> _readSpecs(Map<String, dynamic> data) {
+  final output = <String>[];
+  final specs = data['specs'] ?? data['specifications'];
+  if (specs is List) {
+    output.addAll(specs.map((e) => e.toString()).where((e) => e.trim().isNotEmpty));
+  } else if (specs is Map) {
+    specs.forEach((key, value) {
+      if (value != null && value.toString().trim().isNotEmpty) {
+        output.add('$key: $value');
+      }
+    });
+  }
+  for (final entry in <String, String>{
+    'RAM': _firstText(data, const ['ram', 'memoryRam']),
+    'Tela': _nestedText(data, 'display', const ['size', 'screenSize']),
+    'Câmera': _nestedText(data, 'camera', const ['main', 'primary']),
+    'Bateria': _nestedText(data, 'battery', const ['capacity', 'size']),
+    'Processador': _nestedText(data, 'processor', const ['chipset', 'cpu']),
+  }.entries) {
+    if (entry.value.isNotEmpty) output.add('${entry.key}: ${entry.value}');
+  }
+  return output.toSet().toList();
+}
+
+String _nestedText(Map<String, dynamic> data, String parent, List<String> keys) {
+  final value = data[parent];
+  if (value is Map) return _firstText(Map<String, dynamic>.from(value), keys);
+  return value is String ? value : '';
 }
 
 Future<CelularSpec?> getOrCreateSpecs(String description, List<CelularSpec> baseList) async {
