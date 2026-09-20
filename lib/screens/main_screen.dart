@@ -275,6 +275,7 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
+      ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
