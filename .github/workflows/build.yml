@@ -33,16 +33,22 @@ jobs:
 
       - name: Setup keystore from Secrets
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | tr -d '\n\r ' | base64 --decode > android/app/upload.keystore
+          RAW="${{ secrets.KEYSTORE_BASE64 }}"
+          echo "Raw secret length: ${#RAW}"
+          echo "First 50 chars: ${RAW:0:50}"
+          echo "Last 50 chars: ${RAW: -50}"
+          CLEAN=$(echo "$RAW" | tr -d '\n\r\t ')
+          echo "Clean length: ${#CLEAN}"
+          echo "$CLEAN" | base64 --decode > android/app/upload.keystore
           echo "Keystore size: $(wc -c < android/app/upload.keystore) bytes"
           file android/app/upload.keystore
 
       - name: Verify keystore
         run: |
           keytool -list -v -keystore android/app/upload.keystore \
-            -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
-            -alias ${{ secrets.KEY_ALIAS }} \
-            -keypass ${{ secrets.KEY_PASSWORD }} 2>&1 | head -20
+            -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
+            -alias "${{ secrets.KEY_ALIAS }}" \
+            -keypass "${{ secrets.KEY_PASSWORD }}" 2>&1
 
       - name: Flutter clean
         run: flutter clean
