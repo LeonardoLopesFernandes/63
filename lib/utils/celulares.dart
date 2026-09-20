@@ -186,20 +186,75 @@ Pair<int, double> calcParcelas(double price, {bool daSemana = false}) {
   return Pair(quantity, price / quantity);
 }
 
-CelularSpec? findPhoneByDescription(List<CelularSpec> celulares, String description) {
-  final search = description.toLowerCase().trim();
-  CelularSpec? best;
-  var bestScore = 0;
+/// Normaliza descrição p/ comparação (maiúsculas, sem acento, 1 espaço).
+String _normalizeDesc(String s) {
+  var out = s.toUpperCase().trim();
+  const accents = {
+    'Á': 'A', 'À': 'A', 'Â': 'A', 'Ã': 'A',
+    'É': 'E', 'È': 'E', 'Ê': 'E',
+    'Í': 'I', 'Ì': 'I', 'Î': 'I',
+    'Ó': 'O', 'Ò': 'O', 'Ô': 'O', 'Õ': 'O',
+    'Ú': 'U', 'Ù': 'U', 'Û': 'U',
+    'Ç': 'C',
+  };
+  accents.forEach((k, v) => out = out.replaceAll(k, v));
+  return out.replaceAll(RegExp(r'\s+'), ' ');
+}
+
+/// Encontra APENAS o aparelho idêntico ao da descrição selecionada:
+/// a descrição precisa conter o modelo E o armazenamento igual.
+/// Nunca retorna "parecido" — sem idêntico, a busca vai p/ internet.
+CelularSpec? findExactPhone(List<CelularSpec> celulares, String description) {
+  final search = _normalizeDesc(description);
+  final wantedStorage = _extractStorageFromText(search);
   for (final phone in celulares) {
-    final text = '${phone.marca} ${phone.modelo} ${phone.armazenamento}'.toLowerCase();
-    final words = text.split(RegExp(r'\s+')).where((word) => word.length > 1);
-    final score = words.where((word) => search.contains(word)).length;
-    if (score > bestScore) {
-      bestScore = score;
-      best = phone;
+    final model = _normalizeDesc(phone.modelo);
+    if (model.isEmpty || !search.contains(model)) continue;
+    if (wantedStorage != 'Não informado' &&
+        _normalizeDesc(phone.armazenamento) != wantedStorage) {
+      continue;
     }
+    return phone;
   }
-  return bestScore > 0 ? best : null;
+  return null;
+}
+
+/// Limpa a descrição verbosa da 1ª API p/ a busca na MobileAPI.
+/// Ex: "APARELHO CELULAR SMARTPHONE SAMSUNG GALAXY S23 5G 256GB PRETO"
+///  -> "SAMSUNG GALAXY S23 5G".
+String _cleanApiQuery(String description) {
+  final upper = _normalizeDesc(description);
+  const noise = {
+    'APARELHO', 'APARELHO CELULAR', 'CELULAR', 'SMARTPHONE', 'TELEFONE',
+    'CELL', 'MOBILE', 'MEMORIA', 'ARMAZENAMENTO', 'COR', 'PRETO', 'PRETA',
+    'BRANCO', 'BRANCA', 'AZUL', 'VERDE', 'ROSA', 'CINZA', 'GRAFITE',
+    'PRATA', 'DOURADO', 'DOURADA', 'BEGE', 'CREME', 'LILAS', 'ROXO',
+    'AMARELO', 'VERMELHO', 'LARANJA', 'MARROM', 'TITANIO', 'TITANIUM',
+    'NOVO', 'NOVA', 'ORIGINAL', 'LACRADO', 'GB', 'TB', 'RAM',
+  };
+  final tokens = upper
+      .split(' ')
+      .where((t) => t.length > 1)
+      .where((t) => !noise.contains(t))
+      .where((t) => !RegExp(r'^\d+(?:[.,]\d+)?\s?(GB|TB)$').hasMatch(t))
+      .toList();
+  if (tokens.isEmpty) return description.trim();
+  // Mantém marca + modelo (primeiros tokens relevantes bastam).
+  return tokens.take(6).join(' ');
+}
+
+/// Detecta a fabricante pela descrição p/ filtrar a busca (manufacturer).
+String? _detectManufacturer(String description) {
+  final u = _normalizeDesc(description);
+  if (u.contains('SAMSUNG') || u.contains('GALAXY')) return 'Samsung';
+  if (u.contains('MOTOROLA') || u.contains(' MOTO ') || u.startsWith('MOTO ')) {
+    return 'Motorola';
+  }
+  if (u.contains('APPLE') || u.contains('IPHONE')) return 'Apple';
+  if (u.contains('XIAOMI') || u.contains('REDMI') || u.contains('POCO')) {
+    return 'Xiaomi';
+  }
+  return null;
 }
 
 Future<List<CelularSpec>> loadSavedPhones() async {
@@ -254,12 +309,13 @@ final Dio _mobileApi = Dio(BaseOptions(
   headers: {'Accept': 'application/json'},
 ));
 
-/// Busca specs na MobileAPI.dev quando o modelo não está na lista local.
-/// Fluxo: 1ª API (single-label-printing) retorna description (ex: "S23") ->
-/// tenta [baseList] + salvos -> se não achar, consulta
-/// `GET /devices/search/?name=<description>` e converte para [CelularSpec].
+/// Busca specs na MobileAPI.dev para a descrição EXATA selecionada no
+/// diálogo da 1ª API. A descrição verbosa é limpa antes de enviar
+/// (`GET /devices/search/?name=<modelo limpo>&manufacturer=<marca>`).
 Future<CelularSpec?> fetchSpecsFromApi(String description) async {
-  final query = description.trim();
+  if (description.trim().isEmpty) return null;
+  final query = _cleanApiQuery(description);
+  final manufacturer = _detectManufacturer(description);
   if (query.isEmpty) return null;
 
   try {
@@ -268,6 +324,7 @@ Future<CelularSpec?> fetchSpecsFromApi(String description) async {
       queryParameters: {
         'name': query,
         'limit': 5,
+        if (manufacturer case final m) 'manufacturer': m,
         if (mobileApiKey.isNotEmpty) 'key': mobileApiKey,
       },
       options: Options(
@@ -281,6 +338,17 @@ Future<CelularSpec?> fetchSpecsFromApi(String description) async {
     if (candidates.isEmpty) return null;
 
     final best = _pickBest(candidates, query);
+
+    // Trava: se o melhor resultado não tem nenhum token em comum com o
+    // que foi selecionado, não adiciona aparelho errado ao catálogo.
+    final bestName = _normalizeDesc(_firstText(best, const [
+      'name', 'model', 'modelo', 'device', 'title',
+    ]));
+    final queryTokens = query.split(' ').where((t) => t.length > 2).toList();
+    if (queryTokens.isNotEmpty &&
+        !queryTokens.any(bestName.contains)) {
+      return null;
+    }
 
     // Tenta enriquecer com detalhe completo /devices/{id}/ (1 crédito extra).
     Map<String, dynamic> device = best;
@@ -306,7 +374,7 @@ Future<CelularSpec?> fetchSpecsFromApi(String description) async {
       }
     }
 
-    return _buildSpec(device, query);
+    return _buildSpec(device, description);
   } on DioException {
     return null;
   } catch (_) {
@@ -350,9 +418,13 @@ CelularSpec? _buildSpec(Map<String, dynamic> device, String fallbackQuery) {
   );
 }
 
-/// Extrai armazenamento (128GB/256GB/512GB/1TB) dos campos de memória ou
-/// da própria descrição da 1ª API (ex: "S23 256GB").
+/// Extrai armazenamento priorizando a descrição SELECIONADA na 1ª API
+/// (é a variante real do aparelho, ex: "S23 256GB"), e só depois os
+/// campos genéricos vindos da MobileAPI.
 String _extractStorage(Map<String, dynamic> device, String fallback) {
+  final fromSelection =
+      _extractStorageFromText('$fallback ${_stringify(device['name'])}');
+  if (fromSelection != 'Não informado') return fromSelection;
   for (final key in const [
     'internal_storage',
     'internalStorage',
@@ -369,7 +441,7 @@ String _extractStorage(Map<String, dynamic> device, String fallback) {
       if (found.isNotEmpty && found != 'Não informado') return found;
     }
   }
-  return _extractStorageFromText('$fallback ${_stringify(device['name'])}');
+  return 'Não informado';
 }
 
 String _extractStorageFromText(String text) {
@@ -598,10 +670,15 @@ String _stringify(dynamic value) {
   return value.toString();
 }
 
+/// Fluxo da seleção no diálogo da 1ª API:
+/// 1. Se a descrição IDÊNTICA já está no catálogo (assets ou já buscada),
+///    usa ela; 2. Senão busca as specs corretas na MobileAPI.dev para
+/// AQUELE aparelho, adiciona como nova entrada no catálogo e retorna.
+/// Nunca escolhe um modelo "semelhante" — sem idêntico, vai p/ internet.
 Future<CelularSpec?> getOrCreateSpecs(String description, List<CelularSpec> baseList) async {
-  final local = findPhoneByDescription(baseList, description);
+  final local = findExactPhone(baseList, description);
   if (local != null) return local;
-  final saved = findPhoneByDescription(await loadSavedPhones(), description);
+  final saved = findExactPhone(await loadSavedPhones(), description);
   if (saved != null) return saved;
   final fetched = await fetchSpecsFromApi(description);
   if (fetched != null) await addSavedPhone(fetched);

@@ -244,8 +244,9 @@ class _MainScreenState extends State<MainScreen> {
                 title: Text(item.description),
                 subtitle: Text('R\$ ${item.price}'),
                 onTap: () async {
-                  // Feedback imediato: busca local primeiro, senão internet.
-                  _toast('Verificando catálogo...');
+                  // Se idêntico já está no catálogo usa direto;
+                  // senão busca as specs exatas na internet e adiciona.
+                  _toast('Buscando especificações...');
                   final matched = await getOrCreateSpecs(item.description, _celulares);
                   if (matched != null) {
                     final already = _celulares.any((c) =>
