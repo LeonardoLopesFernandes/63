@@ -352,10 +352,26 @@ class _MainScreenState extends State<MainScreen> {
             padding: const EdgeInsets.only(left: 12),
             child: Image.asset('assets/ic_papeleta.png', width: 36, height: 36),
           ),
-          title: const Text('Plano de Telefonia', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+          title: Center(
+            child: RichText(
+              text: const TextSpan(
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                children: [
+                  TextSpan(
+                    text: 'Plano de ',
+                    style: TextStyle(color: Color(0xFFD32F2F)), // Vermelho Claro
+                  ),
+                  TextSpan(
+                    text: 'Telefonia',
+                    style: TextStyle(color: Color(0xFF0040A0)), // Azul TIM
+                  ),
+                ],
+              ),
+            ),
           backgroundColor: Colors.transparent,
           foregroundColor: const Color(0xFF1D1B20),
           elevation: 0,
+          centerTitle: true,
           actions: [
             IconButton(
               icon: const Icon(Icons.person, color: Color(0xFFD32F2F)),

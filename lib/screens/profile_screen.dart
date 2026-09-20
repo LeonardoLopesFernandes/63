@@ -42,8 +42,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final picked = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 90);
       if (picked == null) return;
       final arquivo = File(picked.path);
-      Session.saveProfilePhoto(arquivo.path);
-      setState(() => _fotoPerfil = arquivo);
+      // Copia para diretório permanente do app para persistir após reinicialização
+      final dir = await getApplicationDocumentsDirectory();
+      final nomeArquivo = 'profile_photo_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final destino = File('${dir.path}/$nomeArquivo');
+      await arquivo.copy(destino.path);
+      Session.saveProfilePhoto(destino.path);
+      setState(() => _fotoPerfil = destino);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Foto atualizada com sucesso')),
       );
