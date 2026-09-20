@@ -245,30 +245,49 @@ class _MainScreenState extends State<MainScreen> {
               return ListTile(
                 title: Text(item.description),
                 subtitle: Text('R\$ ${item.price}'),
-                onTap: () async {
-                  // Fecha o dialog IMEDIATAMENTE ao tocar.
+                onTap: () {
+                  // 1. Preenche IMEDIATAMENTE com o que veio da 1ª API.
                   Navigator.pop(ctx);
-                  _toast('Buscando especificações...');
-                  final matched = await getOrCreateSpecs(item.description, _celulares);
-                  if (matched != null) {
-                    final already = _celulares.any((c) =>
-                        c.modelo.toLowerCase() == matched.modelo.toLowerCase() &&
-                        c.armazenamento.toLowerCase() == matched.armazenamento.toLowerCase());
-                    if (!already && mounted) {
-                      setState(() => _celulares = [..._celulares, matched]);
+                  _states[index] = _states[index].copyWith(
+                    selectedPhone: CelularSpec(
+                      id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
+                      marca: '',
+                      modelo: item.description,
+                      armazenamento: 'Não informado',
+                      specs: [],
+                    ),
+                    priceText: parsePriceToDigits(item.price),
+                    ean: item.ean,
+                    codSap: item.sap,
+                  );
+                  _saveAll();
+                  if (mounted) setState(() {});
+                  _toast('${item.description} selecionado — buscando specs...');
+
+                  // 2. Em background busca specs corretas (MobileAPI/GSMArena).
+                  Future.microtask(() async {
+                    final matched = await getOrCreateSpecs(item.description, _celulares);
+                    if (!mounted) return;
+                    if (matched != null) {
+                      final already = _celulares.any((c) =>
+                          c.modelo.toLowerCase() == matched.modelo.toLowerCase() &&
+                          c.armazenamento.toLowerCase() == matched.armazenamento.toLowerCase());
+                      if (!already) {
+                        setState(() => _celulares = [..._celulares, matched]);
+                      }
+                      _states[index] = _states[index].copyWith(
+                        selectedPhone: matched,
+                        priceText: parsePriceToDigits(item.price),
+                        ean: item.ean,
+                        codSap: item.sap,
+                      );
+                      _saveAll();
+                      setState(() {});
+                      _toast('${matched.modelo} ${matched.armazenamento} — specs carregadas');
+                    } else {
+                      _toast('Specs não encontradas na internet para: ${item.description}');
                     }
-                    _states[index] = _states[index].copyWith(
-                      selectedPhone: matched,
-                      priceText: parsePriceToDigits(item.price),
-                      ean: item.ean,
-                      codSap: item.sap,
-                    );
-                    _saveAll();
-                    if (mounted) setState(() {});
-                    _toast('${matched.modelo} ${matched.armazenamento} selecionado');
-                  } else {
-                    _toast('Modelo não encontrado nem na internet: ${item.description}');
-                  }
+                  });
                 },
               );
             },
