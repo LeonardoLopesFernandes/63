@@ -246,8 +246,8 @@ class _MainScreenState extends State<MainScreen> {
                 title: Text(item.description),
                 subtitle: Text('R\$ ${item.price}'),
                 onTap: () async {
-                  // Se idêntico já está no catálogo usa direto;
-                  // senão busca as specs exatas na internet e adiciona.
+                  // Fecha o dialog IMEDIATAMENTE ao tocar.
+                  Navigator.pop(ctx);
                   _toast('Buscando especificações...');
                   final matched = await getOrCreateSpecs(item.description, _celulares);
                   if (matched != null) {
@@ -265,7 +265,6 @@ class _MainScreenState extends State<MainScreen> {
                     );
                     _saveAll();
                     if (mounted) setState(() {});
-                    Navigator.pop(ctx);
                     _toast('${matched.modelo} ${matched.armazenamento} selecionado');
                   } else {
                     _toast('Modelo não encontrado nem na internet: ${item.description}');
