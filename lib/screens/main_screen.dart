@@ -215,12 +215,12 @@ class _MainScreenState extends State<MainScreen> {
     final descController = TextEditingController();
     final priceController = TextEditingController();
     final specsControllers = <TextEditingController>[
-      TextEditingController(), // camera
-      TextEditingController(), // frontal
-      TextEditingController(), // bateria
-      TextEditingController(), // ram
-      TextEditingController(), // processador
-      TextEditingController(), // tela
+      TextEditingController(),
+      TextEditingController(),
+      TextEditingController(),
+      TextEditingController(),
+      TextEditingController(),
+      TextEditingController(),
     ];
     final specLabels = ['Câmera principal', 'Câmera frontal', 'Bateria', 'RAM', 'Processador', 'Tela'];
     final specHints = [
@@ -275,7 +275,151 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final desc = descController.text.trim();
+              final price = priceController.text.trim();
+              if (desc.isEmpty || price.isEmpty) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  const SnackBar(content: Text('Preencha descrição e preço')),
+                );
+                return;
+              }
+              final specs = specsControllers
+                  .map((c) => c.text.trim())
+                  .where((s) => s.isNotEmpty)
+                  .toList();
+              if (specs.length < 3) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  const SnackBar(content: Text('Preencha pelo menos 3 especificações')),
+                );
+                return;
+              }
+              Navigator.pop(ctx);
+              _saveManualModel(desc, price, specs);
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
       ),
+    );
+  }
+
+  Future<void> _saveManualModel(String desc, String price, List<String> specs) async {
+    final upper = desc.toUpperCase();
+    String marca = 'Desconhecido';
+    if (upper.contains('SAMSUNG') || upper.contains('GALAXY')) marca = 'Samsung';
+    else if (upper.contains('MOTOROLA') || upper.contains('MOTO') || upper.contains('EDGE')) marca = 'Motorola';
+    else if (upper.contains('XIAOMI') || upper.contains('REDMI') || upper.contains('POCO')) marca = 'Xiaomi';
+    else if (upper.contains('APPLE') || upper.contains('IPHONE')) marca = 'Apple';
+
+    String armazenamento = 'Não informado';
+    final storageMatch = RegExp(r'(\d{2,4})\s?GB').firstMatch(upper);
+    if (storageMatch != null) {
+      armazenamento = '${storageMatch.group(1)}GB';
+    }
+
+    var modelo = desc;
+    if (armazenamento != 'Não informado') {
+      modelo = modelo.replaceAll(RegExp(r'\d{2,4}\s?GB', caseSensitive: false), '').trim();
+    }
+
+    final newPhone = CelularSpec(
+      id: 'manual-${DateTime.now().millisecondsSinceEpoch}',
+      marca: marca,
+      modelo: modelo.toUpperCase(),
+      armazenamento: armazenamento,
+      specs: specs,
+    );
+
+    final prefs = await SharedPreferences.getInstance();
+    final manualPhonesKey = 'manual_phones';
+    final existing = prefs.getStringList('manual_phones') ?? [];
+    existing.add(jsonEncode(newPhone.toJson()));
+    await prefs.setStringList('manual_phones', existing);
+
+    setState(() {
+      _celulares.add(newPhone);
+    });
+
+    final priceDigits = price.replaceAll(RegExp(r'[^0-9]'), '');
+    _onStateChange(0, _states[0].copyWith(
+      selectedPhone: newPhone,
+      priceText: priceDigits,
+    ));
+
+    _toast('Modelo "$modelo $armazenamento" adicionado e selecionado!');
+  }
+
+  Future<void> _showAddModelDialog() async {
+    final descController = TextEditingController();
+    final priceController = TextEditingController();
+    final specsControllers = <TextEditingController>[
+      TextEditingController(),
+      TextEditingController(),
+      TextEditingController(),
+      TextEditingController(),
+      TextEditingController(),
+      TextEditingController(),
+    ];
+    final specLabels = ['Câmera principal', 'Câmera frontal', 'Bateria', 'RAM', 'Processador', 'Tela'];
+    final specHints = [
+      'Ex: 50 Mp + 12 Mp + 10 Mp',
+      'Ex: 12MP',
+      'Ex: 5000 mAh',
+      'Ex: 8 GB de RAM',
+      'Ex: 8 Core 3.2 GHZ',
+      'Ex: 6,7"',
+    ];
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Adicionar modelo manualmente'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    labelText: 'Descrição do modelo *',
+                    hintText: 'Ex: SAMSUNG A17 5G 256GB',
+                  ),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Preço do aparelho *',
+                    hintText: 'Ex: 150000 (para R\$ 1.500,00)',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('Especificações (6 campos)', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                ...List.generate(6, (i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: TextField(
+                    controller: specsControllers[i],
+                    decoration: InputDecoration(
+                      labelText: specLabels[i],
+                      hintText: specHints[i],
+                    ),
+                  ),
+                )),
+              ],
+            ),
+          ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -667,7 +811,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
-
 class FormRow extends StatefulWidget {
   final int index;
   final PapeletaFormState state;
