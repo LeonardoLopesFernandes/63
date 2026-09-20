@@ -120,7 +120,7 @@ class _MainScreenState extends State<MainScreen> {
     final prefs = await SharedPreferences.getInstance();
     final key = 'phone_name_${phone.id}';
     await prefs.setString(key, newName);
-    
+
     final idx = _celulares.indexWhere((p) => p.id == phone.id);
     if (idx != -1) {
       _celulares[idx] = CelularSpec(
@@ -131,7 +131,7 @@ class _MainScreenState extends State<MainScreen> {
         specs: phone.specs,
       );
     }
-    
+
     for (var i = 0; i < _states.length; i++) {
       if (_states[i].selectedPhone?.id == phone.id) {
         _states[i] = _states[i].copyWith(
@@ -145,7 +145,7 @@ class _MainScreenState extends State<MainScreen> {
         );
       }
     }
-    
+
     _saveAll();
     if (mounted) setState(() {});
     _toast('Modelo renomeado para "$newName"');
@@ -155,15 +155,15 @@ class _MainScreenState extends State<MainScreen> {
     final prefs = await SharedPreferences.getInstance();
     final key = 'phone_deleted_${phone.id}';
     await prefs.setBool(key, true);
-    
+
     _celulares.removeWhere((p) => p.id == phone.id);
-    
+
     for (var i = 0; i < _states.length; i++) {
       if (_states[i].selectedPhone?.id == phone.id) {
         _states[i] = _states[i].copyWith(selectedPhone: null);
       }
     }
-    
+
     _saveAll();
     if (mounted) setState(() {});
     _toast('Modelo removido');
@@ -176,11 +176,11 @@ class _MainScreenState extends State<MainScreen> {
     _toast('Modelo "${phone.modelo} ${phone.armazenamento}" adicionado!');
   }
 
-  void _onPhoneEdited(CelularSpec phone, List<String> newSpecs) async {
+  Future<void> _onPhoneEdited(CelularSpec phone, List<String> newSpecs) async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'phone_specs_${phone.id}';
     await prefs.setStringList(key, newSpecs);
-    
+
     final idx = _celulares.indexWhere((p) => p.id == phone.id);
     if (idx != -1) {
       _celulares[idx] = CelularSpec(
@@ -191,7 +191,7 @@ class _MainScreenState extends State<MainScreen> {
         specs: newSpecs,
       );
     }
-    
+
     for (var i = 0; i < _states.length; i++) {
       if (_states[i].selectedPhone?.id == phone.id) {
         _states[i] = _states[i].copyWith(
@@ -205,7 +205,7 @@ class _MainScreenState extends State<MainScreen> {
         );
       }
     }
-    
+
     _saveAll();
     if (mounted) setState(() {});
     _toast('Specs do "${phone.modelo}" atualizadas!');
@@ -272,7 +272,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ),
                 )),
-],
+              ],
             ),
           ),
         actions: [
@@ -943,7 +943,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
                     title: const Text('Adicionar modelo manualmente', style: TextStyle(fontSize: 16, color: Color(0xFF0D47A1), fontWeight: FontWeight.w500)),
                     onTap: () {
                       setState(() => _expanded = false);
-                      widget.onPhoneAdded(null); // Trigger parent to show dialog
+                      widget.onPhoneAdded(null);
                     },
                   ),
                 ],
@@ -978,7 +978,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
             label: const Text('Renomear', style: TextStyle(color: Color(0xFF0D47A1))),
             onPressed: () {
               Navigator.pop(ctx);
-              widget.onPhoneRenamed(phone, phone.modelo); // Will open rename dialog via parent
+              _showRenameDialog(phone);
             },
           ),
           TextButton.icon(
@@ -1006,6 +1006,40 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
     );
   }
 
+  void _showRenameDialog(CelularSpec phone) {
+    final controller = TextEditingController(text: phone.modelo);
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Renomear modelo'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: 'Novo nome',
+            hintText: 'Ex: Meu S23 Personalizado',
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              final newName = controller.text.trim();
+              if (newName.isNotEmpty && newName != phone.modelo) {
+                widget.onPhoneRenamed(phone, newName);
+              }
+              Navigator.pop(ctx);
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showEditSpecsDialog(CelularSpec phone) {
     final specsControllers = phone.specs.map((s) => TextEditingController(text: s)).toList();
     final specLabels = ['Câmera principal', 'Câmera frontal', 'Bateria', 'RAM', 'Processador', 'Tela'];
@@ -1018,7 +1052,6 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
       'Ex: 6,7"',
     ];
 
-    // Ensure 6 controllers
     while (specsControllers.length < 6) {
       specsControllers.add(TextEditingController());
     }
