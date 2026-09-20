@@ -321,14 +321,15 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
       appBar: _silencioso && !_reveal
           ? null
           : AppBar(
-              backgroundColor: Colors.white,
-              elevation: 1,
+              backgroundColor: const Color(0xFFFFFFFF),
+              elevation: 0,
+              surfaceTintColor: const Color(0xFFFFFFFF),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black87),
                 onPressed: () => Navigator.pop(context),
               ),
-              title: const Text('Login Microsoft',
-                  style: TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold)),
+              title: const Text('',
+                  style: TextStyle(color: Colors.transparent, fontSize: 0)),
             ),
       body: Stack(
         children: [
