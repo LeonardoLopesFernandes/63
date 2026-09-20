@@ -52,7 +52,6 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEYSTORE_PATH: android/app/upload.keystore
         run: flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm64 --build-number=${{ github.run_number }} --build-name=1.0.0
 
       - name: Upload APK artifact
