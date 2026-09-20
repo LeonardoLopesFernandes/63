@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CelularSpec {
   final String id;
@@ -289,7 +290,7 @@ const String mobileApiKey = String.fromEnvironment(
   defaultValue: '18f7405527592c6822f4257c5515ad98f2ddad81',
 );
 
-/// Carrega lista completa (assets + já buscados via API e salvos).
+/// Carrega lista completa (assets + já buscados via API + modelos manuais).
 Future<List<CelularSpec>> loadAllCelulares() async {
   final base = await loadCelulares();
   final saved = await loadSavedPhones();
@@ -298,6 +299,19 @@ Future<List<CelularSpec>> loadAllCelulares() async {
         b.modelo.toLowerCase() == s.modelo.toLowerCase() &&
         b.armazenamento.toLowerCase() == s.armazenamento.toLowerCase());
     if (!exists) base.add(s);
+  }
+  // Carrega modelos manuais salvos no SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  final manualList = prefs.getStringList('manual_phones') ?? [];
+  for (final jsonStr in manualList) {
+    try {
+      final data = json.decode(jsonStr);
+      final phone = CelularSpec.fromJson(data);
+      final exists = base.any((b) =>
+          b.modelo.toLowerCase() == phone.modelo.toLowerCase() &&
+          b.armazenamento.toLowerCase() == phone.armazenamento.toLowerCase());
+      if (!exists) base.add(phone);
+    } catch (_) {}
   }
   return base;
 }

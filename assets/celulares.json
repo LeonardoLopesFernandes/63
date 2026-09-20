@@ -689,6 +689,19 @@
     ]
   },
   {
+    "id": "moto-edge40-neo-5g-128",
+    "marca": "Motorola",
+    "modelo": "EDGE 40 NEO 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Dimensity 7030"
+    ]
+  },
+  {
     "id": "moto-edge40-neo-5g-256",
     "marca": "Motorola",
     "modelo": "EDGE 40 NEO 5G",
@@ -699,6 +712,71 @@
       "8GB + 8GB Ram Boost de RAM",
       "bateria 5000 mAh",
       "processador 8 Core 2.5 GHZ"
+    ]
+  },
+  {
+    "id": "moto-edge40-neo-5g-512",
+    "marca": "Motorola",
+    "modelo": "EDGE 40 NEO 5G",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Dimensity 7030"
+    ]
+  },
+  {
+    "id": "moto-edge40-5g-256",
+    "marca": "Motorola",
+    "modelo": "EDGE 40 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 4400 mAh",
+      "processador MediaTek Dimensity 8020"
+    ]
+  },
+  {
+    "id": "moto-edge40-5g-512",
+    "marca": "Motorola",
+    "modelo": "EDGE 40 5G",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 13 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 4400 mAh",
+      "processador MediaTek Dimensity 8020"
+    ]
+  },
+  {
+    "id": "moto-edge40-pro-5g-256",
+    "marca": "Motorola",
+    "modelo": "EDGE 40 PRO 5G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50 Mp + 50 Mp + 12 Mp",
+      "câmera frontal 60MP",
+      "12GB + 8GB Ram Boost de RAM",
+      "bateria 4600 mAh",
+      "processador Snapdragon 8 Gen 2"
+    ]
+  },
+  {
+    "id": "moto-edge40-pro-5g-512",
+    "marca": "Motorola",
+    "modelo": "EDGE 40 PRO 5G",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 50 Mp + 12 Mp",
+      "câmera frontal 60MP",
+      "12GB + 8GB Ram Boost de RAM",
+      "bateria 4600 mAh",
+      "processador Snapdragon 8 Gen 2"
     ]
   },
   {
@@ -715,6 +793,32 @@
     ]
   },
   {
+    "id": "moto-edge50-5g-512",
+    "marca": "Motorola",
+    "modelo": "EDGE 50 5G",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 10 Mp + 10 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 5000 mAh",
+      "processador 8 Core 2.6 GHZ"
+    ]
+  },
+  {
+    "id": "moto-edge50-neo-5g-128",
+    "marca": "Motorola",
+    "modelo": "EDGE 50 NEO 5G",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50 Mp + 10 Mp + 13 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 4310 mAh",
+      "processador MediaTek Dimensity 7300"
+    ]
+  },
+  {
     "id": "moto-edge50-neo-5g-256",
     "marca": "Motorola",
     "modelo": "EDGE 50 NEO 5G",
@@ -728,1004 +832,1901 @@
     ]
   },
   {
-    "id": "moto-edge50-fusion-5g-256",
+    "id": "moto-edge50-neo-5g-512",
+    "marca": "Motorola",
+    "modelo": "EDGE 50 NEO 5G",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 50 Mp + 10 Mp + 13 Mp",
+      "câmera frontal 32MP",
+      "8GB + 8GB Ram Boost de RAM",
+      "bateria 4310 mAh",
+      "processador MediaTek Dimensity 7300"
+    ]
+  },
+  {
+    "id": "moto-edge50-fusion-5g-128",
     "marca": "Motorola",
     "modelo": "EDGE 50 FUSION 5G",
-    "armazenamento": "256GB",
+    "armazenamento": "128GB",
     "specs": [
       "câmera 50 Mp + 13 Mp",
       "câmera frontal 32MP",
       "8GB + 8GB Ram Boost de RAM",
       "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
+      "processador Snapdragon 6 Gen 1"
     ]
   },
   {
-    "id": "moto-edge60-5g-256",
-    "marca": "Motorola",
-    "modelo": "EDGE 60 5G",
+  "id": "samsung-s23-fe-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY S23 FE",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 8.0 MP",
+    "câmera frontal 10MP",
+    "8 GB de RAM",
+    "bateria 4500 mAh",
+    "processador Exynos 2200"
+  ]
+},
+{
+  "id": "samsung-s23-fe-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY S23 FE",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 8.0 MP",
+    "câmera frontal 10MP",
+    "8 GB de RAM",
+    "bateria 4500 mAh",
+    "processador Exynos 2200"
+  ]
+},
+{
+  "id": "samsung-s24-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 4000 mAh",
+    "processador Snapdragon 8 Gen 3 (4nm)"
+  ]
+},
+{
+  "id": "samsung-s24-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 4000 mAh",
+    "processador Snapdragon 8 Gen 3 (4nm)"
+  ]
+},
+{
+  "id": "samsung-s24-512",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 4000 mAh",
+    "processador Snapdragon 8 Gen 3 (4nm)"
+  ]
+},
+{
+  "id": "samsung-s24-plus-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24+",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 4900 mAh",
+    "processador Snapdragon 8 Gen 3 (4nm)"
+  ]
+},
+{
+  "id": "samsung-s24-plus-512",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24+",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 4900 mAh",
+    "processador Snapdragon 8 Gen 3 (4nm)"
+  ]
+},
+{
+  "id": "samsung-s24-ultra-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24 ULTRA",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 200.0 MP + 12.0 MP + 50.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Gen 3 (4nm)"
+  ]
+},
+{
+  "id": "samsung-s24-ultra-512",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24 ULTRA",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 200.0 MP + 12.0 MP + 50.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Gen 3 (4nm)"
+  ]
+},
+{
+  "id": "samsung-s24-ultra-1tb",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24 ULTRA",
+  "armazenamento": "1TB",
+  "specs": [
+    "câmera 200.0 MP + 12.0 MP + 50.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Gen 3 (4nm)"
+  ]
+},
+{
+  "id": "samsung-s24-fe-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24 FE",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 8.0 MP",
+    "câmera frontal 10MP",
+    "8 GB de RAM",
+    "bateria 4700 mAh",
+    "processador Exynos 2400e"
+  ]
+},
+{
+  "id": "samsung-s24-fe-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24 FE",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 8.0 MP",
+    "câmera frontal 10MP",
+    "8 GB de RAM",
+    "bateria 4700 mAh",
+    "processador Exynos 2400e"
+  ]
+},
+{
+  "id": "samsung-s24-fe-512",
+  "marca": "Samsung",
+  "modelo": "GALAXY S24 FE",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 8.0 MP",
+    "câmera frontal 10MP",
+    "8 GB de RAM",
+    "bateria 4700 mAh",
+    "processador Exynos 2400e"
+  ]
+},
+{
+  "id": "samsung-s25-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY S25",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 4000 mAh",
+    "processador Snapdragon 8 Elite for Galaxy(3nm)"
+  ]
+},
+{
+  "id": "samsung-s25-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY S25",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 4000 mAh",
+    "processador Snapdragon 8 Elite for Galaxy(3nm)"
+  ]
+},
+{
+  "id": "samsung-s25-512",
+  "marca": "Samsung",
+  "modelo": "GALAXY S25",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 4000 mAh",
+    "processador Snapdragon 8 Elite for Galaxy(3nm)"
+  ]
+},
+{
+  "id": "samsung-s25-plus-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY S25+",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 4900 mAh",
+    "processador Snapdragon 8 Elite for Galaxy(3nm)"
+  ]
+},
+{
+  "id": "samsung-s25-plus-512",
+  "marca": "Samsung",
+  "modelo": "GALAXY S25+",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 4900 mAh",
+    "processador Snapdragon 8 Elite for Galaxy(3nm)"
+  ]
+},
+{
+  "id": "samsung-s25-ultra-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY S25 ULTRA",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 200.0 MP + 50.0 MP + 50.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Elite for Galaxy(3nm)"
+  ]
+},
+{
+  "id": "samsung-s25-ultra-512",
+  "marca": "Samsung",
+  "modelo": "GALAXY S25 ULTRA",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 200.0 MP + 50.0 MP + 50.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Elite for Galaxy(3nm)"
+  ]
+},
+{
+  "id": "samsung-s25-ultra-1tb",
+  "marca": "Samsung",
+  "modelo": "GALAXY S25 ULTRA",
+  "armazenamento": "1TB",
+  "specs": [
+    "câmera 200.0 MP + 50.0 MP + 50.0 MP + 10.0 MP",
+    "câmera frontal 12MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Elite for Galaxy(3nm)"
+  ]
+},
+{
+  "id": "samsung-a05-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A05 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 2.0 MP",
+    "câmera frontal 5MP",
+    "4 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.0 GHZ"
+  ]
+},
+{
+  "id": "samsung-a06-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A06 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 2.0 MP",
+    "câmera frontal 5MP",
+    "4 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.0 GHZ"
+  ]
+},
+{
+  "id": "samsung-a07-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A07 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 2.0 MP",
+    "câmera frontal 8MP",
+    "4 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.0 GHZ"
+  ]
+},
+{
+  "id": "samsung-a07-4g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A07 4G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 2.0 MP",
+    "câmera frontal 8MP",
+    "4 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.0 GHZ"
+  ]
+},
+{
+  "id": "samsung-a15-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A15 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "4 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.2 GHZ"
+  ]
+},
+{
+  "id": "samsung-a15-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A15 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "4 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.2 GHZ"
+  ]
+},
+{
+  "id": "samsung-a16-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A16 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "4 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.2 GHZ"
+  ]
+},
+{
+  "id": "samsung-a16-4g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A16 4G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.2 GHZ"
+  ]
+},
+{
+  "id": "samsung-a16-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A16 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "4 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.2 GHZ"
+  ]
+},
+{
+  "id": "samsung-a16-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A16 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.2 GHZ"
+  ]
+},
+{
+  "id": "samsung-a17-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A17 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.3 GHZ"
+  ]
+},
+{
+  "id": "samsung-a17-4g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A17 4G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.3 GHZ"
+  ]
+},
+{
+  "id": "samsung-a17-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A17 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.3 GHZ"
+  ]
+},
+{
+  "id": "samsung-a17-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A17 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.3 GHZ"
+  ]
+},
+{
+  "id": "samsung-a25-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A25 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a25-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A25 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a25-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A25 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a26-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A26 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a26-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A26 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a26-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A26 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a27-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A27 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a27-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A27 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a27-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A27 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.5 GHZ"
+  ]
+},
+{
+  "id": "samsung-a35-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A35 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a35-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A35 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a35-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A35 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a36-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A36 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a36-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A36 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-a36-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A36 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.5 GHZ"
+  ]
+},
+{
+  "id": "samsung-a37-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A37 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "6 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.5 GHZ"
+  ]
+},
+{
+  "id": "samsung-a37-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A37 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.5 GHZ"
+  ]
+},
+{
+  "id": "samsung-a37-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A37 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.5 GHZ"
+  ]
+},
+{
+  "id": "samsung-a55-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A55 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+    "câmera frontal 32MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.6 GHZ"
+  ]
+},
+{
+  "id": "samsung-a55-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A55 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+    "câmera frontal 32MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.6 GHZ"
+  ]
+},
+{
+  "id": "samsung-a56-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A56 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.6 GHZ"
+  ]
+},
+{
+  "id": "samsung-a56-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A56 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.6 GHZ"
+  ]
+},
+{
+  "id": "samsung-a57-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY A57 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.6 GHZ"
+  ]
+},
+{
+  "id": "samsung-a57-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY A57 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 12.0 MP + 5.0 MP",
+    "câmera frontal 12MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.6 GHZ"
+  ]
+},
+{
+  "id": "samsung-m15-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY M15 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 5.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "4 GB de RAM",
+    "bateria 6000 mAh",
+    "processador 8 Core 2.2 GHZ"
+  ]
+},
+{
+  "id": "samsung-m35-4g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY M35 4G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 13MP",
+    "6 GB de RAM",
+    "bateria 6000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-m55-5g-128",
+  "marca": "Samsung",
+  "modelo": "GALAXY M55 5G",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 50MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "samsung-m55-5g-256",
+  "marca": "Samsung",
+  "modelo": "GALAXY M55 5G",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 50MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador 8 Core 2.4 GHZ"
+  ]
+},
+{
+  "id": "xiaomi-13-256",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 13",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 10.0 MP + 12.0 MP",
+    "câmera frontal 32MP",
+    "8 GB de RAM",
+    "bateria 4500 mAh",
+    "processador Snapdragon 8 Gen 2"
+  ]
+},
+{
+  "id": "xiaomi-13-512",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 13",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 10.0 MP + 12.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 4500 mAh",
+    "processador Snapdragon 8 Gen 2"
+  ]
+},
+{
+  "id": "xiaomi-13-pro-256",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 13 PRO",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 4820 mAh",
+    "processador Snapdragon 8 Gen 2"
+  ]
+},
+{
+  "id": "xiaomi-13-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 13 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 4820 mAh",
+    "processador Snapdragon 8 Gen 2"
+  ]
+},
+{
+  "id": "xiaomi-13-ultra-256",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 13 ULTRA",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Gen 2"
+  ]
+},
+{
+  "id": "xiaomi-13-ultra-512",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 13 ULTRA",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Gen 2"
+  ]
+},
+{
+  "id": "xiaomi-13-ultra-1tb",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 13 ULTRA",
+  "armazenamento": "1TB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "16 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Gen 2"
+  ]
+},
+{
+  "id": "xiaomi-14-256",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 14",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 4610 mAh",
+    "processador Snapdragon 8 Gen 3"
+  ]
+},
+{
+  "id": "xiaomi-14-512",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 14",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 4610 mAh",
+    "processador Snapdragon 8 Gen 3"
+  ]
+},
+{
+  "id": "xiaomi-14-pro-256",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 14 PRO",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 4880 mAh",
+    "processador Snapdragon 8 Gen 3"
+  ]
+},
+{
+  "id": "xiaomi-14-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 14 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 4880 mAh",
+    "processador Snapdragon 8 Gen 3"
+  ]
+},
+{
+  "id": "xiaomi-14-ultra-256",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 14 ULTRA",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 5300 mAh",
+    "processador Snapdragon 8 Gen 3"
+  ]
+},
+{
+  "id": "xiaomi-14-ultra-512",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 14 ULTRA",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "16 GB de RAM",
+    "bateria 5300 mAh",
+    "processador Snapdragon 8 Gen 3"
+  ]
+},
+{
+  "id": "xiaomi-14-ultra-1tb",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 14 ULTRA",
+  "armazenamento": "1TB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "16 GB de RAM",
+    "bateria 5300 mAh",
+    "processador Snapdragon 8 Gen 3"
+  ]
+},
+{
+  "id": "xiaomi-15-256",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 15",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 5240 mAh",
+    "processador Snapdragon 8 Elite"
+  ]
+},
+{
+  "id": "xiaomi-15-512",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 15",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 5240 mAh",
+    "processador Snapdragon 8 Elite"
+  ]
+},
+{
+  "id": "xiaomi-15-pro-256",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 15 PRO",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 6100 mAh",
+    "processador Snapdragon 8 Elite"
+  ]
+},
+{
+  "id": "xiaomi-15-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 15 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 6100 mAh",
+    "processador Snapdragon 8 Elite"
+  ]
+},
+{
+  "id": "xiaomi-15-ultra-256",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 15 ULTRA",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 200.0 MP + 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 5410 mAh",
+    "processador Snapdragon 8 Elite"
+  ]
+},
+{
+  "id": "xiaomi-15-ultra-512",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 15 ULTRA",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 200.0 MP + 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "12 GB de RAM",
+    "bateria 5410 mAh",
+    "processador Snapdragon 8 Elite"
+  ]
+},
+{
+  "id": "xiaomi-15-ultra-1tb",
+  "marca": "Xiaomi",
+  "modelo": "XIAOMI 15 ULTRA",
+  "armazenamento": "1TB",
+  "specs": [
+    "câmera 200.0 MP + 50.0 MP + 50.0 MP + 50.0 MP",
+    "câmera frontal 32MP",
+    "16 GB de RAM",
+    "bateria 5410 mAh",
+    "processador Snapdragon 8 Elite"
+  ]
+},
+{
+  "id": "redmi-note-13-128",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 13",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 108.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 685"
+  ]
+},
+{
+  "id": "redmi-note-13-256",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 13",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 108.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 685"
+  ]
+},
+{
+  "id": "redmi-note-13-pro-128",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 13 PRO",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 200.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "8 GB de RAM",
+    "bateria 5100 mAh",
+    "processador Snapdragon 7s Gen 2"
+  ]
+},
+{
+  "id": "redmi-note-13-pro-256",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 13 PRO",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 200.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "8 GB de RAM",
+    "bateria 5100 mAh",
+    "processador Snapdragon 7s Gen 2"
+  ]
+},
+{
+  "id": "redmi-note-13-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 13 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 200.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "12 GB de RAM",
+    "bateria 5100 mAh",
+    "processador Snapdragon 7s Gen 2"
+  ]
+},
+{
+  "id": "redmi-note-13-pro-plus-256",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 13 PRO+",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 200.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador MediaTek Dimensity 7200 Ultra"
+  ]
+},
+{
+  "id": "redmi-note-13-pro-plus-512",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 13 PRO+",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 200.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador MediaTek Dimensity 7200 Ultra"
+  ]
+},
+{
+  "id": "redmi-note-14-128",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 14",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 108.0 MP + 2.0 MP",
+    "câmera frontal 20MP",
+    "6 GB de RAM",
+    "bateria 5500 mAh",
+    "processador MediaTek Helio G99 Ultra"
+  ]
+},
+{
+  "id": "redmi-note-14-256",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 14",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 108.0 MP + 2.0 MP",
+    "câmera frontal 20MP",
+    "8 GB de RAM",
+    "bateria 5500 mAh",
+    "processador MediaTek Helio G99 Ultra"
+  ]
+},
+{
+  "id": "redmi-note-14-pro-256",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 14 PRO",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 200.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 20MP",
+    "8 GB de RAM",
+    "bateria 5110 mAh",
+    "processador MediaTek Dimensity 7300-Ultra"
+  ]
+},
+{
+  "id": "redmi-note-14-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 14 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 200.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 20MP",
+    "12 GB de RAM",
+    "bateria 5110 mAh",
+    "processador MediaTek Dimensity 7300-Ultra"
+  ]
+},
+{
+  "id": "redmi-note-14-pro-plus-256",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 14 PRO+",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 200.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 20MP",
+    "8 GB de RAM",
+    "bateria 5110 mAh",
+    "processador Snapdragon 7s Gen 3"
+  ]
+},
+{
+  "id": "redmi-note-14-pro-plus-512",
+  "marca": "Xiaomi",
+  "modelo": "REDMI NOTE 14 PRO+",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 200.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 20MP",
+    "12 GB de RAM",
+    "bateria 5110 mAh",
+    "processador Snapdragon 7s Gen 3"
+  ]
+},
+{
+  "id": "poco-x6-256",
+  "marca": "Xiaomi",
+  "modelo": "POCO X6",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 64.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "8 GB de RAM",
+    "bateria 5100 mAh",
+    "processador Snapdragon 7s Gen 2"
+  ]
+},
+{
+  "id": "poco-x6-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO X6",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 64.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "12 GB de RAM",
+    "bateria 5100 mAh",
+    "processador Snapdragon 7s Gen 2"
+  ]
+},
+{
+  "id": "poco-x6-pro-256",
+  "marca": "Xiaomi",
+  "modelo": "POCO X6 PRO",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 64.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador MediaTek Dimensity 8300 Ultra"
+  ]
+},
+{
+  "id": "poco-x6-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO X6 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 64.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador MediaTek Dimensity 8300 Ultra"
+  ]
+},
+{
+  "id": "poco-x7-256",
+  "marca": "Xiaomi",
+  "modelo": "POCO X7",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "8 GB de RAM",
+    "bateria 5110 mAh",
+    "processador MediaTek Dimensity 7300-Ultra"
+  ]
+},
+{
+  "id": "poco-x7-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO X7",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "12 GB de RAM",
+    "bateria 5110 mAh",
+    "processador MediaTek Dimensity 7300-Ultra"
+  ]
+},
+{
+  "id": "poco-x7-pro-256",
+  "marca": "Xiaomi",
+  "modelo": "POCO X7 PRO",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "8 GB de RAM",
+    "bateria 6000 mAh",
+    "processador MediaTek Dimensity 8400-Ultra"
+  ]
+},
+{
+  "id": "poco-x7-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO X7 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "12 GB de RAM",
+    "bateria 6000 mAh",
+    "processador MediaTek Dimensity 8400-Ultra"
+  ]
+},
+{
+  "id": "poco-f6-256",
+  "marca": "Xiaomi",
+  "modelo": "POCO F6",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8s Gen 3"
+  ]
+},
+{
+  "id": "poco-f6-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO F6",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8s Gen 3"
+  ]
+},
+{
+  "id": "poco-f6-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO F6 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Gen 2"
+  ]
+},
+{
+  "id": "poco-f6-pro-1tb",
+  "marca": "Xiaomi",
+  "modelo": "POCO F6 PRO",
+  "armazenamento": "1TB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "16 GB de RAM",
+    "bateria 5000 mAh",
+    "processador Snapdragon 8 Gen 2"
+  ]
+},
+{
+  "id": "poco-f7-256",
+  "marca": "Xiaomi",
+  "modelo": "POCO F7",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "8 GB de RAM",
+    "bateria 6500 mAh",
+    "processador Snapdragon 8s Gen 4"
+  ]
+},
+{
+  "id": "poco-f7-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO F7",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "12 GB de RAM",
+    "bateria 6500 mAh",
+    "processador Snapdragon 8s Gen 4"
+  ]
+},
+{
+  "id": "poco-f7-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO F7 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "12 GB de RAM",
+    "bateria 6000 mAh",
+    "processador Snapdragon 8 Gen 3"
+  ]
+},
+{
+  "id": "poco-f7-pro-1tb",
+  "marca": "Xiaomi",
+  "modelo": "POCO F7 PRO",
+  "armazenamento": "1TB",
+  "specs": [
+    "câmera 50.0 MP + 8.0 MP",
+    "câmera frontal 20MP",
+    "16 GB de RAM",
+    "bateria 6000 mAh",
+    "processador Snapdragon 8 Gen 3"
+  ]
+},
+{
+  "id": "poco-f7-ultra-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO F7 ULTRA",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP",
+    "câmera frontal 20MP",
+    "12 GB de RAM",
+    "bateria 6000 mAh",
+    "processador Snapdragon 8 Elite"
+  ]
+},
+{
+  "id": "poco-f7-ultra-1tb",
+  "marca": "Xiaomi",
+  "modelo": "POCO F7 ULTRA",
+  "armazenamento": "1TB",
+  "specs": [
+    "câmera 50.0 MP + 50.0 MP",
+    "câmera frontal 20MP",
+    "16 GB de RAM",
+    "bateria 6000 mAh",
+    "processador Snapdragon 8 Elite"
+  ]
+},
+{
+  "id": "poco-m6-128",
+  "marca": "Xiaomi",
+  "modelo": "POCO M6",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 50.0 MP + 2.0 MP",
+    "câmera frontal 5MP",
+    "6 GB de RAM",
+    "bateria 5030 mAh",
+    "processador MediaTek Helio G91 Ultra"
+  ]
+},
+{
+  "id": "poco-m6-256",
+  "marca": "Xiaomi",
+  "modelo": "POCO M6",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 2.0 MP",
+    "câmera frontal 5MP",
+    "8 GB de RAM",
+    "bateria 5030 mAh",
+    "processador MediaTek Helio G91 Ultra"
+  ]
+},
+{
+  "id": "poco-m6-pro-128",
+  "marca": "Xiaomi",
+  "modelo": "POCO M6 PRO",
+  "armazenamento": "128GB",
+  "specs": [
+    "câmera 64.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "8 GB de RAM",
+    "bateria 5000 mAh",
+    "processador MediaTek Helio G99 Ultra"
+  ]
+},
+{
+  "id": "poco-m6-pro-256",
+  "marca": "Xiaomi",
+  "modelo": "POCO M6 PRO",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 64.0 MP + 8.0 MP + 2.0 MP",
+    "câmera frontal 16MP",
+    "12 GB de RAM",
+    "bateria 5000 mAh",
+    "processador MediaTek Helio G99 Ultra"
+  ]
+},
+{
+  "id": "poco-m7-pro-256",
+  "marca": "Xiaomi",
+  "modelo": "POCO M7 PRO",
+  "armazenamento": "256GB",
+  "specs": [
+    "câmera 50.0 MP + 2.0 MP",
+    "câmera frontal 20MP",
+    "8 GB de RAM",
+    "bateria 5110 mAh",
+    "processador MediaTek Dimensity 7025-Ultra"
+  ]
+},
+{
+  "id": "poco-m7-pro-512",
+  "marca": "Xiaomi",
+  "modelo": "POCO M7 PRO",
+  "armazenamento": "512GB",
+  "specs": [
+    "câmera 50.0 MP + 2.0 MP",
+    "câmera frontal 20MP",
+    "12 GB de RAM",
+    "bateria 5110 mAh",
+    "processador MediaTek Dimensity 7025-Ultra"
+  ]
+},
+  {
+    "id": "infinix-zero-40-256",
+    "marca": "Infinix",
+    "modelo": "ZERO 40",
     "armazenamento": "256GB",
     "specs": [
-      "câmera 50 Mp + 10 Mp + 12 Mp",
+      "câmera 108.0 MP + 64.0 MP + 24.0 MP",
+      "câmera frontal 64MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Dimensity 8200 Ultimate"
+    ]
+  },
+  {
+    "id": "infinix-zero-40-512",
+    "marca": "Infinix",
+    "modelo": "ZERO 40",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 108.0 MP + 64.0 MP + 24.0 MP",
+      "câmera frontal 64MP",
+      "12 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Dimensity 8200 Ultimate"
+    ]
+  },
+  {
+    "id": "infinix-zero-40-4g-256",
+    "marca": "Infinix",
+    "modelo": "ZERO 40 4G",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 108.0 MP + 50.0 MP + 2.0 MP",
       "câmera frontal 50MP",
-      "8GB + 8GB Ram Boost de RAM",
-      "bateria 5500 mAh",
-      "processador 8 Core 2.6 GHZ"
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G99 Ultimate"
     ]
   },
   {
-    "id": "moto-edge60-neo-5g-256",
-    "marca": "Motorola",
-    "modelo": "EDGE 60 NEO 5G",
+    "id": "infinix-zero-40-4g-512",
+    "marca": "Infinix",
+    "modelo": "ZERO 40 4G",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 108.0 MP + 50.0 MP + 2.0 MP",
+      "câmera frontal 50MP",
+      "12 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G99 Ultimate"
+    ]
+  },
+  {
+    "id": "infinix-zero-30-256",
+    "marca": "Infinix",
+    "modelo": "ZERO 30",
     "armazenamento": "256GB",
     "specs": [
-      "câmera 50 Mp + 13 Mp",
+      "câmera 108.0 MP + 13.0 MP + 2.0 MP",
+      "câmera frontal 50MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Dimensity 8020"
+    ]
+  },
+  {
+    "id": "infinix-zero-30-512",
+    "marca": "Infinix",
+    "modelo": "ZERO 30",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 108.0 MP + 13.0 MP + 2.0 MP",
+      "câmera frontal 50MP",
+      "12 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Dimensity 8020"
+    ]
+  },
+  {
+    "id": "infinix-note-40-128",
+    "marca": "Infinix",
+    "modelo": "NOTE 40",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 108.0 MP + 2.0 MP + 2.0 MP",
       "câmera frontal 32MP",
-      "8GB + 8GB Ram Boost de RAM",
-      "bateria 5500 mAh",
-      "processador 8 Core 2.6 GHZ"
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G99 Ultimate"
     ]
   },
   {
-    "id": "samsung-a05-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A05 4G",
+    "id": "infinix-note-40-256",
+    "marca": "Infinix",
+    "modelo": "NOTE 40",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 108.0 MP + 2.0 MP + 2.0 MP",
+      "câmera frontal 32MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G99 Ultimate"
+    ]
+  },
+  {
+    "id": "infinix-note-40-pro-256",
+    "marca": "Infinix",
+    "modelo": "NOTE 40 PRO",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 108.0 MP + 2.0 MP + 2.0 MP",
+      "câmera frontal 32MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G99 Ultimate"
+    ]
+  },
+  {
+    "id": "infinix-note-40-pro-512",
+    "marca": "Infinix",
+    "modelo": "NOTE 40 PRO",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 108.0 MP + 2.0 MP + 2.0 MP",
+      "câmera frontal 32MP",
+      "12 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G99 Ultimate"
+    ]
+  },
+  {
+    "id": "infinix-note-40-pro-plus-256",
+    "marca": "Infinix",
+    "modelo": "NOTE 40 PRO+",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 108.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 32MP",
+      "12 GB de RAM",
+      "bateria 4600 mAh",
+      "processador MediaTek Dimensity 8200 Ultimate"
+    ]
+  },
+  {
+    "id": "infinix-note-40-pro-plus-512",
+    "marca": "Infinix",
+    "modelo": "NOTE 40 PRO+",
+    "armazenamento": "512GB",
+    "specs": [
+      "câmera 108.0 MP + 8.0 MP + 2.0 MP",
+      "câmera frontal 32MP",
+      "12 GB de RAM",
+      "bateria 4600 mAh",
+      "processador MediaTek Dimensity 8200 Ultimate"
+    ]
+  },
+  {
+    "id": "infinix-hot-40i-128",
+    "marca": "Infinix",
+    "modelo": "HOT 40I",
     "armazenamento": "128GB",
     "specs": [
-      "câmera 50.0 MP + 2.0 MP",
-      "câmera frontal 5MP",
-      "4 GB de RAM",
+      "câmera 50.0 MP + 0.08 MP",
+      "câmera frontal 8MP",
+      "8 GB de RAM",
       "bateria 5000 mAh",
-      "processador 8 Core 2.0 GHZ"
+      "processador MediaTek Helio G99"
     ]
   },
   {
-    "id": "samsung-a06-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A06 4G",
-    "armazenamento": "128GB",
+    "id": "infinix-hot-40i-256",
+    "marca": "Infinix",
+    "modelo": "HOT 40I",
+    "armazenamento": "256GB",
     "specs": [
-      "câmera 50.0 MP + 2.0 MP",
-      "câmera frontal 5MP",
-      "4 GB de RAM",
+      "câmera 50.0 MP + 0.08 MP",
+      "câmera frontal 8MP",
+      "8 GB de RAM",
       "bateria 5000 mAh",
-      "processador 8 Core 2.0 GHZ"
+      "processador MediaTek Helio G99"
     ]
   },
   {
-    "id": "samsung-a07-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A07 4G",
+    "id": "infinix-hot-50-pro-128",
+    "marca": "Infinix",
+    "modelo": "HOT 50 PRO",
     "armazenamento": "128GB",
     "specs": [
       "câmera 50.0 MP + 2.0 MP",
       "câmera frontal 8MP",
-      "4 GB de RAM",
+      "8 GB de RAM",
       "bateria 5000 mAh",
-      "processador 8 Core 2.0 GHZ"
+      "processador MediaTek Helio G100"
     ]
   },
   {
-    "id": "samsung-a07-4g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A07 4G",
+    "id": "infinix-hot-50-pro-256",
+    "marca": "Infinix",
+    "modelo": "HOT 50 PRO",
     "armazenamento": "256GB",
     "specs": [
       "câmera 50.0 MP + 2.0 MP",
       "câmera frontal 8MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G100"
+    ]
+  },
+  {
+    "id": "infinix-hot-50i-128",
+    "marca": "Infinix",
+    "modelo": "HOT 50I",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 0.08 MP",
+      "câmera frontal 8MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G99"
+    ]
+  },
+  {
+    "id": "infinix-hot-50i-256",
+    "marca": "Infinix",
+    "modelo": "HOT 50I",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 0.08 MP",
+      "câmera frontal 8MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G99"
+    ]
+  },
+  {
+    "id": "infinix-smart-8-128",
+    "marca": "Infinix",
+    "modelo": "SMART 8",
+    "armazenamento": "128GB",
+    "specs": [
+      "câmera 50.0 MP + 0.08 MP",
+      "câmera frontal 8MP",
       "4 GB de RAM",
       "bateria 5000 mAh",
-      "processador 8 Core 2.0 GHZ"
+      "processador MediaTek Helio G81"
     ]
   },
   {
-    "id": "samsung-a15-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A15 4G",
+    "id": "infinix-smart-8-256",
+    "marca": "Infinix",
+    "modelo": "SMART 8",
+    "armazenamento": "256GB",
+    "specs": [
+      "câmera 50.0 MP + 0.08 MP",
+      "câmera frontal 8MP",
+      "8 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G81"
+    ]
+  },
+  {
+    "id": "infinix-smart-9-64",
+    "marca": "Infinix",
+    "modelo": "SMART 9",
+    "armazenamento": "64GB",
+    "specs": [
+      "câmera 13.0 MP + 2.0 MP",
+      "câmera frontal 8MP",
+      "3 GB de RAM",
+      "bateria 5000 mAh",
+      "processador MediaTek Helio G81"
+    ]
+  },
+  {
+    "id": "infinix-smart-9-128",
+    "marca": "Infinix",
+    "modelo": "SMART 9",
     "armazenamento": "128GB",
     "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
+      "câmera 13.0 MP + 2.0 MP",
+      "câmera frontal 8MP",
       "4 GB de RAM",
       "bateria 5000 mAh",
-      "processador 8 Core 2.2 GHZ"
+      "processador MediaTek Helio G81"
     ]
   },
   {
-    "id": "samsung-a15-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A15 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "4 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a16-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A16 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "4 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a16-4g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A16 4G",
+    "id": "infinix-smart-9-256",
+    "marca": "Infinix",
+    "modelo": "SMART 9",
     "armazenamento": "256GB",
     "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a16-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A16 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "4 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a16-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A16 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a17-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A17 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.3 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a17-4g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A17 4G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.3 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a17-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A17 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.3 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a17-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A17 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.3 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a25-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A25 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a25-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A25 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a25-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A25 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a26-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A26 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a26-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A26 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a26-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A26 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a27-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A27 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a27-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A27 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a27-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A27 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
+      "câmera 13.0 MP + 2.0 MP",
+      "câmera frontal 8MP",
       "8 GB de RAM",
       "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a35-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A35 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a35-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A35 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a35-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A35 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a36-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A36 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a36-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A36 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a36-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A36 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a37-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A37 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "6 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a37-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A37 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a37-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A37 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a55-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A55 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
-      "câmera frontal 32MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.6 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a55-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A55 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
-      "câmera frontal 32MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.6 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a56-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A56 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.6 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a56-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A56 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.6 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a57-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY A57 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.6 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-a57-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY A57 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 12.0 MP + 5.0 MP",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.6 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-m15-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY M15 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 5.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "4 GB de RAM",
-      "bateria 6000 mAh",
-      "processador 8 Core 2.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-m35-4g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY M35 4G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 13MP",
-      "6 GB de RAM",
-      "bateria 6000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-m55-5g-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY M55 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 50MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-m55-5g-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY M55 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50.0 MP + 8.0 MP + 2.0 MP",
-      "câmera frontal 50MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s23-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY S23",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50 Mp + 10 Mp + 12 Mp",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 3900 mAh",
-      "processador 8 Core 3.36 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s23-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY S23",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50 Mp + 10 Mp + 12 Mp",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 3900 mAh",
-      "processador 8 Core 3.36 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s23-512",
-    "marca": "Samsung",
-    "modelo": "GALAXY S23",
-    "armazenamento": "512GB",
-    "specs": [
-      "câmera 50 Mp + 10 Mp + 12 Mp",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 3900 mAh",
-      "processador 8 Core 3.36 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s23-ultra-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY S23 ULTRA",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 200 Mp + 10 Mp + 12 Mp",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 3.36 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s23-ultra-512",
-    "marca": "Samsung",
-    "modelo": "GALAXY S23 ULTRA",
-    "armazenamento": "512GB",
-    "specs": [
-      "câmera 200 Mp + 10 Mp + 12 Mp",
-      "câmera frontal 12MP",
-      "12 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 3.36 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s23-ultra-1tb",
-    "marca": "Samsung",
-    "modelo": "GALAXY S23 ULTRA",
-    "armazenamento": "1TB",
-    "specs": [
-      "câmera 200 Mp + 10 Mp + 12 Mp",
-      "câmera frontal 12MP",
-      "12 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 3.36 GHZ"
-    ]
-  },
-  {
-    "id": "motorola-g55-5g-128",
-    "marca": "Motorola",
-    "modelo": "MOTO G55 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50 Mp + 8 Mp",
-      "câmera frontal 16MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
-    ]
-  },
-  {
-    "id": "motorola-g55-5g-256",
-    "marca": "Motorola",
-    "modelo": "MOTO G55 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50 Mp + 8 Mp",
-      "câmera frontal 16MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
-    ]
-  },
-  {
-    "id": "xiaomi-redmi-note13-pro-128",
-    "marca": "Xiaomi",
-    "modelo": "REDMI NOTE 13 PRO",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 200 Mp + 8 Mp + 2 Mp",
-      "câmera frontal 16MP",
-      "8 GB de RAM",
-      "bateria 5100 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "xiaomi-redmi-note13-pro-256",
-    "marca": "Xiaomi",
-    "modelo": "REDMI NOTE 13 PRO",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 200 Mp + 8 Mp + 2 Mp",
-      "câmera frontal 16MP",
-      "8 GB de RAM",
-      "bateria 5100 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "xiaomi-redmi-note13-pro-512",
-    "marca": "Xiaomi",
-    "modelo": "REDMI NOTE 13 PRO",
-    "armazenamento": "512GB",
-    "specs": [
-      "câmera 200 Mp + 8 Mp + 2 Mp",
-      "câmera frontal 16MP",
-      "12 GB de RAM",
-      "bateria 5100 mAh",
-      "processador 8 Core 2.4 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50 Mp + 12 Mp + 10 Mp",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 4000 mAh",
-      "processador 8 Core 3.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50 Mp + 12 Mp + 10 Mp",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 4000 mAh",
-      "processador 8 Core 3.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-512",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26",
-    "armazenamento": "512GB",
-    "specs": [
-      "câmera 50 Mp + 12 Mp + 10 Mp",
-      "câmera frontal 12MP",
-      "12 GB de RAM",
-      "bateria 4000 mAh",
-      "processador 8 Core 3.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-plus-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26+",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50 Mp + 12 Mp + 10 Mp",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 4900 mAh",
-      "processador 8 Core 3.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-plus-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26+",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50 Mp + 12 Mp + 10 Mp",
-      "câmera frontal 12MP",
-      "8 GB de RAM",
-      "bateria 4900 mAh",
-      "processador 8 Core 3.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-plus-512",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26+",
-    "armazenamento": "512GB",
-    "specs": [
-      "câmera 50 Mp + 12 Mp + 10 Mp",
-      "câmera frontal 12MP",
-      "12 GB de RAM",
-      "bateria 4900 mAh",
-      "processador 8 Core 3.2 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-ultra-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26 ULTRA",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 200 Mp + 50 Mp + 12 Mp + 10 Mp",
-      "câmera frontal 12MP",
-      "12 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 3.3 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-ultra-512",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26 ULTRA",
-    "armazenamento": "512GB",
-    "specs": [
-      "câmera 200 Mp + 50 Mp + 12 Mp + 10 Mp",
-      "câmera frontal 12MP",
-      "12 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 3.3 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-ultra-1tb",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26 ULTRA",
-    "armazenamento": "1TB",
-    "specs": [
-      "câmera 200 Mp + 50 Mp + 12 Mp + 10 Mp",
-      "câmera frontal 12MP",
-      "16 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 3.3 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-fe-128",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26 FE",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50 Mp + 12 Mp + 8 Mp",
-      "câmera frontal 10MP",
-      "8 GB de RAM",
-      "bateria 4500 mAh",
-      "processador 8 Core 2.9 GHZ"
-    ]
-  },
-  {
-    "id": "samsung-s26-fe-256",
-    "marca": "Samsung",
-    "modelo": "GALAXY S26 FE",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50 Mp + 12 Mp + 8 Mp",
-      "câmera frontal 10MP",
-      "8 GB de RAM",
-      "bateria 4500 mAh",
-      "processador 8 Core 2.9 GHZ"
-    ]
-  },
-  {
-    "id": "motorola-g84-128",
-    "marca": "Motorola",
-    "modelo": "MOTO G84 5G",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50 Mp + 8 Mp",
-      "câmera frontal 16MP",
-      "8 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
-    ]
-  },
-  {
-    "id": "motorola-g84-256",
-    "marca": "Motorola",
-    "modelo": "MOTO G84 5G",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50 Mp + 8 Mp",
-      "câmera frontal 16MP",
-      "12 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 2.5 GHZ"
-    ]
-  },
-  {
-    "id": "motorola-edge50-256",
-    "marca": "Motorola",
-    "modelo": "EDGE 50 PRO",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50 Mp + 13 Mp + 10 Mp",
-      "câmera frontal 50MP",
-      "12 GB de RAM",
-      "bateria 4500 mAh",
-      "processador 8 Core 3.0 GHZ"
-    ]
-  },
-  {
-    "id": "motorola-edge50-512",
-    "marca": "Motorola",
-    "modelo": "EDGE 50 PRO",
-    "armazenamento": "512GB",
-    "specs": [
-      "câmera 50 Mp + 13 Mp + 10 Mp",
-      "câmera frontal 50MP",
-      "12 GB de RAM",
-      "bateria 4500 mAh",
-      "processador 8 Core 3.0 GHZ"
-    ]
-  },
-  {
-    "id": "xiaomi-14-128",
-    "marca": "Xiaomi",
-    "modelo": "XIAOMI 14",
-    "armazenamento": "128GB",
-    "specs": [
-      "câmera 50 Mp + 50 Mp + 50 Mp",
-      "câmera frontal 32MP",
-      "8 GB de RAM",
-      "bateria 4610 mAh",
-      "processador 8 Core 3.2 GHZ"
-    ]
-  },
-  {
-    "id": "xiaomi-14-256",
-    "marca": "Xiaomi",
-    "modelo": "XIAOMI 14",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50 Mp + 50 Mp + 50 Mp",
-      "câmera frontal 32MP",
-      "12 GB de RAM",
-      "bateria 4610 mAh",
-      "processador 8 Core 3.2 GHZ"
-    ]
-  },
-  {
-    "id": "xiaomi-14-512",
-    "marca": "Xiaomi",
-    "modelo": "XIAOMI 14",
-    "armazenamento": "512GB",
-    "specs": [
-      "câmera 50 Mp + 50 Mp + 50 Mp",
-      "câmera frontal 32MP",
-      "16 GB de RAM",
-      "bateria 4610 mAh",
-      "processador 8 Core 3.2 GHZ"
-    ]
-  },
-  {
-    "id": "xiaomi-14-ultra-256",
-    "marca": "Xiaomi",
-    "modelo": "XIAOMI 14 ULTRA",
-    "armazenamento": "256GB",
-    "specs": [
-      "câmera 50 Mp + 50 Mp + 50 Mp + 50 Mp",
-      "câmera frontal 32MP",
-      "16 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 3.3 GHZ"
-    ]
-  },
-  {
-    "id": "xiaomi-14-ultra-512",
-    "marca": "Xiaomi",
-    "modelo": "XIAOMI 14 ULTRA",
-    "armazenamento": "512GB",
-    "specs": [
-      "câmera 50 Mp + 50 Mp + 50 Mp + 50 Mp",
-      "câmera frontal 32MP",
-      "16 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 3.3 GHZ"
-    ]
-  },
-  {
-    "id": "xiaomi-14-ultra-1tb",
-    "marca": "Xiaomi",
-    "modelo": "XIAOMI 14 ULTRA",
-    "armazenamento": "1TB",
-    "specs": [
-      "câmera 50 Mp + 50 Mp + 50 Mp + 50 Mp",
-      "câmera frontal 32MP",
-      "16 GB de RAM",
-      "bateria 5000 mAh",
-      "processador 8 Core 3.3 GHZ"
+      "processador MediaTek Helio G81"
     ]
   }
 ]

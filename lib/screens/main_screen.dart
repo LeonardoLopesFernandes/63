@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show TextInputFormatter, SystemNavigator;
@@ -45,7 +46,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   String _randomPriceDigits() {
-    final cents = _random.nextInt(220000) + 80000; // R$ 800,00 a R$ 2.999,00
+    final cents = _random.nextInt(220000) + 80000;
     return cents.toString();
   }
 
@@ -57,8 +58,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _load() async {
-    // Sessão expirada enquanto o app estava aberto/fechado: volta ao
-    // login, que reloga sozinho com as credenciais salvas.
     if (!Session.hasValidToken()) {
       if (mounted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -71,8 +70,6 @@ class _MainScreenState extends State<MainScreen> {
       }
       return;
     }
-    // Inclui assets + já buscados via MobileAPI (phones.json) para que
-    // S23 etc., uma vez buscados, apareçam na lista.
     final celulares = await loadAllCelulares();
     final prefs = await SharedPreferences.getInstance();
     for (var i = 0; i < 4; i++) {
@@ -117,6 +114,246 @@ class _MainScreenState extends State<MainScreen> {
     _states[i] = s;
     _saveAll();
     if (mounted) setState(() {});
+  }
+
+  Future<void> _onPhoneRenamed(CelularSpec phone, String newName) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'phone_name_${phone.id}';
+    await prefs.setString(key, newName);
+    
+    final idx = _celulares.indexWhere((p) => p.id == phone.id);
+    if (idx != -1) {
+      _celulares[idx] = CelularSpec(
+        id: phone.id,
+        marca: phone.marca,
+        modelo: newName,
+        armazenamento: phone.armazenamento,
+        specs: phone.specs,
+      );
+    }
+    
+    for (var i = 0; i < _states.length; i++) {
+      if (_states[i].selectedPhone?.id == phone.id) {
+        _states[i] = _states[i].copyWith(
+          selectedPhone: CelularSpec(
+            id: phone.id,
+            marca: phone.marca,
+            modelo: newName,
+            armazenamento: phone.armazenamento,
+            specs: phone.specs,
+          ),
+        );
+      }
+    }
+    
+    _saveAll();
+    if (mounted) setState(() {});
+    _toast('Modelo renomeado para "$newName"');
+  }
+
+  Future<void> _onPhoneDeleted(CelularSpec phone) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'phone_deleted_${phone.id}';
+    await prefs.setBool(key, true);
+    
+    _celulares.removeWhere((p) => p.id == phone.id);
+    
+    for (var i = 0; i < _states.length; i++) {
+      if (_states[i].selectedPhone?.id == phone.id) {
+        _states[i] = _states[i].copyWith(selectedPhone: null);
+      }
+    }
+    
+    _saveAll();
+    if (mounted) setState(() {});
+    _toast('Modelo removido');
+  }
+
+  void _onPhoneAdded(CelularSpec phone) {
+    if (!_celulares.any((p) => p.id == phone.id)) {
+      setState(() => _celulares.add(phone));
+    }
+    _toast('Modelo "${phone.modelo} ${phone.armazenamento}" adicionado!');
+  }
+
+  void _onPhoneEdited(CelularSpec phone, List<String> newSpecs) async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'phone_specs_${phone.id}';
+    await prefs.setStringList(key, newSpecs);
+    
+    final idx = _celulares.indexWhere((p) => p.id == phone.id);
+    if (idx != -1) {
+      _celulares[idx] = CelularSpec(
+        id: phone.id,
+        marca: phone.marca,
+        modelo: phone.modelo,
+        armazenamento: phone.armazenamento,
+        specs: newSpecs,
+      );
+    }
+    
+    for (var i = 0; i < _states.length; i++) {
+      if (_states[i].selectedPhone?.id == phone.id) {
+        _states[i] = _states[i].copyWith(
+          selectedPhone: CelularSpec(
+            id: phone.id,
+            marca: phone.marca,
+            modelo: phone.modelo,
+            armazenamento: phone.armazenamento,
+            specs: newSpecs,
+          ),
+        );
+      }
+    }
+    
+    _saveAll();
+    if (mounted) setState(() {});
+    _toast('Specs do "${phone.modelo}" atualizadas!');
+  }
+
+  Future<void> _showAddModelDialog() async {
+    final descController = TextEditingController();
+    final priceController = TextEditingController();
+    final specsControllers = <TextEditingController>[
+      TextEditingController(), // camera
+      TextEditingController(), // frontal
+      TextEditingController(), // bateria
+      TextEditingController(), // ram
+      TextEditingController(), // processador
+      TextEditingController(), // tela
+    ];
+    final specLabels = ['Câmera principal', 'Câmera frontal', 'Bateria', 'RAM', 'Processador', 'Tela'];
+    final specHints = [
+      'Ex: 50 Mp + 12 Mp + 10 Mp',
+      'Ex: 12MP',
+      'Ex: 5000 mAh',
+      'Ex: 8 GB de RAM',
+      'Ex: 8 Core 3.2 GHZ',
+      'Ex: 6,7"',
+    ];
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Adicionar modelo manualmente'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    labelText: 'Descrição do modelo *',
+                    hintText: 'Ex: SAMSUNG A17 5G 256GB',
+                  ),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Preço do aparelho *',
+                    hintText: 'Ex: 150000 (para R\$ 1.500,00)',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('Especificações (6 campos)', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                ...List.generate(6, (i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: TextField(
+                    controller: specsControllers[i],
+                    decoration: InputDecoration(
+                      labelText: specLabels[i],
+                      hintText: specHints[i],
+                    ),
+                  ),
+                )),
+              ],
+            ),
+          ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final desc = descController.text.trim();
+              final price = priceController.text.trim();
+              if (desc.isEmpty || price.isEmpty) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  const SnackBar(content: Text('Preencha descrição e preço')),
+                );
+                return;
+              }
+              final specs = specsControllers
+                  .map((c) => c.text.trim())
+                  .where((s) => s.isNotEmpty)
+                  .toList();
+              if (specs.length < 3) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  const SnackBar(content: Text('Preencha pelo menos 3 especificações')),
+                );
+                return;
+              }
+              Navigator.pop(ctx);
+              _saveManualModel(desc, price, specs);
+            },
+            child: const Text('Adicionar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _saveManualModel(String desc, String price, List<String> specs) async {
+    final upper = desc.toUpperCase();
+    String marca = 'Desconhecido';
+    if (upper.contains('SAMSUNG') || upper.contains('GALAXY')) marca = 'Samsung';
+    else if (upper.contains('MOTOROLA') || upper.contains('MOTO') || upper.contains('EDGE')) marca = 'Motorola';
+    else if (upper.contains('XIAOMI') || upper.contains('REDMI') || upper.contains('POCO')) marca = 'Xiaomi';
+    else if (upper.contains('APPLE') || upper.contains('IPHONE')) marca = 'Apple';
+
+    String armazenamento = 'Não informado';
+    final storageMatch = RegExp(r'(\d{2,4})\s?GB').firstMatch(upper);
+    if (storageMatch != null) {
+      armazenamento = '${storageMatch.group(1)}GB';
+    }
+
+    var modelo = desc;
+    if (armazenamento != 'Não informado') {
+      modelo = modelo.replaceAll(RegExp(r'\d{2,4}\s?GB', caseSensitive: false), '').trim();
+    }
+
+    final newPhone = CelularSpec(
+      id: 'manual-${DateTime.now().millisecondsSinceEpoch}',
+      marca: marca,
+      modelo: modelo.toUpperCase(),
+      armazenamento: armazenamento,
+      specs: specs,
+    );
+
+    final prefs = await SharedPreferences.getInstance();
+    final manualPhonesKey = 'manual_phones';
+    final existing = prefs.getStringList('manual_phones') ?? [];
+    existing.add(jsonEncode(newPhone.toJson()));
+    await prefs.setStringList('manual_phones', existing);
+
+    setState(() {
+      _celulares.add(newPhone);
+    });
+
+    final priceDigits = price.replaceAll(RegExp(r'[^0-9]'), '');
+    _onStateChange(0, _states[0].copyWith(
+      selectedPhone: newPhone,
+      priceText: priceDigits,
+    ));
+
+    _toast('Modelo "$modelo $armazenamento" adicionado e selecionado!');
   }
 
   void _gerar() async {
@@ -180,7 +417,6 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
-        // Limpa só o token (mantém credenciais p/ o auto-login relogar sozinho).
         Session.clearToken();
         Session.onLoginChange?.call();
         return;
@@ -213,7 +449,6 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
-        // Limpa só o token (mantém credenciais p/ o auto-login relogar sozinho).
         Session.clearToken();
         Session.onLoginChange?.call();
         return;
@@ -245,49 +480,29 @@ class _MainScreenState extends State<MainScreen> {
               return ListTile(
                 title: Text(item.description),
                 subtitle: Text('R\$ ${item.price}'),
-                onTap: () {
-                  // 1. Preenche IMEDIATAMENTE com o que veio da 1ª API.
+                onTap: () async {
                   Navigator.pop(ctx);
-                  _states[index] = _states[index].copyWith(
-                    selectedPhone: CelularSpec(
-                      id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
-                      marca: '',
-                      modelo: item.description,
-                      armazenamento: 'Não informado',
-                      specs: [],
-                    ),
-                    priceText: parsePriceToDigits(item.price),
-                    ean: item.ean,
-                    codSap: item.sap,
-                  );
-                  _saveAll();
-                  if (mounted) setState(() {});
-                  _toast('${item.description} selecionado — buscando specs...');
-
-                  // 2. Em background busca specs corretas (MobileAPI/GSMArena).
-                  Future.microtask(() async {
-                    final matched = await getOrCreateSpecs(item.description, _celulares);
-                    if (!mounted) return;
-                    if (matched != null) {
-                      final already = _celulares.any((c) =>
-                          c.modelo.toLowerCase() == matched.modelo.toLowerCase() &&
-                          c.armazenamento.toLowerCase() == matched.armazenamento.toLowerCase());
-                      if (!already) {
-                        setState(() => _celulares = [..._celulares, matched]);
-                      }
-                      _states[index] = _states[index].copyWith(
-                        selectedPhone: matched,
-                        priceText: parsePriceToDigits(item.price),
-                        ean: item.ean,
-                        codSap: item.sap,
-                      );
-                      _saveAll();
-                      setState(() {});
-                      _toast('${matched.modelo} ${matched.armazenamento} — specs carregadas');
-                    } else {
-                      _toast('Specs não encontradas na internet para: ${item.description}');
+                  _toast('Buscando especificações...');
+                  final matched = await getOrCreateSpecs(item.description, _celulares);
+                  if (matched != null) {
+                    final already = _celulares.any((c) =>
+                        c.modelo.toLowerCase() == matched.modelo.toLowerCase() &&
+                        c.armazenamento.toLowerCase() == matched.armazenamento.toLowerCase());
+                    if (!already && mounted) {
+                      setState(() => _celulares = [..._celulares, matched]);
                     }
-                  });
+                    _states[index] = _states[index].copyWith(
+                      selectedPhone: matched,
+                      priceText: parsePriceToDigits(item.price),
+                      ean: item.ean,
+                      codSap: item.sap,
+                    );
+                    _saveAll();
+                    if (mounted) setState(() {});
+                    _toast('${matched.modelo} ${matched.armazenamento} selecionado');
+                  } else {
+                    _toast('Modelo não encontrado nem na internet: ${item.description}');
+                  }
                 },
               );
             },
@@ -359,11 +574,11 @@ class _MainScreenState extends State<MainScreen> {
                 children: [
                   TextSpan(
                     text: 'Plano de ',
-                    style: TextStyle(color: Color(0xFFD32F2F)), // Vermelho Claro
+                    style: TextStyle(color: Color(0xFFD32F2F)),
                   ),
                   TextSpan(
                     text: 'Telefonia',
-                    style: TextStyle(color: Color(0xFF0040A0)), // Azul TIM
+                    style: TextStyle(color: Color(0xFF0040A0)),
                   ),
                 ],
               ),
@@ -381,68 +596,72 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ],
         ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scroll,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              itemCount: 4,
-              itemBuilder: (ctx, i) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: FormRow(
-                  index: i,
-                  state: _states[i],
-                  motorolaPhones: motorola,
-                  samsungPhones: samsung,
-                  outrosPhones: outros,
-                  allPhones: _celulares,
-                  onStateChange: (s) => _onStateChange(i, s),
-                  onScan: () => _openScanner(i),
-                  onSearchSubmit: _abrirBuscaDescricao,
-                  onWeekToggle: (checked) {
-                    if (checked) {
-                      for (var j = 0; j < 4; j++) {
-                        _states[j] = j == i ? _states[j].copyWith(daSemana: true) : _states[j].copyWith(daSemana: false);
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scroll,
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                itemCount: 4,
+                itemBuilder: (ctx, i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: FormRow(
+                    index: i,
+                    state: _states[i],
+                    motorolaPhones: motorola,
+                    samsungPhones: samsung,
+                    outrosPhones: outros,
+                    allPhones: _celulares,
+                    onStateChange: (s) => _onStateChange(i, s),
+                    onScan: () => _openScanner(i),
+                    onSearchSubmit: _abrirBuscaDescricao,
+                    onWeekToggle: (checked) {
+                      if (checked) {
+                        for (var j = 0; j < 4; j++) {
+                          _states[j] = j == i ? _states[j].copyWith(daSemana: true) : _states[j].copyWith(daSemana: false);
+                        }
+                      } else {
+                        _states[i] = _states[i].copyWith(daSemana: false);
                       }
-                    } else {
-                      _states[i] = _states[i].copyWith(daSemana: false);
-                    }
-                    _saveAll();
-                    setState(() {});
-                  },
+                      _saveAll();
+                      setState(() {});
+                    },
+                    onPhoneRenamed: (phone, newName) => _onPhoneRenamed(phone, newName),
+                    onPhoneDeleted: (phone) => _onPhoneDeleted(phone),
+                    onPhoneAdded: (phone) => _onPhoneAdded(phone),
+                    onPhoneEdited: (phone, newSpecs) => _onPhoneEdited(phone, newSpecs),
+                  ),
                 ),
               ),
             ),
-          ),
-          if (_errors.isNotEmpty)
-            Container(
-              margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF0F0),
-                border: Border.all(color: Colors.red, width: 2),
-                borderRadius: BorderRadius.circular(12),
+            if (_errors.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF0F0),
+                  border: Border.all(color: Colors.red, width: 2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _errors.map((e) => Text(e, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold))).toList(),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: _errors.map((e) => Text(e, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold))).toList(),
-              ),
-            ),
-        ],
-      ),
-       floatingActionButton: _atBottom
-           ? SizedBox(
-               width: MediaQuery.of(context).size.width - 32,
-               child: FloatingActionButton.extended(
-                 onPressed: _gerar,
-                 backgroundColor: const Color(0xFFD32F2F),
-                 label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                 icon: const Icon(Icons.check, color: Colors.white),
-               ),
-             )
-           : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          ],
+        ),
+        floatingActionButton: _atBottom
+            ? SizedBox(
+                width: MediaQuery.of(context).size.width - 32,
+                child: FloatingActionButton.extended(
+                  onPressed: _gerar,
+                  backgroundColor: const Color(0xFFD32F2F),
+                  label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  icon: const Icon(Icons.check, color: Colors.white),
+                ),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -459,6 +678,10 @@ class FormRow extends StatefulWidget {
   final VoidCallback onScan;
   final void Function(int, String) onSearchSubmit;
   final void Function(bool) onWeekToggle;
+  final void Function(CelularSpec, String) onPhoneRenamed;
+  final void Function(CelularSpec) onPhoneDeleted;
+  final void Function(CelularSpec?) onPhoneAdded;
+  final void Function(CelularSpec, List<String>) onPhoneEdited;
 
   const FormRow({
     super.key,
@@ -472,6 +695,10 @@ class FormRow extends StatefulWidget {
     required this.onScan,
     required this.onSearchSubmit,
     required this.onWeekToggle,
+    required this.onPhoneRenamed,
+    required this.onPhoneDeleted,
+    required this.onPhoneAdded,
+    required this.onPhoneEdited,
   });
 
   @override
@@ -562,7 +789,12 @@ class _FormRowState extends State<FormRow> {
                   motorolaPhones: widget.motorolaPhones,
                   samsungPhones: widget.samsungPhones,
                   outrosPhones: widget.outrosPhones,
+                  allPhones: widget.allPhones,
                   onPhoneSelected: (p) => widget.onStateChange(widget.state.copyWith(selectedPhone: p)),
+                  onPhoneRenamed: (phone, newName) => widget.onPhoneRenamed(phone, newName),
+                  onPhoneDeleted: (phone) => widget.onPhoneDeleted(phone),
+                  onPhoneAdded: (phone) => widget.onPhoneAdded(phone),
+                  onPhoneEdited: (phone, newSpecs) => widget.onPhoneEdited(phone, newSpecs),
                 ),
                 const SizedBox(height: 16),
                 const Text('DIGITE O PREÇO DO APARELHO', style: TextStyle(color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 12, letterSpacing: 0.5)),
@@ -630,7 +862,12 @@ class PhoneDropdown extends StatefulWidget {
   final List<CelularSpec> motorolaPhones;
   final List<CelularSpec> samsungPhones;
   final List<CelularSpec> outrosPhones;
+  final List<CelularSpec> allPhones;
   final void Function(CelularSpec?) onPhoneSelected;
+  final void Function(CelularSpec, String) onPhoneRenamed;
+  final void Function(CelularSpec) onPhoneDeleted;
+  final void Function(CelularSpec?) onPhoneAdded;
+  final void Function(CelularSpec, List<String>) onPhoneEdited;
 
   const PhoneDropdown({
     super.key,
@@ -638,7 +875,12 @@ class PhoneDropdown extends StatefulWidget {
     required this.motorolaPhones,
     required this.samsungPhones,
     this.outrosPhones = const [],
+    required this.allPhones,
     required this.onPhoneSelected,
+    required this.onPhoneRenamed,
+    required this.onPhoneDeleted,
+    required this.onPhoneAdded,
+    required this.onPhoneEdited,
   });
 
   @override
@@ -694,6 +936,16 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
                         child: Text('Buscados na internet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
                     ...widget.outrosPhones.map((p) => _item(p)),
                   ],
+                  const Divider(),
+                  ListTile(
+                    dense: true,
+                    leading: const Icon(Icons.add_circle, color: Color(0xFF0D47A1)),
+                    title: const Text('Adicionar modelo manualmente', style: TextStyle(fontSize: 16, color: Color(0xFF0D47A1), fontWeight: FontWeight.w500)),
+                    onTap: () {
+                      setState(() => _expanded = false);
+                      widget.onPhoneAdded(null); // Trigger parent to show dialog
+                    },
+                  ),
                 ],
               ),
             ),
@@ -710,6 +962,140 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
         widget.onPhoneSelected(phone);
         setState(() => _expanded = false);
       },
+      onLongPress: () => _showOptionsDialog(phone),
+    );
+  }
+
+  void _showOptionsDialog(CelularSpec phone) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('${phone.modelo} ${phone.armazenamento}'),
+        content: const Text('O que deseja fazer?'),
+        actions: [
+          TextButton.icon(
+            icon: const Icon(Icons.edit, color: Color(0xFF0D47A1)),
+            label: const Text('Renomear', style: TextStyle(color: Color(0xFF0D47A1))),
+            onPressed: () {
+              Navigator.pop(ctx);
+              widget.onPhoneRenamed(phone, phone.modelo); // Will open rename dialog via parent
+            },
+          ),
+          TextButton.icon(
+            icon: const Icon(Icons.build, color: Color(0xFF0D47A1)),
+            label: const Text('Editar specs', style: TextStyle(color: Color(0xFF0D47A1))),
+            onPressed: () {
+              Navigator.pop(ctx);
+              _showEditSpecsDialog(phone);
+            },
+          ),
+          TextButton.icon(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            label: const Text('Remover', style: TextStyle(color: Colors.red)),
+            onPressed: () {
+              Navigator.pop(ctx);
+              _confirmDelete(phone);
+            },
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditSpecsDialog(CelularSpec phone) {
+    final specsControllers = phone.specs.map((s) => TextEditingController(text: s)).toList();
+    final specLabels = ['Câmera principal', 'Câmera frontal', 'Bateria', 'RAM', 'Processador', 'Tela'];
+    final specHints = [
+      'Ex: 50 Mp + 12 Mp + 10 Mp',
+      'Ex: 12MP',
+      'Ex: 5000 mAh',
+      'Ex: 8 GB de RAM',
+      'Ex: 8 Core 3.2 GHZ',
+      'Ex: 6,7"',
+    ];
+
+    // Ensure 6 controllers
+    while (specsControllers.length < 6) {
+      specsControllers.add(TextEditingController());
+    }
+
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Editar specs: ${phone.modelo} ${phone.armazenamento}'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Edite as especificações:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                ...List.generate(6, (i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: TextField(
+                    controller: specsControllers[i],
+                    decoration: InputDecoration(
+                      labelText: i < specLabels.length ? specLabels[i] : 'Spec ${i + 1}',
+                      hintText: i < specHints.length ? specHints[i] : '',
+                    ),
+                  ),
+                )),
+              ],
+            ),
+          ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final newSpecs = specsControllers
+                  .map((c) => c.text.trim())
+                  .where((s) => s.isNotEmpty)
+                  .toList();
+              if (newSpecs.length < 3) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  const SnackBar(content: Text('Preencha pelo menos 3 especificações')),
+                );
+                return;
+              }
+              Navigator.pop(ctx);
+              widget.onPhoneEdited(phone, newSpecs);
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    ));
+  }
+
+  void _confirmDelete(CelularSpec phone) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Remover modelo?'),
+        content: Text('Tem certeza que deseja remover "${phone.modelo} ${phone.armazenamento}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              widget.onPhoneDeleted(phone);
+              Navigator.pop(ctx);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Remover'),
+          ),
+        ],
+      ),
     );
   }
 }
