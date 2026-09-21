@@ -1,0 +1,43 @@
+name: Shorebird Patch OTA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
+
+      - name: Setup keystore from Secrets
+        run: |
+          RAW="${{ secrets.KEYSTORE_BASE64 }}"
+          CLEAN=$(echo "$RAW" | tr -d '\n\r\t ')
+          echo "$CLEAN" | base64 --decode > android/app/upload.keystore
+          echo "Keystore size: $(wc -c < android/app/upload.keystore) bytes"
+
+      - name: Shorebird patch (OTA para Android)
+        env:
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          shorebird patch android \
+            --target-platform android-arm64 \
+            -- --android-skip-build-dependency-validation

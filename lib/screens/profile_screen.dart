@@ -206,6 +206,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 label: const Text('Sair da Conta', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
+            const SizedBox(height: 16),
+            const Text(
+              'Versão OTA: 2',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
           ],
         ),
       ),
