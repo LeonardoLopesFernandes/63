@@ -39,5 +39,5 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           shorebird patch android \
-            --release-version=1.0.0+82 \
+            --release-version=latest \
             -- --android-skip-build-dependency-validation
