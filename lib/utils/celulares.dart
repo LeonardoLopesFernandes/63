@@ -327,27 +327,34 @@ const String mobileApiKey = String.fromEnvironment(
 
 /// Carrega lista completa (assets + já buscados via API + modelos manuais).
 Future<List<CelularSpec>> loadAllCelulares() async {
+  final prefs = await SharedPreferences.getInstance();
+  // IDs removidos permanentemente (usuario removeu da lista).
+  bool isDeleted(CelularSpec p) => prefs.getBool('phone_deleted_${p.id}') ?? false;
+
   final base = await loadCelulares();
   final saved = await loadSavedPhones();
   for (final s in saved) {
+    if (isDeleted(s)) continue;
     final exists = base.any((b) =>
         b.modelo.toLowerCase() == s.modelo.toLowerCase() &&
         b.armazenamento.toLowerCase() == s.armazenamento.toLowerCase());
     if (!exists) base.add(s);
   }
   // Carrega modelos manuais salvos no SharedPreferences
-  final prefs = await SharedPreferences.getInstance();
   final manualList = prefs.getStringList('manual_phones') ?? [];
   for (final jsonStr in manualList) {
     try {
       final data = json.decode(jsonStr);
       final phone = CelularSpec.fromJson(data);
+      if (isDeleted(phone)) continue;
       final exists = base.any((b) =>
           b.modelo.toLowerCase() == phone.modelo.toLowerCase() &&
           b.armazenamento.toLowerCase() == phone.armazenamento.toLowerCase());
       if (!exists) base.add(phone);
     } catch (_) {}
   }
+  // Remove de assets que foram marcados como removidos (permanente).
+  base.removeWhere(isDeleted);
   return base;
 }
 
