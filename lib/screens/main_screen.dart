@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show TextInputFormatter, SystemNavigator;
+import 'package:flutter/services.dart' show TextInputFormatter, SystemNavigator, Clipboard;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:papeleta63/api/endpoints.dart';
 import 'package:papeleta63/api/models.dart';
@@ -234,10 +234,9 @@ class _MainScreenState extends State<MainScreen> {
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
             elevation: 1,
-            title: const Text('Adicionar modelo manualmente', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black87),
-              onPressed: () => Navigator.pop(ctx),
+            automaticallyImplyLeading: false,
+            title: const Center(
+              child: Text('Adicionar modelo manualmente', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
             ),
           ),
           body: SingleChildScrollView(
@@ -272,17 +271,36 @@ class _MainScreenState extends State<MainScreen> {
                 const Text('Colar ficha técnica (busquei no navegador)',
                     style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0D47A1))),
                 const SizedBox(height: 6),
-                TextField(
-                  controller: pasteController,
-                  maxLines: 4,
-                  minLines: 2,
-                  decoration: InputDecoration(
-                    hintText: 'Cole aqui o texto com as specs...',
-                    hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                  ),
+                Stack(
+                  children: [
+                    TextField(
+                      controller: pasteController,
+                      maxLines: 4,
+                      minLines: 2,
+                      decoration: InputDecoration(
+                        hintText: 'Cole aqui o texto com as specs...',
+                        hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                      ),
+                    ),
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: IconButton(
+                        tooltip: 'Colar do clipboard',
+                        icon: const Icon(Icons.content_paste, color: Color(0xFF0D47A1), size: 20),
+                        onPressed: () async {
+                          final data = await Clipboard.getData(Clipboard.kTextPlain);
+                          final texto = data?.text ?? '';
+                          if (texto.isNotEmpty) {
+                            pasteController.text = texto;
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 SizedBox(
