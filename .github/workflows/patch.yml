@@ -40,5 +40,4 @@ jobs:
         run: |
           shorebird patch android \
             --release-version=1.0.0+82 \
-            --target-platform android-arm64 \
             -- --android-skip-build-dependency-validation

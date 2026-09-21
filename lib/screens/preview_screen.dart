@@ -24,23 +24,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
-Widget _badgeLabel(IconData icon, String label, Color color) => Container(
-  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-  decoration: BoxDecoration(
-    color: color.withValues(alpha: 0.08),
-    borderRadius: BorderRadius.circular(8),
-  ),
-  child: Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(icon, size: 20, color: color),
-      const SizedBox(height: 2),
-      FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, height: 1.1, color: color), textAlign: TextAlign.center, maxLines: 1),
-      ),
-    ],
-  ),
+Widget _badgeLabel(IconData icon, String label, Color color) => Column(
+  mainAxisSize: MainAxisSize.min,
+  children: [
+    Icon(icon, size: 20, color: color),
+    const SizedBox(height: 2),
+    FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, height: 1.1, color: color), textAlign: TextAlign.center, maxLines: 1),
+    ),
+  ],
 );
 
   Future<void> _compartilhar() async {
@@ -163,6 +156,7 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Container(
                       foregroundColor: const Color(0xFF0D47A1),
                       side: const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
                       fixedSize: const Size.fromHeight(56),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     child: _badgeLabel(Icons.send, 'ENVIAR', const Color(0xFF0D47A1)),
                   ),
@@ -175,6 +169,7 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Container(
                       foregroundColor: const Color(0xFF2E7D32),
                       side: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
                       fixedSize: const Size.fromHeight(56),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     child: _busy
                         ? const Text('IMPRIMINDO...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10))
@@ -189,6 +184,7 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Container(
                       backgroundColor: const Color(0xFF111111),
                       foregroundColor: Colors.white,
                       fixedSize: const Size.fromHeight(56),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     child: _busy
                         ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10))
