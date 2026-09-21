@@ -226,19 +226,33 @@ class _MainScreenState extends State<MainScreen> {
 
     await showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Adicionar modelo manualmente'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
+      builder: (ctx) => Dialog.fullscreen(
+        backgroundColor: const Color(0xFFF4F8FE),
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF4F8FE),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+            elevation: 1,
+            title: const Text('Adicionar modelo manualmente', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black87),
+              onPressed: () => Navigator.pop(ctx),
+            ),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(
                     labelText: 'Descrição do modelo *',
                     hintText: 'Ex: SAMSUNG A17 5G 256GB',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                   ),
                   autofocus: true,
                 ),
@@ -249,6 +263,9 @@ class _MainScreenState extends State<MainScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Preço do aparelho *',
                     hintText: 'Ex: 150000 (para R\$ 1.500,00)',
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -263,7 +280,7 @@ class _MainScreenState extends State<MainScreen> {
                     hintText: 'Cole aqui o texto com as specs...',
                     hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
                     filled: true,
-                    fillColor: const Color(0xFFF0F4F9),
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                   ),
                 ),
@@ -291,50 +308,98 @@ class _MainScreenState extends State<MainScreen> {
                     decoration: InputDecoration(
                       labelText: specLabels[i],
                       hintText: specHints[i],
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                     ),
                   ),
                 )),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.black87,
+                          side: const BorderSide(color: Colors.black38),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: const Text('Cancelar'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final desc = descController.text.trim();
+                          final price = priceController.text.trim();
+                          if (desc.isEmpty || price.isEmpty) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              const SnackBar(content: Text('Preencha descrição e preço')),
+                            );
+                            return;
+                          }
+                          final specs = specsControllers
+                              .map((c) => c.text.trim())
+                              .where((s) => s.isNotEmpty)
+                              .toList();
+                          if (specs.length < 3) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              const SnackBar(content: Text('Preencha pelo menos 3 especificações')),
+                            );
+                            return;
+                          }
+                          Navigator.pop(ctx);
+                          _saveManualModel(desc, price, specs);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0D47A1),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: const Text('Adicionar'),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final desc = descController.text.trim();
-              final price = priceController.text.trim();
-              if (desc.isEmpty || price.isEmpty) {
-                ScaffoldMessenger.of(ctx).showSnackBar(
-                  const SnackBar(content: Text('Preencha descrição e preço')),
-                );
-                return;
-              }
-              final specs = specsControllers
-                  .map((c) => c.text.trim())
-                  .where((s) => s.isNotEmpty)
-                  .toList();
-              if (specs.length < 3) {
-                ScaffoldMessenger.of(ctx).showSnackBar(
-                  const SnackBar(content: Text('Preencha pelo menos 3 especificações')),
-                );
-                return;
-              }
-              Navigator.pop(ctx);
-              _saveManualModel(desc, price, specs);
-            },
-            child: const Text('Adicionar'),
-          ),
-        ],
       ),
     );
   }
 
   List<String> _parseSpecsDeFicha(String texto) {
-    final linhas = texto.split(RegExp(r'[\n\r]')).map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+    // Normaliza o texto: se os labels vierem grudados (ex: "...50 MPCâmera
+    // frontal: 5 MP"), insere quebra de linha antes de cada label conhecido.
+    var normalizado = texto;
+    const labels = [
+      'Câmera traseira', 'Câmera frontal', 'Câmera', 'Bateria',
+      'RAM', 'Processador', 'Tela', 'Descrição', 'Descricao',
+    ];
+    for (final label in labels) {
+      normalizado = normalizado.replaceAllMapped(
+        RegExp('($label[\\s:])', caseSensitive: false),
+        (m) => '\n${m.group(1)}',
+      );
+    }
+    // Também quebra quando um label minúsculo vem após texto sem espaço
+    // (ex: "mAhRAM: 4 GB" -> "mAh\nRAM: 4 GB").
+    for (final label in labels) {
+      final rl = label.toLowerCase();
+      normalizado = normalizado.replaceAllMapped(
+        RegExp('($rl[\\s:])', caseSensitive: false),
+        (m) => '\n${m.group(1)}',
+      );
+    }
+
+    final linhas = normalizado
+        .split(RegExp(r'[\n\r]'))
+        .map((l) => l.trim())
+        .where((l) => l.isNotEmpty)
+        .toList();
     final specs = List<String>.filled(6, '');
 
     String valorDe(String label) {
