@@ -218,8 +218,8 @@ class _MainScreenState extends State<MainScreen> {
       for (var i = 0; i < specs.length && i < 6; i++) {
         specsControllers[i].text = specs[i];
       }
-      if (descController.text.trim().isEmpty && specs.isNotEmpty) {
-        descController.text = _extrairDescricao(texto, specs.first);
+      if (descController.text.trim().isEmpty) {
+        descController.text = _extrairDescricao(texto, '');
       }
       setState(() {});
     }
@@ -476,19 +476,44 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   String _extrairDescricao(String texto, String primeiraSpec) {
-    // Remove labels conhecidos e spec para achar uma linha de descrição.
     final linhas = texto.split(RegExp(r'[\n\r]')).map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+
+    // 1. Prioridade máxima: label explícito "Descrição: <valor>".
+    for (final linha in linhas) {
+      final m = RegExp(r'^descri(cao|ção)?\s*[:=\-]?\s*(.+)$', caseSensitive: false).firstMatch(linha);
+      if (m != null) {
+        final v = m.group(2)!.trim();
+        if (v.isNotEmpty && v.length < 80) return v;
+      }
+    }
+
+    // 2. Procura uma linha que pareça NOME DE APARELHO (marca/modelo),
+    //    nunca câmera/bateria/etc.
     for (final linha in linhas) {
       final lower = linha.toLowerCase();
-      final ehLabel = lower.startsWith('descri') ||
-          lower.startsWith('câmera') || lower.startsWith('camera') ||
+      final temMarca = RegExp(r'samsung|galaxy|motorola|moto|xiaomi|redmi|poco|apple|iphone|edge|realme|huawei|nokia|lg\b').hasMatch(lower);
+      final temModelo = RegExp(r'\b[a-z]+\d+[a-z0-9]*\b|\b\d+\s?(gb|tb)\b').hasMatch(lower);
+      final ehSpec = lower.startsWith('câmera') || lower.startsWith('camera') ||
           lower.startsWith('bateria') || lower.startsWith('ram') ||
           lower.startsWith('processador') || lower.startsWith('tela') ||
-          lower.contains('mp') || lower.contains('mAh') || lower.contains('core') ||
-          lower.contains('ghz') || lower.contains('gb de ram');
-      if (!ehLabel && linha.length < 80) return linha;
+          lower.contains('mAh') || lower.contains('core') || lower.contains('ghz') ||
+          lower.contains('mp ') || lower.contains(' polegadas') || lower.contains(' inches');
+      if (!ehSpec && (temMarca || temModelo) && linha.length < 80) return linha;
     }
-    return primeiraSpec;
+
+    // 3. Fallback: primeira linha que não é um label/spec.
+    for (final linha in linhas) {
+      final lower = linha.toLowerCase();
+      final ehSpec = lower.startsWith('câmera') || lower.startsWith('camera') ||
+          lower.startsWith('bateria') || lower.startsWith('ram') ||
+          lower.startsWith('processador') || lower.startsWith('tela') ||
+          lower.contains('mAh') || lower.contains('core') || lower.contains('ghz') ||
+          lower.contains('mp ') || lower.contains(' polegadas');
+      if (!ehSpec && linha.length < 80) return linha;
+    }
+
+    // 4. Nunca retorna a câmera; devolve vazio p/ usuário preencher.
+    return '';
   }
 
   Future<void> _saveManualModel(String desc, String price, List<String> specs) async {
