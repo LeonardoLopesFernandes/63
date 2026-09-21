@@ -34,10 +34,11 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   }
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
+    // Zoom exibido de 1x a 8x, mapeado para 0.0-1.0 na API (mobile_scanner).
     final newZoom = (_scaleStart * details.scale).clamp(1.0, 8.0);
     if (newZoom != _currentZoom) {
       _currentZoom = newZoom;
-      _controller.setZoomScale(_currentZoom);
+      _controller.setZoomScale((_currentZoom - 1) / 7);
       setState(() {});
     }
   }
