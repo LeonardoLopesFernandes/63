@@ -28,20 +28,20 @@ jobs:
         with:
           channel: stable
 
+      - name: Install Shorebird CLI
+        run: curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
+        env:
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+
       - name: Install dependencies
         run: flutter pub get
 
       - name: Setup keystore from Secrets
         run: |
           RAW="${{ secrets.KEYSTORE_BASE64 }}"
-          echo "Raw secret length: ${#RAW}"
-          echo "First 50 chars: ${RAW:0:50}"
-          echo "Last 50 chars: ${RAW: -50}"
           CLEAN=$(echo "$RAW" | tr -d '\n\r\t ')
-          echo "Clean length: ${#CLEAN}"
           echo "$CLEAN" | base64 --decode > android/app/upload.keystore
           echo "Keystore size: $(wc -c < android/app/upload.keystore) bytes"
-          file android/app/upload.keystore
 
       - name: Verify keystore
         run: |
@@ -56,12 +56,22 @@ jobs:
       - name: Flutter pub get (after clean)
         run: flutter pub get
 
-      - name: Build arm64-v8a APK (release, instalável)
+      - name: Shorebird release (APK arm64, release registrado p/ OTA)
         env:
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        run: flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm64 --build-number=${{ github.run_number }} --build-name=1.0.0
+        run: |
+          export PATH="$HOME/.shorebird/bin:$PATH"
+          shorebird doctor
+          shorebird release android \
+            --artifact=apk \
+            --target-platform android-arm64 \
+            --android-skip-build-dependency-validation \
+            --build-number=${{ github.run_number }} \
+            --build-name=1.0.0 \
+            -- --release
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
