@@ -67,12 +67,11 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
       _silencioso = args?[LoginWebViewScreen.EXTRA_SILENCIOSO] ?? false;
       _reveal = !_silencioso;
 
-      WebViewCookieManager().clearCookies();
+      // IMPORTANTE: NÃO limpar cookies/cache/localStorage. Manter a sessão
+      // Microsoft faz o auto-login ser instantâneo (igual ao minha-loja).
 
       _controller = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..clearCache()
-        ..clearLocalStorage()
         ..setUserAgent(
           'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 '
           '(KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
@@ -96,7 +95,7 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
         ..loadRequest(Uri.parse(msLoginUrl));
 
       if (_silencioso) {
-        _timeoutTimer = Timer(const Duration(seconds: 15), () {
+        _timeoutTimer = Timer(const Duration(seconds: 60), () {
           if (mounted && !_saved) {
             setState(() => _reveal = true);
           }
