@@ -214,14 +214,7 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _showAddModelDialog() async {
     final descController = TextEditingController();
     final priceController = TextEditingController();
-    final specsControllers = <TextEditingController>[
-      TextEditingController(),
-      TextEditingController(),
-      TextEditingController(),
-      TextEditingController(),
-      TextEditingController(),
-      TextEditingController(),
-    ];
+    final specsControllers = List.generate(6, (_) => TextEditingController());
     final specLabels = ['Câmera principal', 'Câmera frontal', 'Bateria', 'RAM', 'Processador', 'Tela'];
     final specHints = [
       'Ex: 50 Mp + 12 Mp + 10 Mp',
@@ -275,6 +268,7 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -338,7 +332,6 @@ class _MainScreenState extends State<MainScreen> {
     );
 
     final prefs = await SharedPreferences.getInstance();
-    final manualPhonesKey = 'manual_phones';
     final existing = prefs.getStringList('manual_phones') ?? [];
     existing.add(jsonEncode(newPhone.toJson()));
     await prefs.setStringList('manual_phones', existing);
@@ -356,148 +349,321 @@ class _MainScreenState extends State<MainScreen> {
     _toast('Modelo "$modelo $armazenamento" adicionado e selecionado!');
   }
 
-  Future<void> _showAddModelDialog() async {
-    final descController = TextEditingController();
-    final priceController = TextEditingController();
-    final specsControllers = <TextEditingController>[
-      TextEditingController(),
-      TextEditingController(),
-      TextEditingController(),
-      TextEditingController(),
-      TextEditingController(),
-      TextEditingController(),
-    ];
-    final specLabels = ['Câmera principal', 'Câmera frontal', 'Bateria', 'RAM', 'Processador', 'Tela'];
-    final specHints = [
-      'Ex: 50 Mp + 12 Mp + 10 Mp',
-      'Ex: 12MP',
-      'Ex: 5000 mAh',
-      'Ex: 8 GB de RAM',
-      'Ex: 8 Core 3.2 GHZ',
-      'Ex: 6,7"',
-    ];
+  void _gerar() async {
+    final newErrors = <String>[];
+    final dados = <PapeletaData>[];
+    for (var i = 0; i < 4; i++) {
+      final s = _states[i];
+      if (s.selectedPhone == null) {
+        newErrors.add('Papeleta ${i + 1}: selecione um modelo');
+      } else {
+        final price = parsePrice(s.priceText);
+        final discount = parsePrice(s.discountText);
+        if (price <= 0) {
+          newErrors.add('Papeleta ${i + 1}: digite o preço');
+        } else if (discount <= 0) {
+          newErrors.add('Papeleta ${i + 1}: digite o desconto');
+        } else {
+          final discountedPrice = (price - discount) < 0 ? 0.0 : price - discount;
+          final parc = calcParcelas(discountedPrice, daSemana: s.daSemana);
+          final phone = s.selectedPhone!;
+          dados.add(PapeletaData(
+            modelo: phone.modelo,
+            armazenamento: phone.armazenamento,
+            specs: phone.specs,
+            precoOriginal: fmtPrice(price),
+            desconto: fmtPrice(discount),
+            precoComDesconto: fmtPrice(discountedPrice),
+            qtdParcelas: parc.first,
+            valorParcela: fmtPrice(parc.second),
+            ean: s.ean,
+            codSap: s.codSap,
+            daSemana: s.daSemana,
+          ));
+        }
+      }
+    }
+    setState(() => _errors = newErrors);
+    if (newErrors.isEmpty && dados.length == 4) {
+      await _saveAll();
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => PreviewScreen(dados: dados)),
+        );
+      }
+    }
+  }
 
+  void _openScanner(int index) async {
+    final ean = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()),
+    );
+    if (ean == null || ean.isEmpty) return;
+    try {
+      final resp = await getPriceSignStandalone(
+        storeId: Session.getUserStore(),
+        type: 'PAPELETA_PROMOCIONAL',
+        ean: ean,
+        startDate: _today(),
+      );
+      await _mostrarDialogoResultados(index, resp.items);
+    } catch (e) {
+      final msg = e.toString();
+      if (msg.contains('401')) {
+        Session.clearToken();
+        Session.onLoginChange?.call();
+        return;
+      } else if (msg.contains('403')) {
+        _toast('Acesso negado.');
+      } else {
+        _toast('Erro ao consultar EAN: $msg');
+      }
+    }
+  }
+
+  Future<void> _abrirBuscaDescricao(int index, String query) async {
+    final q = query.trim();
+    if (q.length < 2) {
+      _toast('Digite ao menos 2 caracteres');
+      return;
+    }
+    _toast('Buscando...');
+    try {
+      final resp = await getSingleLabelPrinting(
+        storeId: Session.getUserStore(),
+        description: q,
+        startDate: _today(),
+      );
+      final dept63Items = resp.items.where((item) {
+        final dept = item.department.toLowerCase();
+        return dept.contains('63') || dept.contains('telefonia');
+      }).toList();
+      await _mostrarDialogoResultados(index, dept63Items.isNotEmpty ? dept63Items : resp.items);
+    } catch (e) {
+      final msg = e.toString();
+      if (msg.contains('401')) {
+        Session.clearToken();
+        Session.onLoginChange?.call();
+        return;
+      } else if (msg.contains('403')) {
+        _toast('Acesso negado.');
+      } else {
+        _toast('Erro na busca: $msg');
+      }
+    }
+  }
+
+  Future<void> _mostrarDialogoResultados(int index, List<PriceSign> items) async {
+    if (!mounted) return;
+    if (items.isEmpty) {
+      _toast('Nenhum resultado encontrado');
+      return;
+    }
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Adicionar modelo manualmente'),
+        title: const Text('Selecione o aparelho'),
         content: SizedBox(
           width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: descController,
-                  decoration: const InputDecoration(
-                    labelText: 'Descrição do modelo *',
-                    hintText: 'Ex: SAMSUNG A17 5G 256GB',
-                  ),
-                  autofocus: true,
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: priceController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Preço do aparelho *',
-                    hintText: 'Ex: 150000 (para R\$ 1.500,00)',
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text('Especificações (6 campos)', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                ...List.generate(6, (i) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: TextField(
-                    controller: specsControllers[i],
-                    decoration: InputDecoration(
-                      labelText: specLabels[i],
-                      hintText: specHints[i],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-          ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final desc = descController.text.trim();
-              final price = priceController.text.trim();
-              if (desc.isEmpty || price.isEmpty) {
-                ScaffoldMessenger.of(ctx).showSnackBar(
-                  const SnackBar(content: Text('Preencha descrição e preço')),
-                );
-                return;
-              }
-              final specs = specsControllers
-                  .map((c) => c.text.trim())
-                  .where((s) => s.isNotEmpty)
-                  .toList();
-              if (specs.length < 3) {
-                ScaffoldMessenger.of(ctx).showSnackBar(
-                  const SnackBar(content: Text('Preencha pelo menos 3 especificações')),
-                );
-                return;
-              }
-              Navigator.pop(ctx);
-              _saveManualModel(desc, price, specs);
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: items.length,
+            itemBuilder: (c, i) {
+              final item = items[i];
+              return ListTile(
+                title: Text(item.description),
+                subtitle: Text('R\$ ${item.price}'),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  _toast('Buscando especificações...');
+                  final matched = await getOrCreateSpecs(item.description, _celulares);
+                  if (matched != null) {
+                    final already = _celulares.any((c) =>
+                        c.modelo.toLowerCase() == matched.modelo.toLowerCase() &&
+                        c.armazenamento.toLowerCase() == matched.armazenamento.toLowerCase());
+                    if (!already && mounted) {
+                      setState(() => _celulares = [..._celulares, matched]);
+                    }
+                    _states[index] = _states[index].copyWith(
+                      selectedPhone: matched,
+                      priceText: parsePriceToDigits(item.price),
+                      ean: item.ean,
+                      codSap: item.sap,
+                    );
+                    _saveAll();
+                    if (mounted) setState(() {});
+                    _toast('${matched.modelo} ${matched.armazenamento} selecionado');
+                  } else {
+                    _toast('Modelo não encontrado nem na internet: ${item.description}');
+                  }
+                },
+              );
             },
-            child: const Text('Adicionar'),
           ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fechar')),
         ],
       ),
     );
   }
 
-  Future<void> _saveManualModel(String desc, String price, List<String> specs) async {
-    final upper = desc.toUpperCase();
-    String marca = 'Desconhecido';
-    if (upper.contains('SAMSUNG') || upper.contains('GALAXY')) marca = 'Samsung';
-    else if (upper.contains('MOTOROLA') || upper.contains('MOTO') || upper.contains('EDGE')) marca = 'Motorola';
-    else if (upper.contains('XIAOMI') || upper.contains('REDMI') || upper.contains('POCO')) marca = 'Xiaomi';
-    else if (upper.contains('APPLE') || upper.contains('IPHONE')) marca = 'Apple';
+  String _today() {
+    final now = DateTime.now();
+    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+  }
 
-    String armazenamento = 'Não informado';
-    final storageMatch = RegExp(r'(\d{2,4})\s?GB').firstMatch(upper);
-    if (storageMatch != null) {
-      armazenamento = '${storageMatch.group(1)}GB';
-    }
+  void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
-    var modelo = desc;
-    if (armazenamento != 'Não informado') {
-      modelo = modelo.replaceAll(RegExp(r'\d{2,4}\s?GB', caseSensitive: false), '').trim();
-    }
-
-    final newPhone = CelularSpec(
-      id: 'manual-${DateTime.now().millisecondsSinceEpoch}',
-      marca: marca,
-      modelo: modelo.toUpperCase(),
-      armazenamento: armazenamento,
-      specs: specs,
+  Future<void> _onBackPressed(BuildContext context) async {
+    final sair = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Deseja sair do aplicativo?',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('NÃO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('SIM, SAIR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
     );
+    if (sair == true) SystemNavigator.pop();
+  }
 
-    final prefs = await SharedPreferences.getInstance();
-    final manualPhonesKey = 'manual_phones';
-    final existing = prefs.getStringList('manual_phones') ?? [];
-    existing.add(jsonEncode(newPhone.toJson()));
-    await prefs.setStringList('manual_phones', existing);
-
-    setState(() {
-      _celulares.add(newPhone);
-    });
-
-    final priceDigits = price.replaceAll(RegExp(r'[^0-9]'), '');
-    _onStateChange(0, _states[0].copyWith(
-      selectedPhone: newPhone,
-      priceText: priceDigits,
-    ));
-
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    final motorola = _celulares.where((c) => c.marca == 'Motorola').toList();
+    final samsung = _celulares.where((c) => c.marca == 'Samsung').toList();
+    final outros = _celulares
+        .where((c) => c.marca != 'Motorola' && c.marca != 'Samsung')
+        .toList();
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) => _onBackPressed(context),
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF4F8FE),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          foregroundColor: const Color(0xFF1D1B20),
+          elevation: 0,
+          centerTitle: true,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Image.asset('assets/ic_papeleta.png', width: 36, height: 36),
+          ),
+          title: Center(
+            child: RichText(
+              text: const TextSpan(
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                children: [
+                  TextSpan(
+                    text: 'Plano de ',
+                    style: TextStyle(color: Color(0xFFD32F2F)),
+                  ),
+                  TextSpan(
+                    text: 'Telefonia',
+                    style: TextStyle(color: Color(0xFF0040A0)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.person, color: Color(0xFFD32F2F)),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              ),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                controller: _scroll,
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                itemCount: 4,
+                itemBuilder: (ctx, i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: FormRow(
+                    index: i,
+                    state: _states[i],
+                    motorolaPhones: motorola,
+                    samsungPhones: samsung,
+                    outrosPhones: outros,
+                    allPhones: _celulares,
+                    onStateChange: (s) => _onStateChange(i, s),
+                    onScan: () => _openScanner(i),
+                    onSearchSubmit: _abrirBuscaDescricao,
+                    onWeekToggle: (checked) {
+                      if (checked) {
+                        for (var j = 0; j < 4; j++) {
+                          _states[j] = j == i
+                              ? _states[j].copyWith(daSemana: true)
+                              : _states[j].copyWith(daSemana: false);
+                        }
+                      } else {
+                        _states[i] = _states[i].copyWith(daSemana: false);
+                      }
+                      _saveAll();
+                      setState(() {});
+                    },
+                    onPhoneRenamed: (phone, newName) => _onPhoneRenamed(phone, newName),
+                    onPhoneDeleted: (phone) => _onPhoneDeleted(phone),
+                    onPhoneAdded: (phone) => _onPhoneAdded(phone),
+                    onPhoneEdited: (phone, newSpecs) => _onPhoneEdited(phone, newSpecs),
+                  ),
+                ),
+              ),
+            ),
+            if (_errors.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF0F0),
+                  border: Border.all(color: Colors.red, width: 2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _errors
+                      .map((e) => Text(e, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)))
+                      .toList(),
+                ),
+              ),
+          ],
+        ),
+        floatingActionButton: _atBottom
+            ? SizedBox(
+                width: MediaQuery.of(context).size.width - 32,
+                child: FloatingActionButton.extended(
+                  onPressed: _gerar,
+                  backgroundColor: const Color(0xFFD32F2F),
+                  label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  icon: const Icon(Icons.check, color: Colors.white),
+                ),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
+    );
+  }
+}
     _toast('Modelo "$modelo $armazenamento" adicionado e selecionado!');
   }
 
@@ -728,6 +894,7 @@ class _MainScreenState extends State<MainScreen> {
                 ],
               ),
             ),
+          ),
           backgroundColor: Colors.transparent,
           foregroundColor: const Color(0xFF1D1B20),
           elevation: 0,
@@ -811,6 +978,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
+
 class FormRow extends StatefulWidget {
   final int index;
   final PapeletaFormState state;
@@ -1225,6 +1393,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
               ],
             ),
           ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
