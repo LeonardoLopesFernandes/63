@@ -198,16 +198,31 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _showAddModelDialog() async {
     final descController = TextEditingController();
     final priceController = TextEditingController();
+    final pasteController = TextEditingController();
     final specsControllers = List.generate(6, (_) => TextEditingController());
-    final specLabels = ['Câmera principal', 'Câmera frontal', 'Bateria', 'RAM', 'Processador', 'Tela'];
+    final specLabels = ['Câmera traseira', 'Câmera frontal', 'RAM', 'Bateria', 'Processador', 'Tela'];
     final specHints = [
       'Ex: 50 Mp + 12 Mp + 10 Mp',
       'Ex: 12MP',
-      'Ex: 5000 mAh',
       'Ex: 8 GB de RAM',
+      'Ex: 5000 mAh',
       'Ex: 8 Core 3.2 GHZ',
       'Ex: 6,7"',
     ];
+
+    // Extrai specs do texto colado (ficha técnica) e preenche os campos.
+    void extrair() {
+      final texto = pasteController.text;
+      if (texto.trim().isEmpty) return;
+      final specs = _parseSpecsDeFicha(texto);
+      for (var i = 0; i < specs.length && i < 6; i++) {
+        specsControllers[i].text = specs[i];
+      }
+      if (descController.text.trim().isEmpty && specs.isNotEmpty) {
+        descController.text = _extrairDescricao(texto, specs.first);
+      }
+      setState(() {});
+    }
 
     await showDialog<void>(
       context: context,
@@ -234,6 +249,36 @@ class _MainScreenState extends State<MainScreen> {
                   decoration: const InputDecoration(
                     labelText: 'Preço do aparelho *',
                     hintText: 'Ex: 150000 (para R\$ 1.500,00)',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text('Colar ficha técnica (busquei no navegador)',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0D47A1))),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: pasteController,
+                  maxLines: 4,
+                  minLines: 2,
+                  decoration: InputDecoration(
+                    hintText: 'Cole aqui o texto com as specs...',
+                    hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
+                    filled: true,
+                    fillColor: const Color(0xFFF0F4F9),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: extrair,
+                    icon: const Icon(Icons.auto_awesome, size: 18),
+                    label: const Text('Extrair specs automaticamente'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0D47A1),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -286,6 +331,81 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
     );
+  }
+
+  List<String> _parseSpecsDeFicha(String texto) {
+    final linhas = texto.split(RegExp(r'[\n\r]')).map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+    final specs = List<String>.filled(6, '');
+
+    String valorDe(String label) {
+      for (final linha in linhas) {
+        final lower = linha.toLowerCase();
+        if (lower.startsWith(label.toLowerCase())) {
+          var v = linha.substring(label.length).trim();
+          v = v.replaceAll(RegExp(r'^[:=\-]+'), '').trim();
+          if (v.isNotEmpty) return v;
+        }
+      }
+      return '';
+    }
+
+    // Câmera traseira
+    var cam = valorDe('Câmera traseira');
+    if (cam.isEmpty) cam = valorDe('Câmera');
+    specs[0] = cam;
+
+    // Câmera frontal
+    specs[1] = valorDe('Câmera frontal');
+
+    // RAM
+    var ram = valorDe('RAM');
+    if (ram.isEmpty) {
+      final m = RegExp(r'(\d{1,2})\s?GB[^,;]*RAM', caseSensitive: false).firstMatch(texto);
+      if (m != null) ram = '${m.group(1)} GB de RAM';
+    }
+    specs[2] = ram;
+
+    // Bateria
+    var bat = valorDe('Bateria');
+    if (bat.isEmpty) {
+      final m = RegExp(r'(\d{3,5})\s?mAh', caseSensitive: false).firstMatch(texto);
+      if (m != null) bat = '${m.group(1)} mAh';
+    }
+    specs[3] = bat;
+
+    // Processador
+    var cpu = valorDe('Processador');
+    if (cpu.isEmpty) {
+      final m = RegExp(r'(\d+\s?Core[^;,\n]*)', caseSensitive: false).firstMatch(texto);
+      if (m != null) cpu = m.group(1)!.trim();
+    }
+    specs[4] = cpu;
+
+    // Tela
+    var tela = valorDe('Tela');
+    if (tela.isEmpty) {
+      final m = RegExp(r'(\d{1,2}[,.]\d{1,2})[\s\"]*', caseSensitive: false).firstMatch(texto);
+      if (m != null) tela = '${m.group(1)}"';
+    }
+    specs[5] = tela;
+
+    return specs;
+  }
+
+  String _extrairDescricao(String texto, String primeiraSpec) {
+    // Remove labels conhecidos e spec para achar uma linha de descrição.
+    final linhas = texto.split(RegExp(r'[\n\r]')).map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+    for (final linha in linhas) {
+      final lower = linha.toLowerCase();
+      final ehLabel = lower.startsWith('descri') ||
+          lower.startsWith('câmera') || lower.startsWith('camera') ||
+          lower.startsWith('bateria') || lower.startsWith('ram') ||
+          lower.startsWith('processador') || lower.startsWith('tela') ||
+          lower.contains('mp') || lower.contains('mAh') || lower.contains('core') ||
+          lower.contains('ghz') || lower.contains('gb de ram');
+      if (!ehLabel && linha.length < 80) return linha;
+    }
+    return primeiraSpec;
   }
 
   Future<void> _saveManualModel(String desc, String price, List<String> specs) async {

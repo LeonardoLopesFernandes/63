@@ -44,10 +44,20 @@ class _BrowserScreenState extends State<BrowserScreen> {
       ..loadRequest(Uri.parse(url));
   }
 
-  String _buildSearchUrl(String query) {
-    final q = Uri.encodeComponent(query.trim());
-    return 'https://www.google.com/search?q=ficha+tecnica+$q';
-  }
+String _buildSearchUrl(String query) {
+    // Prompt otimizado p/ retornar as specs no formato que o app extrai.
+    final prompt = 'Liste as especificações de $query neste formato exato '
+        '(uma por linha, em português):\n'
+        'Descrição:\n'
+        'Câmera traseira:\n'
+        'Câmera frontal:\n'
+        'Bateria:\n'
+        'RAM:\n'
+        'Processador:\n'
+        'Tela:';
+    final q = Uri.encodeComponent(prompt);
+    return 'https://www.google.com/search?q=$q';
+}
 
   Future<void> _go() async {
     var input = _urlCtrl.text.trim();
