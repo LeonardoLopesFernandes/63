@@ -29,9 +29,9 @@ jobs:
           channel: stable
 
       - name: Install Shorebird CLI
-        run: curl --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/shorebirdtech/install/main/install.sh -sSf | bash
-        env:
-          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
 
       - name: Install dependencies
         run: flutter pub get
@@ -63,7 +63,6 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
-          export PATH="$HOME/.shorebird/bin:$PATH"
           shorebird doctor
           shorebird release android \
             --artifact=apk \
