@@ -67,9 +67,9 @@ jobs:
           shorebird release android \
             --artifact=apk \
             --target-platform android-arm64 \
-            --android-skip-build-dependency-validation \
             --build-number=${{ github.run_number }} \
-            --build-name=1.0.0
+            --build-name=1.0.0 \
+            -- --android-skip-build-dependency-validation
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
