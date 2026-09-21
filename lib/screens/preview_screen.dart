@@ -24,11 +24,12 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
-Widget _badgeLabel(String l1, String l2) => Column(
+Widget _badgeLabel(IconData icon, String label, Color color) => Column(
   mainAxisSize: MainAxisSize.min,
   children: [
-    Text(l1, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, height: 1.1), textAlign: TextAlign.center),
-    Text(l2, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, height: 1.1), textAlign: TextAlign.center),
+    Icon(icon, size: 18, color: color),
+    const SizedBox(height: 2),
+    Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 9, height: 1.1, color: color), textAlign: TextAlign.center),
   ],
 );
 
@@ -151,9 +152,9 @@ Widget _badgeLabel(String l1, String l2) => Column(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF0D47A1),
                       side: const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
-                      fixedSize: const Size.fromHeight(44),
+                      fixedSize: const Size.fromHeight(56),
                     ),
-                    child: _badgeLabel('ENVIAR', 'PAPELETA'),
+                    child: _badgeLabel(Icons.send, 'ENVIAR', const Color(0xFF0D47A1)),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -163,9 +164,11 @@ Widget _badgeLabel(String l1, String l2) => Column(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF2E7D32),
                       side: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
-                      fixedSize: const Size.fromHeight(44),
+                      fixedSize: const Size.fromHeight(56),
                     ),
-                    child: _busy ? const Text('IMPRIMINDO...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10)) : _badgeLabel('IMPRIMIR', 'PDF'),
+                    child: _busy
+                        ? const Text('IMPRIMINDO...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10))
+                        : _badgeLabel(Icons.print, 'IMPRIMIR', const Color(0xFF2E7D32)),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -175,9 +178,11 @@ Widget _badgeLabel(String l1, String l2) => Column(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF111111),
                       foregroundColor: Colors.white,
-                      fixedSize: const Size.fromHeight(44),
+                      fixedSize: const Size.fromHeight(56),
                     ),
-                    child: _busy ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10)) : const Text('COMPART PDF', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+                    child: _busy
+                        ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10))
+                        : _badgeLabel(Icons.share, 'COMPARTILHAR', Colors.white),
                   ),
                 ),
               ],
