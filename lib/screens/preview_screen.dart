@@ -119,7 +119,7 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Column(
     return Scaffold(
       backgroundColor: const Color(0xFFE8E8E8),
       appBar: AppBar(
-        title: const Center(
+        title: Center(
           child: RichText(
             text: TextSpan(
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),

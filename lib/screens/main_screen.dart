@@ -247,7 +247,7 @@ class _MainScreenState extends State<MainScreen> {
               children: [
                 TextField(
                   controller: descController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Descrição do modelo *',
                     hintText: 'Ex: SAMSUNG A17 5G 256GB',
                     filled: true,
@@ -260,7 +260,7 @@ class _MainScreenState extends State<MainScreen> {
                 TextField(
                   controller: priceController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Preço do aparelho *',
                     hintText: 'Ex: 150000 (para R\$ 1.500,00)',
                     filled: true,
