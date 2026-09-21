@@ -40,4 +40,4 @@ jobs:
         run: |
           shorebird patch android \
             --release-version=latest \
-            -- --android-skip-build-dependency-validation
+            -- --android-skip-build-dependency-validation --no-tree-shake-icons
