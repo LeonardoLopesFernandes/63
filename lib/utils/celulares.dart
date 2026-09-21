@@ -202,22 +202,57 @@ String _normalizeDesc(String s) {
   return out.replaceAll(RegExp(r'\s+'), ' ');
 }
 
-/// Encontra APENAS o aparelho idêntico ao da descrição selecionada:
-/// a descrição precisa conter o modelo E o armazenamento igual.
-/// Nunca retorna "parecido" — sem idêntico, a busca vai p/ internet.
+/// Encontra o aparelho no catálogo que corresponde à descrição selecionada.
+/// Reconhece variações de conectividade/armazenamento sem confundir modelos
+/// diferentes: "G06 128GB" casa com "MOTO G06 4G 128GB", mas "S23" não casa
+/// com "S23 ULTRA".
 CelularSpec? findExactPhone(List<CelularSpec> celulares, String description) {
-  final search = _normalizeDesc(description);
-  final wantedStorage = _extractStorageFromText(search);
+  final wantedStorage = _extractStorageFromText(description);
+  final searchTokens = _modelKeyTokens(description);
+  if (searchTokens.isEmpty) return null;
+
   for (final phone in celulares) {
-    final model = _normalizeDesc(phone.modelo);
-    if (model.isEmpty || !search.contains(model)) continue;
     if (wantedStorage != 'Não informado' &&
         _normalizeDesc(phone.armazenamento) != wantedStorage) {
       continue;
     }
-    return phone;
+    final phoneTokens = _modelKeyTokens(phone.modelo);
+    if (phoneTokens.isEmpty) continue;
+
+    if (_tokensMatch(searchTokens, phoneTokens)) {
+      return phone;
+    }
   }
   return null;
+}
+
+/// Tokens significativos do modelo, sem marca, conectividade (4G/5G),
+/// armazenamento e ruído genérico. Ex: "MOTO G06 4G" -> ["G06"].
+Set<String> _modelKeyTokens(String text) {
+  const marca = {
+    'SAMSUNG', 'GALAXY', 'MOTOROLA', 'MOTO', 'XIAOMI', 'REDMI', 'POCO',
+    'APPLE', 'IPHONE', 'EDGE', 'SMART', 'PHONE', 'CELULAR',
+  };
+  const ruido = {
+    '4G', '5G', '3G', '2G', 'WIFI', 'NFC', 'DUAL', 'SIM', 'CHIP',
+    'NOVO', 'NOVA', 'ORIGINAL', 'LACRADO', 'APARELHO',
+  };
+  final tokens = _normalizeDesc(text).split(' ').where((t) {
+    if (t.length < 2) return false;
+    if (marca.contains(t)) return false;
+    if (ruido.contains(t)) return false;
+    if (RegExp(r'^\d+(?:[.,]\d+)?\s?(GB|TB)$').hasMatch(t)) return false;
+    return true;
+  }).toSet();
+  return tokens;
+}
+
+/// true se os conjuntos são iguais ou a diferença é só de ruído permitido.
+bool _tokensMatch(Set<String> a, Set<String> b) {
+  if (a.isEmpty || b.isEmpty) return false;
+  if (a.length != b.length) return false;
+  // Mesma quantidade de tokens significativos e todos iguais (ordem não importa).
+  return a.containsAll(b) && b.containsAll(a);
 }
 
 /// Limpa a descrição verbosa da 1ª API p/ a busca na MobileAPI.

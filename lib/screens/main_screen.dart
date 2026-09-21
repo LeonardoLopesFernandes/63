@@ -575,10 +575,27 @@ void _openScanner(int index) async {
             padding: const EdgeInsets.only(left: 12),
             child: Image.asset('assets/ic_papeleta.png', width: 36, height: 36),
           ),
-          title: const Text('Plano de Telefonia', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+          title: Center(
+            child: RichText(
+              text: const TextSpan(
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                children: [
+                  TextSpan(
+                    text: 'Plano de ',
+                    style: TextStyle(color: Color(0xFFD32F2F)),
+                  ),
+                  TextSpan(
+                    text: 'Telefonia',
+                    style: TextStyle(color: Color(0xFF0040A0)),
+                  ),
+                ],
+              ),
+            ),
+          ),
           backgroundColor: Colors.transparent,
           foregroundColor: const Color(0xFF1D1B20),
           elevation: 0,
+          centerTitle: true,
           actions: [
             IconButton(
               icon: const Icon(Icons.person, color: Color(0xFFD32F2F)),
@@ -893,6 +910,25 @@ class PhoneDropdown extends StatefulWidget {
 
 class _PhoneDropdownState extends State<PhoneDropdown> {
   bool _expanded = false;
+  final TextEditingController _searchCtrl = TextEditingController();
+  String _searchTerm = '';
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  List<CelularSpec> _filter(List<CelularSpec> phones) {
+    if (_searchTerm.trim().isEmpty) return phones;
+    final q = _searchTerm.toLowerCase();
+    return phones
+        .where((p) =>
+            p.modelo.toLowerCase().contains(q) ||
+            p.armazenamento.toLowerCase().contains(q) ||
+            p.marca.toLowerCase().contains(q))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -928,19 +964,33 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(padding: EdgeInsets.all(8), child: Text('Motorola', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
-                  ...widget.motorolaPhones.map((p) => _item(p)),
-                  const Divider(),
-                  const Padding(padding: EdgeInsets.all(8), child: Text('Samsung', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
-                  ...widget.samsungPhones.map((p) => _item(p)),
-                  if (widget.outrosPhones.isNotEmpty) ...[
-                    const Divider(),
-                    const Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text('Buscados na internet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
-                    ...widget.outrosPhones.map((p) => _item(p)),
-                  ],
-                  const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    child: TextField(
+                      controller: _searchCtrl,
+                      onChanged: (v) => setState(() => _searchTerm = v),
+                      style: const TextStyle(fontSize: 14),
+                      decoration: InputDecoration(
+                        hintText: 'Buscar modelo na lista...',
+                        hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 18),
+                        suffixIcon: _searchTerm.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear, color: Colors.grey, size: 18),
+                                onPressed: () {
+                                  _searchCtrl.clear();
+                                  setState(() => _searchTerm = '');
+                                },
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: const Color(0xFFF0F4F9),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                      ),
+                    ),
+                  ),
                   ListTile(
                     dense: true,
                     leading: const Icon(Icons.add_circle, color: Color(0xFF0D47A1)),
@@ -950,6 +1000,19 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
                       widget.onAddModel();
                     },
                   ),
+                  const Divider(),
+                  const Padding(padding: EdgeInsets.all(8), child: Text('Motorola', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
+                  ..._filter(widget.motorolaPhones).map((p) => _item(p)),
+                  const Divider(),
+                  const Padding(padding: EdgeInsets.all(8), child: Text('Samsung', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
+                  ..._filter(widget.samsungPhones).map((p) => _item(p)),
+                  if (_filter(widget.outrosPhones).isNotEmpty) ...[
+                    const Divider(),
+                    const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Text('Buscados na internet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15))),
+                    ..._filter(widget.outrosPhones).map((p) => _item(p)),
+                  ],
                 ],
               ),
             ),
@@ -1046,12 +1109,12 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
 
   void _showEditSpecsDialog(CelularSpec phone) {
     final specsControllers = phone.specs.map((s) => TextEditingController(text: s)).toList();
-    final specLabels = ['Câmera principal', 'Câmera frontal', 'Bateria', 'RAM', 'Processador', 'Tela'];
+    final specLabels = ['Câmera traseira', 'Câmera frontal', 'RAM', 'Bateria', 'Processador', 'Tela'];
     final specHints = [
       'Ex: 50 Mp + 12 Mp + 10 Mp',
       'Ex: 12MP',
-      'Ex: 5000 mAh',
       'Ex: 8 GB de RAM',
+      'Ex: 5000 mAh',
       'Ex: 8 Core 3.2 GHZ',
       'Ex: 6,7"',
     ];
@@ -1063,13 +1126,14 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Editar specs: ${phone.modelo} ${phone.armazenamento}'),
+        title: Text('${phone.modelo} ${phone.armazenamento}', style: const TextStyle(fontWeight: FontWeight.bold)),
         content: SizedBox(
           width: double.maxFinite,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                const SizedBox(height: 4),
                 const Text('Edite as especificações:', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 ...List.generate(6, (i) => Padding(

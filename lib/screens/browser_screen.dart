@@ -70,50 +70,56 @@ class _BrowserScreenState extends State<BrowserScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text('Buscar na internet', style: TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold)),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-            child: TextField(
-              controller: _urlCtrl,
-              onSubmitted: (_) => _go(),
-              textInputAction: TextInputAction.go,
-              style: const TextStyle(fontSize: 14),
-              decoration: InputDecoration(
-                hintText: 'Digite um termo ou URL...',
-                hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 20),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.arrow_forward, color: Colors.black54, size: 20),
-                  onPressed: _go,
+      body: Column(
+        children: [
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+              child: TextField(
+                controller: _urlCtrl,
+                onSubmitted: (_) => _go(),
+                textInputAction: TextInputAction.go,
+                style: const TextStyle(fontSize: 14),
+                decoration: InputDecoration(
+                  hintText: 'Digite um termo ou URL...',
+                  hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  prefixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 20),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const Icon(Icons.search, color: Colors.grey, size: 20),
+                    ],
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.arrow_forward, color: Colors.black54, size: 20),
+                    onPressed: _go,
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xFFF0F4F9),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
                 ),
-                filled: true,
-                fillColor: const Color(0xFFF0F4F9),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
               ),
             ),
           ),
-        ),
-      ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: _controller),
-          if (_loading)
-            const Positioned.fill(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+          Expanded(
+            child: Stack(
+              children: [
+                WebViewWidget(controller: _controller),
+                if (_loading)
+                  const Positioned.fill(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+              ],
             ),
+          ),
         ],
       ),
       bottomNavigationBar: SafeArea(
