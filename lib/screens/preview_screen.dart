@@ -24,13 +24,23 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
-Widget _badgeLabel(IconData icon, String label, Color color) => Column(
-  mainAxisSize: MainAxisSize.min,
-  children: [
-    Icon(icon, size: 18, color: color),
-    const SizedBox(height: 2),
-    Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 9, height: 1.1, color: color), textAlign: TextAlign.center),
-  ],
+Widget _badgeLabel(IconData icon, String label, Color color) => Container(
+  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+  decoration: BoxDecoration(
+    color: color.withValues(alpha: 0.08),
+    borderRadius: BorderRadius.circular(8),
+  ),
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, size: 20, color: color),
+      const SizedBox(height: 2),
+      FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, height: 1.1, color: color), textAlign: TextAlign.center, maxLines: 1),
+      ),
+    ],
+  ),
 );
 
   Future<void> _compartilhar() async {
