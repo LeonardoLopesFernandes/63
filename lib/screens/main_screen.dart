@@ -851,7 +851,7 @@ void _openScanner(int index) async {
                child: FloatingActionButton.extended(
                  onPressed: _gerar,
                  backgroundColor: const Color(0xFFD32F2F),
-                 label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                 label: const Text('GERAR PAPELETA', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                  icon: const Icon(Icons.check, color: Colors.white),
                ),
              )

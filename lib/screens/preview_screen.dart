@@ -119,9 +119,20 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Column(
     return Scaffold(
       backgroundColor: const Color(0xFFE8E8E8),
       appBar: AppBar(
-        title: const Text('Visualização de Papeleta', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Center(
+          child: RichText(
+            text: TextSpan(
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              children: [
+                TextSpan(text: 'Visualização', style: TextStyle(color: Color(0xFF0D47A1))),
+                TextSpan(text: ' de Papeleta', style: TextStyle(color: Color(0xFFD32F2F))),
+              ],
+            ),
+          ),
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [

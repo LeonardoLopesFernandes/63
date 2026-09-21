@@ -103,9 +103,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F8FE),
       appBar: AppBar(
-        title: const Text('Perfil do Usuário', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Center(
+          child: Text('Perfil do Usuário', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        ),
         backgroundColor: brandRed,
         iconTheme: const IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
