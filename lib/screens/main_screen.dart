@@ -7,6 +7,7 @@ import 'package:papeleta63/api/endpoints.dart';
 import 'package:papeleta63/api/models.dart';
 import 'package:papeleta63/api/session.dart';
 import 'package:papeleta63/screens/barcode_scanner_screen.dart';
+import 'package:papeleta63/screens/browser_screen.dart';
 import 'package:papeleta63/screens/login_screen.dart';
 import 'package:papeleta63/screens/preview_screen.dart';
 import 'package:papeleta63/screens/profile_screen.dart';
@@ -46,7 +47,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   String _randomPriceDigits() {
-    final cents = _random.nextInt(220000) + 80000;
+    final cents = _random.nextInt(220000) + 80000; // R$ 800,00 a R$ 2.999,00
     return cents.toString();
   }
 
@@ -58,6 +59,8 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _load() async {
+    // Sessão expirada enquanto o app estava aberto/fechado: volta ao
+    // login, que reloga sozinho com as credenciais salvas.
     if (!Session.hasValidToken()) {
       if (mounted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -70,6 +73,8 @@ class _MainScreenState extends State<MainScreen> {
       }
       return;
     }
+    // Inclui assets + já buscados via MobileAPI (phones.json) para que
+    // S23 etc., uma vez buscados, apareçam na lista.
     final celulares = await loadAllCelulares();
     final prefs = await SharedPreferences.getInstance();
     for (var i = 0; i < 4; i++) {
@@ -124,11 +129,8 @@ class _MainScreenState extends State<MainScreen> {
     final idx = _celulares.indexWhere((p) => p.id == phone.id);
     if (idx != -1) {
       _celulares[idx] = CelularSpec(
-        id: phone.id,
-        marca: phone.marca,
-        modelo: newName,
-        armazenamento: phone.armazenamento,
-        specs: phone.specs,
+        id: phone.id, marca: phone.marca, modelo: newName,
+        armazenamento: phone.armazenamento, specs: phone.specs,
       );
     }
 
@@ -136,11 +138,8 @@ class _MainScreenState extends State<MainScreen> {
       if (_states[i].selectedPhone?.id == phone.id) {
         _states[i] = _states[i].copyWith(
           selectedPhone: CelularSpec(
-            id: phone.id,
-            marca: phone.marca,
-            modelo: newName,
-            armazenamento: phone.armazenamento,
-            specs: phone.specs,
+            id: phone.id, marca: phone.marca, modelo: newName,
+            armazenamento: phone.armazenamento, specs: phone.specs,
           ),
         );
       }
@@ -153,8 +152,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> _onPhoneDeleted(CelularSpec phone) async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'phone_deleted_${phone.id}';
-    await prefs.setBool(key, true);
+    await prefs.setBool('phone_deleted_${phone.id}', true);
 
     _celulares.removeWhere((p) => p.id == phone.id);
 
@@ -169,26 +167,15 @@ class _MainScreenState extends State<MainScreen> {
     _toast('Modelo removido');
   }
 
-  void _onPhoneAdded(CelularSpec phone) {
-    if (!_celulares.any((p) => p.id == phone.id)) {
-      setState(() => _celulares.add(phone));
-    }
-    _toast('Modelo "${phone.modelo} ${phone.armazenamento}" adicionado!');
-  }
-
   Future<void> _onPhoneEdited(CelularSpec phone, List<String> newSpecs) async {
     final prefs = await SharedPreferences.getInstance();
-    final key = 'phone_specs_${phone.id}';
-    await prefs.setStringList(key, newSpecs);
+    await prefs.setStringList('phone_specs_${phone.id}', newSpecs);
 
     final idx = _celulares.indexWhere((p) => p.id == phone.id);
     if (idx != -1) {
       _celulares[idx] = CelularSpec(
-        id: phone.id,
-        marca: phone.marca,
-        modelo: phone.modelo,
-        armazenamento: phone.armazenamento,
-        specs: newSpecs,
+        id: phone.id, marca: phone.marca, modelo: phone.modelo,
+        armazenamento: phone.armazenamento, specs: newSpecs,
       );
     }
 
@@ -196,11 +183,8 @@ class _MainScreenState extends State<MainScreen> {
       if (_states[i].selectedPhone?.id == phone.id) {
         _states[i] = _states[i].copyWith(
           selectedPhone: CelularSpec(
-            id: phone.id,
-            marca: phone.marca,
-            modelo: phone.modelo,
-            armazenamento: phone.armazenamento,
-            specs: newSpecs,
+            id: phone.id, marca: phone.marca, modelo: phone.modelo,
+            armazenamento: phone.armazenamento, specs: newSpecs,
           ),
         );
       }
@@ -394,7 +378,7 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  void _openScanner(int index) async {
+void _openScanner(int index) async {
     final ean = await Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()),
     );
@@ -421,6 +405,16 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  void _openBrowser(int index) {
+    final selected = _states[index].selectedPhone;
+    final query = selected == null
+        ? 'celular'
+        : '${selected.marca} ${selected.modelo} ${selected.armazenamento}';
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => BrowserScreen(initialQuery: query)),
+    );
+  }
+
   Future<void> _abrirBuscaDescricao(int index, String query) async {
     final q = query.trim();
     if (q.length < 2) {
@@ -442,6 +436,7 @@ class _MainScreenState extends State<MainScreen> {
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
+        // Limpa só o token (mantém credenciais p/ o auto-login relogar sozinho).
         Session.clearToken();
         Session.onLoginChange?.call();
         return;
@@ -473,347 +468,49 @@ class _MainScreenState extends State<MainScreen> {
               return ListTile(
                 title: Text(item.description),
                 subtitle: Text('R\$ ${item.price}'),
-                onTap: () async {
+                onTap: () {
+                  // 1. Preenche IMEDIATAMENTE com o que veio da 1ª API.
                   Navigator.pop(ctx);
-                  _toast('Buscando especificações...');
-                  final matched = await getOrCreateSpecs(item.description, _celulares);
-                  if (matched != null) {
-                    final already = _celulares.any((c) =>
-                        c.modelo.toLowerCase() == matched.modelo.toLowerCase() &&
-                        c.armazenamento.toLowerCase() == matched.armazenamento.toLowerCase());
-                    if (!already && mounted) {
-                      setState(() => _celulares = [..._celulares, matched]);
-                    }
-                    _states[index] = _states[index].copyWith(
-                      selectedPhone: matched,
-                      priceText: parsePriceToDigits(item.price),
-                      ean: item.ean,
-                      codSap: item.sap,
-                    );
-                    _saveAll();
-                    if (mounted) setState(() {});
-                    _toast('${matched.modelo} ${matched.armazenamento} selecionado');
-                  } else {
-                    _toast('Modelo não encontrado nem na internet: ${item.description}');
-                  }
-                },
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fechar')),
-        ],
-      ),
-    );
-  }
+                  _states[index] = _states[index].copyWith(
+                    selectedPhone: CelularSpec(
+                      id: 'temp-${DateTime.now().millisecondsSinceEpoch}',
+                      marca: '',
+                      modelo: item.description,
+                      armazenamento: 'Não informado',
+                      specs: [],
+                    ),
+                    priceText: parsePriceToDigits(item.price),
+                    ean: item.ean,
+                    codSap: item.sap,
+                  );
+                  _saveAll();
+                  if (mounted) setState(() {});
+                  _toast('${item.description} selecionado — buscando specs...');
 
-  String _today() {
-    final now = DateTime.now();
-    return '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-  }
-
-  void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-
-  Future<void> _onBackPressed(BuildContext context) async {
-    final sair = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Deseja sair do aplicativo?',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('NÃO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('SIM, SAIR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-    if (sair == true) SystemNavigator.pop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_loaded) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-    final motorola = _celulares.where((c) => c.marca == 'Motorola').toList();
-    final samsung = _celulares.where((c) => c.marca == 'Samsung').toList();
-    final outros = _celulares
-        .where((c) => c.marca != 'Motorola' && c.marca != 'Samsung')
-        .toList();
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) => _onBackPressed(context),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF4F8FE),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          foregroundColor: const Color(0xFF1D1B20),
-          elevation: 0,
-          centerTitle: true,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 12),
-            child: Image.asset('assets/ic_papeleta.png', width: 36, height: 36),
-          ),
-          title: Center(
-            child: RichText(
-              text: const TextSpan(
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                children: [
-                  TextSpan(
-                    text: 'Plano de ',
-                    style: TextStyle(color: Color(0xFFD32F2F)),
-                  ),
-                  TextSpan(
-                    text: 'Telefonia',
-                    style: TextStyle(color: Color(0xFF0040A0)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.person, color: Color(0xFFD32F2F)),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ProfileScreen()),
-              ),
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                controller: _scroll,
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                itemCount: 4,
-                itemBuilder: (ctx, i) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: FormRow(
-                    index: i,
-                    state: _states[i],
-                    motorolaPhones: motorola,
-                    samsungPhones: samsung,
-                    outrosPhones: outros,
-                    allPhones: _celulares,
-                    onStateChange: (s) => _onStateChange(i, s),
-                    onScan: () => _openScanner(i),
-                    onSearchSubmit: _abrirBuscaDescricao,
-                    onWeekToggle: (checked) {
-                      if (checked) {
-                        for (var j = 0; j < 4; j++) {
-                          _states[j] = j == i
-                              ? _states[j].copyWith(daSemana: true)
-                              : _states[j].copyWith(daSemana: false);
-                        }
-                      } else {
-                        _states[i] = _states[i].copyWith(daSemana: false);
+                  // 2. Em background busca specs corretas (MobileAPI/GSMArena).
+                  Future.microtask(() async {
+                    final matched = await getOrCreateSpecs(item.description, _celulares);
+                    if (!mounted) return;
+                    if (matched != null) {
+                      final already = _celulares.any((c) =>
+                          c.modelo.toLowerCase() == matched.modelo.toLowerCase() &&
+                          c.armazenamento.toLowerCase() == matched.armazenamento.toLowerCase());
+                      if (!already) {
+                        setState(() => _celulares = [..._celulares, matched]);
                       }
+                      _states[index] = _states[index].copyWith(
+                        selectedPhone: matched,
+                        priceText: parsePriceToDigits(item.price),
+                        ean: item.ean,
+                        codSap: item.sap,
+                      );
                       _saveAll();
                       setState(() {});
-                    },
-                    onPhoneRenamed: (phone, newName) => _onPhoneRenamed(phone, newName),
-                    onPhoneDeleted: (phone) => _onPhoneDeleted(phone),
-                    onPhoneAdded: (phone) => _onPhoneAdded(phone),
-                    onPhoneEdited: (phone, newSpecs) => _onPhoneEdited(phone, newSpecs),
-                  ),
-                ),
-              ),
-            ),
-            if (_errors.isNotEmpty)
-              Container(
-                margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF0F0),
-                  border: Border.all(color: Colors.red, width: 2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _errors
-                      .map((e) => Text(e, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)))
-                      .toList(),
-                ),
-              ),
-          ],
-        ),
-        floatingActionButton: _atBottom
-            ? SizedBox(
-                width: MediaQuery.of(context).size.width - 32,
-                child: FloatingActionButton.extended(
-                  onPressed: _gerar,
-                  backgroundColor: const Color(0xFFD32F2F),
-                  label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  icon: const Icon(Icons.check, color: Colors.white),
-                ),
-              )
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      ),
-    );
-  }
-}
-    _toast('Modelo "$modelo $armazenamento" adicionado e selecionado!');
-  }
-
-  void _gerar() async {
-    final newErrors = <String>[];
-    final dados = <PapeletaData>[];
-    for (var i = 0; i < 4; i++) {
-      final s = _states[i];
-      if (s.selectedPhone == null) {
-        newErrors.add('Papeleta ${i + 1}: selecione um modelo');
-      } else {
-        final price = parsePrice(s.priceText);
-        final discount = parsePrice(s.discountText);
-        if (price <= 0) {
-          newErrors.add('Papeleta ${i + 1}: digite o preço');
-        } else if (discount <= 0) {
-          newErrors.add('Papeleta ${i + 1}: digite o desconto');
-        } else {
-          final discountedPrice = (price - discount) < 0 ? 0.0 : price - discount;
-          final parc = calcParcelas(discountedPrice, daSemana: s.daSemana);
-          final phone = s.selectedPhone!;
-          dados.add(PapeletaData(
-            modelo: phone.modelo,
-            armazenamento: phone.armazenamento,
-            specs: phone.specs,
-            precoOriginal: fmtPrice(price),
-            desconto: fmtPrice(discount),
-            precoComDesconto: fmtPrice(discountedPrice),
-            qtdParcelas: parc.first,
-            valorParcela: fmtPrice(parc.second),
-            ean: s.ean,
-            codSap: s.codSap,
-            daSemana: s.daSemana,
-          ));
-        }
-      }
-    }
-    setState(() => _errors = newErrors);
-    if (newErrors.isEmpty && dados.length == 4) {
-      await _saveAll();
-      if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => PreviewScreen(dados: dados)),
-        );
-      }
-    }
-  }
-
-  void _openScanner(int index) async {
-    final ean = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (_) => const BarcodeScannerScreen()),
-    );
-    if (ean == null || ean.isEmpty) return;
-    try {
-      final resp = await getPriceSignStandalone(
-        storeId: Session.getUserStore(),
-        type: 'PAPELETA_PROMOCIONAL',
-        ean: ean,
-        startDate: _today(),
-      );
-      await _mostrarDialogoResultados(index, resp.items);
-    } catch (e) {
-      final msg = e.toString();
-      if (msg.contains('401')) {
-        Session.clearToken();
-        Session.onLoginChange?.call();
-        return;
-      } else if (msg.contains('403')) {
-        _toast('Acesso negado.');
-      } else {
-        _toast('Erro ao consultar EAN: $msg');
-      }
-    }
-  }
-
-  Future<void> _abrirBuscaDescricao(int index, String query) async {
-    final q = query.trim();
-    if (q.length < 2) {
-      _toast('Digite ao menos 2 caracteres');
-      return;
-    }
-    _toast('Buscando...');
-    try {
-      final resp = await getSingleLabelPrinting(
-        storeId: Session.getUserStore(),
-        description: q,
-        startDate: _today(),
-      );
-      final dept63Items = resp.items.where((item) {
-        final dept = item.department.toLowerCase();
-        return dept.contains('63') || dept.contains('telefonia');
-      }).toList();
-      await _mostrarDialogoResultados(index, dept63Items.isNotEmpty ? dept63Items : resp.items);
-    } catch (e) {
-      final msg = e.toString();
-      if (msg.contains('401')) {
-        Session.clearToken();
-        Session.onLoginChange?.call();
-        return;
-      } else if (msg.contains('403')) {
-        _toast('Acesso negado.');
-      } else {
-        _toast('Erro na busca: $msg');
-      }
-    }
-  }
-
-  Future<void> _mostrarDialogoResultados(int index, List<PriceSign> items) async {
-    if (!mounted) return;
-    if (items.isEmpty) {
-      _toast('Nenhum resultado encontrado');
-      return;
-    }
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Selecione o aparelho'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: items.length,
-            itemBuilder: (c, i) {
-              final item = items[i];
-              return ListTile(
-                title: Text(item.description),
-                subtitle: Text('R\$ ${item.price}'),
-                onTap: () async {
-                  Navigator.pop(ctx);
-                  _toast('Buscando especificações...');
-                  final matched = await getOrCreateSpecs(item.description, _celulares);
-                  if (matched != null) {
-                    final already = _celulares.any((c) =>
-                        c.modelo.toLowerCase() == matched.modelo.toLowerCase() &&
-                        c.armazenamento.toLowerCase() == matched.armazenamento.toLowerCase());
-                    if (!already && mounted) {
-                      setState(() => _celulares = [..._celulares, matched]);
+                      _toast('${matched.modelo} ${matched.armazenamento} — specs carregadas');
+                    } else {
+                      _toast('Specs não encontradas na internet para: ${item.description}');
                     }
-                    _states[index] = _states[index].copyWith(
-                      selectedPhone: matched,
-                      priceText: parsePriceToDigits(item.price),
-                      ean: item.ean,
-                      codSap: item.sap,
-                    );
-                    _saveAll();
-                    if (mounted) setState(() {});
-                    _toast('${matched.modelo} ${matched.armazenamento} selecionado');
-                  } else {
-                    _toast('Modelo não encontrado nem na internet: ${item.description}');
-                  }
+                  });
                 },
               );
             },
@@ -878,27 +575,10 @@ class _MainScreenState extends State<MainScreen> {
             padding: const EdgeInsets.only(left: 12),
             child: Image.asset('assets/ic_papeleta.png', width: 36, height: 36),
           ),
-          title: Center(
-            child: RichText(
-              text: const TextSpan(
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                children: [
-                  TextSpan(
-                    text: 'Plano de ',
-                    style: TextStyle(color: Color(0xFFD32F2F)),
-                  ),
-                  TextSpan(
-                    text: 'Telefonia',
-                    style: TextStyle(color: Color(0xFF0040A0)),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          title: const Text('Plano de Telefonia', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
           backgroundColor: Colors.transparent,
           foregroundColor: const Color(0xFF1D1B20),
           elevation: 0,
-          centerTitle: true,
           actions: [
             IconButton(
               icon: const Icon(Icons.person, color: Color(0xFFD32F2F)),
@@ -908,72 +588,73 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ],
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                controller: _scroll,
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                itemCount: 4,
-                itemBuilder: (ctx, i) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: FormRow(
-                    index: i,
-                    state: _states[i],
-                    motorolaPhones: motorola,
-                    samsungPhones: samsung,
-                    outrosPhones: outros,
-                    allPhones: _celulares,
-                    onStateChange: (s) => _onStateChange(i, s),
-                    onScan: () => _openScanner(i),
-                    onSearchSubmit: _abrirBuscaDescricao,
-                    onWeekToggle: (checked) {
-                      if (checked) {
-                        for (var j = 0; j < 4; j++) {
-                          _states[j] = j == i ? _states[j].copyWith(daSemana: true) : _states[j].copyWith(daSemana: false);
-                        }
-                      } else {
-                        _states[i] = _states[i].copyWith(daSemana: false);
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              controller: _scroll,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              itemCount: 4,
+              itemBuilder: (ctx, i) => Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: FormRow(
+                  index: i,
+                  state: _states[i],
+                  motorolaPhones: motorola,
+                  samsungPhones: samsung,
+                  outrosPhones: outros,
+                  allPhones: _celulares,
+                  onStateChange: (s) => _onStateChange(i, s),
+                  onScan: () => _openScanner(i),
+                  onSearchSubmit: _abrirBuscaDescricao,
+                  onSearchWeb: (i) => _openBrowser(i),
+                  onWeekToggle: (checked) {
+                    if (checked) {
+                      for (var j = 0; j < 4; j++) {
+                        _states[j] = j == i ? _states[j].copyWith(daSemana: true) : _states[j].copyWith(daSemana: false);
                       }
-                      _saveAll();
-                      setState(() {});
-                    },
-                    onPhoneRenamed: (phone, newName) => _onPhoneRenamed(phone, newName),
-                    onPhoneDeleted: (phone) => _onPhoneDeleted(phone),
-                    onPhoneAdded: (phone) => _onPhoneAdded(phone),
-                    onPhoneEdited: (phone, newSpecs) => _onPhoneEdited(phone, newSpecs),
-                  ),
+                    } else {
+                      _states[i] = _states[i].copyWith(daSemana: false);
+                    }
+                    _saveAll();
+                    setState(() {});
+                  },
+                  onPhoneRenamed: (phone, newName) => _onPhoneRenamed(phone, newName),
+                  onPhoneDeleted: (phone) => _onPhoneDeleted(phone),
+                  onPhoneEdited: (phone, newSpecs) => _onPhoneEdited(phone, newSpecs),
+                  onAddModel: _showAddModelDialog,
                 ),
               ),
             ),
-            if (_errors.isNotEmpty)
-              Container(
-                margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF0F0),
-                  border: Border.all(color: Colors.red, width: 2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _errors.map((e) => Text(e, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold))).toList(),
-                ),
+          ),
+          if (_errors.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF0F0),
+                border: Border.all(color: Colors.red, width: 2),
+                borderRadius: BorderRadius.circular(12),
               ),
-          ],
-        ),
-        floatingActionButton: _atBottom
-            ? SizedBox(
-                width: MediaQuery.of(context).size.width - 32,
-                child: FloatingActionButton.extended(
-                  onPressed: _gerar,
-                  backgroundColor: const Color(0xFFD32F2F),
-                  label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  icon: const Icon(Icons.check, color: Colors.white),
-                ),
-              )
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _errors.map((e) => Text(e, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold))).toList(),
+              ),
+            ),
+        ],
+      ),
+       floatingActionButton: _atBottom
+           ? SizedBox(
+               width: MediaQuery.of(context).size.width - 32,
+               child: FloatingActionButton.extended(
+                 onPressed: _gerar,
+                 backgroundColor: const Color(0xFFD32F2F),
+                 label: const Text('GERAR', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                 icon: const Icon(Icons.check, color: Colors.white),
+               ),
+             )
+           : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -990,10 +671,11 @@ class FormRow extends StatefulWidget {
   final VoidCallback onScan;
   final void Function(int, String) onSearchSubmit;
   final void Function(bool) onWeekToggle;
+  final void Function(int) onSearchWeb;
   final void Function(CelularSpec, String) onPhoneRenamed;
   final void Function(CelularSpec) onPhoneDeleted;
-  final void Function(CelularSpec?) onPhoneAdded;
   final void Function(CelularSpec, List<String>) onPhoneEdited;
+  final VoidCallback onAddModel;
 
   const FormRow({
     super.key,
@@ -1007,10 +689,11 @@ class FormRow extends StatefulWidget {
     required this.onScan,
     required this.onSearchSubmit,
     required this.onWeekToggle,
+    required this.onSearchWeb,
     required this.onPhoneRenamed,
     required this.onPhoneDeleted,
-    required this.onPhoneAdded,
     required this.onPhoneEdited,
+    required this.onAddModel,
   });
 
   @override
@@ -1057,10 +740,22 @@ class _FormRowState extends State<FormRow> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('PAPELETA ${widget.index + 1}', style: const TextStyle(color: Color(0xFFD32F2F), fontWeight: FontWeight.bold, fontSize: 16)),
-            IconButton.filled(
-              onPressed: widget.onScan,
-              style: IconButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
-              icon: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 20),
+            Row(
+              children: [
+                IconButton.filled(
+                  onPressed: () => widget.onSearchWeb(widget.index),
+                  style: IconButton.styleFrom(backgroundColor: const Color(0xFF0D47A1)),
+                  icon: const Icon(Icons.public, color: Colors.white, size: 20),
+                  tooltip: 'Buscar ficha técnica na internet',
+                ),
+                const SizedBox(width: 4),
+                IconButton.filled(
+                  onPressed: widget.onScan,
+                  style: IconButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
+                  icon: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 20),
+                  tooltip: 'Escanear código de barras',
+                ),
+              ],
             ),
           ],
         ),
@@ -1101,12 +796,11 @@ class _FormRowState extends State<FormRow> {
                   motorolaPhones: widget.motorolaPhones,
                   samsungPhones: widget.samsungPhones,
                   outrosPhones: widget.outrosPhones,
-                  allPhones: widget.allPhones,
                   onPhoneSelected: (p) => widget.onStateChange(widget.state.copyWith(selectedPhone: p)),
                   onPhoneRenamed: (phone, newName) => widget.onPhoneRenamed(phone, newName),
                   onPhoneDeleted: (phone) => widget.onPhoneDeleted(phone),
-                  onPhoneAdded: (phone) => widget.onPhoneAdded(phone),
                   onPhoneEdited: (phone, newSpecs) => widget.onPhoneEdited(phone, newSpecs),
+                  onAddModel: widget.onAddModel,
                 ),
                 const SizedBox(height: 16),
                 const Text('DIGITE O PREÇO DO APARELHO', style: TextStyle(color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 12, letterSpacing: 0.5)),
@@ -1174,12 +868,11 @@ class PhoneDropdown extends StatefulWidget {
   final List<CelularSpec> motorolaPhones;
   final List<CelularSpec> samsungPhones;
   final List<CelularSpec> outrosPhones;
-  final List<CelularSpec> allPhones;
   final void Function(CelularSpec?) onPhoneSelected;
   final void Function(CelularSpec, String) onPhoneRenamed;
   final void Function(CelularSpec) onPhoneDeleted;
-  final void Function(CelularSpec?) onPhoneAdded;
   final void Function(CelularSpec, List<String>) onPhoneEdited;
+  final VoidCallback onAddModel;
 
   const PhoneDropdown({
     super.key,
@@ -1187,12 +880,11 @@ class PhoneDropdown extends StatefulWidget {
     required this.motorolaPhones,
     required this.samsungPhones,
     this.outrosPhones = const [],
-    required this.allPhones,
     required this.onPhoneSelected,
     required this.onPhoneRenamed,
     required this.onPhoneDeleted,
-    required this.onPhoneAdded,
     required this.onPhoneEdited,
+    required this.onAddModel,
   });
 
   @override
@@ -1255,7 +947,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
                     title: const Text('Adicionar modelo manualmente', style: TextStyle(fontSize: 16, color: Color(0xFF0D47A1), fontWeight: FontWeight.w500)),
                     onTap: () {
                       setState(() => _expanded = false);
-                      widget.onPhoneAdded(null);
+                      widget.onAddModel();
                     },
                   ),
                 ],
