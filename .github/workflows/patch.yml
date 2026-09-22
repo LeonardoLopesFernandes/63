@@ -24,6 +24,11 @@ jobs:
         with:
           cache: true
 
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
       - name: Setup keystore from Secrets
         run: |
           RAW="${{ secrets.KEYSTORE_BASE64 }}"
