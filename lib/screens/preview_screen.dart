@@ -20,7 +20,7 @@ class PreviewScreen extends StatefulWidget {
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
-  bool _busy = false;
+  String? _busyAction;
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
@@ -36,8 +36,17 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Column(
   ],
 );
 
+/// Ícone pulsante usado enquanto o botão está carregando (sem texto).
+Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
+  tween: Tween<double>(begin: 0.8, end: 1.2),
+  duration: const Duration(milliseconds: 600),
+  curve: Curves.easeInOut,
+  builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+  child: Icon(icon, size: 26, color: color),
+);
+
   Future<void> _compartilhar() async {
-    setState(() => _busy = true);
+    setState(() => _busyAction = 'compartilhar');
     try {
       final bytes = await gerarPdfBytes(widget.dados);
       final dir = await getTemporaryDirectory();
@@ -47,12 +56,12 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Column(
     } catch (e) {
       _toast('Erro ao compartilhar: ${e.toString()}');
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) setState(() => _busyAction = null);
     }
   }
 
   Future<void> _enviar() async {
-    setState(() => _busy = true);
+    setState(() => _busyAction = 'enviar');
     try {
       final now = DateTime.now();
       final date = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
@@ -80,12 +89,12 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Column(
         _toast('Erro ao enviar: $msg');
       }
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) setState(() => _busyAction = null);
     }
   }
 
   Future<void> _imprimir() async {
-    setState(() => _busy = true);
+    setState(() => _busyAction = 'imprimir');
     try {
       final bytes = await gerarPdfBytes(widget.dados);
       final socket = await Socket.connect('10.25.168.24', 9100, timeout: const Duration(seconds: 10));
@@ -110,7 +119,7 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Column(
     } catch (e) {
       _toast('Erro ao imprimir: ${e.toString()}');
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) setState(() => _busyAction = null);
     }
   }
 
@@ -162,43 +171,45 @@ Widget _badgeLabel(IconData icon, String label, Color color) => Column(
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: _busy ? null : _enviar,
+                    onPressed: _busyAction != null ? null : _enviar,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF0D47A1),
                       side: const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
                       fixedSize: const Size.fromHeight(56),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: _badgeLabel(Icons.send, 'ENVIAR', const Color(0xFF0D47A1)),
+                    child: _busyAction == 'enviar'
+                        ? _busyIcon(Icons.send, const Color(0xFF0D47A1))
+                        : _badgeLabel(Icons.send, 'ENVIAR', const Color(0xFF0D47A1)),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: _busy ? null : _imprimir,
+                    onPressed: _busyAction != null ? null : _imprimir,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF2E7D32),
                       side: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
                       fixedSize: const Size.fromHeight(56),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: _busy
-                        ? const Text('IMPRIMINDO...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10))
+                    child: _busyAction == 'imprimir'
+                        ? _busyIcon(Icons.print, const Color(0xFF2E7D32))
                         : _badgeLabel(Icons.print, 'IMPRIMIR', const Color(0xFF2E7D32)),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _busy ? null : _compartilhar,
+                    onPressed: _busyAction != null ? null : _compartilhar,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF111111),
                       foregroundColor: Colors.white,
                       fixedSize: const Size.fromHeight(56),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: _busy
-                        ? const Text('COMPARTILHANDO...', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10))
+                    child: _busyAction == 'compartilhar'
+                        ? _busyIcon(Icons.share, Colors.white)
                         : _badgeLabel(Icons.share, 'COMPARTILHAR', Colors.white),
                   ),
                 ),
