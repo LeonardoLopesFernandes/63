@@ -250,7 +250,10 @@ class PapeletaPainter extends CustomPainter {
         RRect.fromRectAndRadius(Rect.fromLTWH(b2L, badge2Top, b2W, b2H),
             Radius.circular(w * 0.03)),
         whiteStroke);
-    b2Paint.paint(canvas, Offset(b2L + w * 0.03, badge2Top + b2H * 0.68 - b2Paint.height));
+    // Centraliza o texto no badge (horizontal e vertical).
+    final b2TextX = b2L + (b2W - b2Paint.width) / 2;
+    final b2TextY = badge2Top + (b2H - b2Paint.height) / 2;
+    b2Paint.paint(canvas, Offset(b2TextX, b2TextY));
 
     // original price
     final origTop = badge2Top + b2H + h * 0.02;
