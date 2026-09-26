@@ -10,8 +10,10 @@ import 'package:papeleta63/utils/celulares.dart';
 
 const int A4_W = 2480;
 const int A4_H = 3508;
-const int MARGIN = 90;
-const int MARGIN_H = 50;
+const int MARGIN = 343; // ~29mm (superior)
+const int MARGIN_BOTTOM = 484; // ~41mm (inferior)
+const int MARGIN_H = 177; // ~15mm (laterais)
+const double GAP = 95; // ~8mm faixa de corte central
 
 double _measureText(String text, double fontSize, {FontWeight weight = FontWeight.normal}) {
   final tp = TextPainter(
@@ -65,9 +67,9 @@ class PapeletaPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     canvas.drawColor(Colors.white, BlendMode.src);
 
-    const gap = 80.0;
+    const gap = GAP;
     final qw = (A4_W - 2 * MARGIN_H) / 2.0;
-    final qh = (A4_H - 2 * MARGIN - gap) / 2.0;
+    final qh = (A4_H - MARGIN - MARGIN_BOTTOM - gap) / 2.0;
 
     for (var i = 0; i < dados.length && i < 4; i++) {
       final item = dados[i];
@@ -333,8 +335,8 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados) async {
       pageFormat: pdf.PdfPageFormat.a4,
       build: (context) => pw.Center(
         child: pw.SizedBox(
-          width: 510,
-          height: 757,
+          width: 595,
+          height: 842,
           child: pw.Image(pw.MemoryImage(png), fit: pw.BoxFit.fill),
         ),
       ),
