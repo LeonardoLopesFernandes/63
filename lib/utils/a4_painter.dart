@@ -115,7 +115,7 @@ class PapeletaPainter extends CustomPainter {
     final borderPaint = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 6;
+      ..strokeWidth = 14;
     canvas.drawRect(Rect.fromLTWH(0, 0, w, h), borderPaint);
 
     final precoDescFmt = formatarMoeda(item.precoComDesconto);
