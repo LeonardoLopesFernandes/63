@@ -331,7 +331,7 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados) async {
   pdfDoc.addPage(
     pw.Page(
       pageFormat: pdf.PdfPageFormat.a4,
-      build: (context) => pw.Center(
+      build: (context) => pw.FullPage(
         child: pw.Image(pw.MemoryImage(png), fit: pw.BoxFit.contain),
       ),
     ),
