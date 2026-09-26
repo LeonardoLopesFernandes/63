@@ -11,7 +11,7 @@ import 'package:papeleta63/utils/celulares.dart';
 const int A4_W = 2480;
 const int A4_H = 3508;
 const int MARGIN = 250;
-const int MARGIN_H = 180;
+const int MARGIN_H = 110;
 
 double _measureText(String text, double fontSize, {FontWeight weight = FontWeight.normal}) {
   final tp = TextPainter(
@@ -67,7 +67,7 @@ class PapeletaPainter extends CustomPainter {
 
     const gap = 80.0;
     final qw = (A4_W - 2 * MARGIN_H) / 2.0;
-    final qh = (A4_H - 2 * MARGIN - gap) / 2.0 - 200.0;
+    final qh = (A4_H - 2 * MARGIN - gap) / 2.0 - 60.0;
 
     for (var i = 0; i < dados.length && i < 4; i++) {
       final item = dados[i];

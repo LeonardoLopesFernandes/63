@@ -4,6 +4,7 @@ Todas as mudanças notáveis do Papeleta63. O topo deste arquivo é publicado
 automaticamente como nota (notes) no release/patch do Shorebird.
 
 ## [Não lançado]
+- Papeleta A4 via socket maior (quadrantes +~10%)
 - Corrige centralização do texto "preço sem plano controle" na papeleta
 - Zoom por pinça no leitor corrigido (mapeamento 1x-8x -> 0.0-1.0)
 - Botões Enviar/Imprimir/Compartilhar mostram ícone pulsante ao carregar
