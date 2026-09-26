@@ -10,9 +10,9 @@ import 'package:papeleta63/utils/celulares.dart';
 
 const int A4_W = 2480;
 const int A4_H = 3508;
-const int MARGIN = 100; // ~8,5mm (superior)
-const int MARGIN_BOTTOM = 120; // ~10mm (inferior)
-const int MARGIN_H = 30; // ~2,5mm (laterais)
+const int MARGIN = 150; // ~12,7mm (superior)
+const int MARGIN_BOTTOM = 170; // ~14,4mm (inferior)
+const int MARGIN_H = 0; // laterais zeradas (largura máxima)
 const double GAP = 80; // ~7mm faixa de corte central
 
 double _measureText(String text, double fontSize, {FontWeight weight = FontWeight.normal}) {
