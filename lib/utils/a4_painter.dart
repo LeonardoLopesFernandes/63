@@ -11,7 +11,7 @@ import 'package:papeleta63/utils/celulares.dart';
 const int A4_W = 2480;
 const int A4_H = 3508;
 const int MARGIN = 150; // ~12,7mm (superior)
-const int MARGIN_BOTTOM = 170; // ~14,4mm (inferior)
+const int MARGIN_BOTTOM = 260; // reduz altura dos quadrantes
 const int MARGIN_H = 0; // laterais zeradas (largura máxima)
 const double GAP = 80; // ~7mm faixa de corte central
 
