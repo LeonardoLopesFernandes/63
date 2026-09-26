@@ -331,9 +331,12 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados) async {
   pdfDoc.addPage(
     pw.Page(
       pageFormat: pdf.PdfPageFormat.a4,
-      build: (context) => pw.Padding(
-        padding: const pw.EdgeInsets.all(28),
-        child: pw.Image(pw.MemoryImage(png), fit: pw.BoxFit.contain),
+      build: (context) => pw.Center(
+        child: pw.SizedBox(
+          width: 550,
+          height: 550 * (A4_H / A4_W),
+          child: pw.Image(pw.MemoryImage(png), fit: pw.BoxFit.fill),
+        ),
       ),
     ),
   );
