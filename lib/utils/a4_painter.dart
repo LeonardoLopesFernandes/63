@@ -333,8 +333,8 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados) async {
       pageFormat: pdf.PdfPageFormat.a4,
       build: (context) => pw.Center(
         child: pw.SizedBox(
-          width: 550,
-          height: 550 * (A4_H / A4_W),
+          width: 510,
+          height: 757,
           child: pw.Image(pw.MemoryImage(png), fit: pw.BoxFit.fill),
         ),
       ),
