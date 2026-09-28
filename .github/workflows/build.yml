@@ -76,17 +76,20 @@ jobs:
           SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
         run: dart run scripts/update_shorebird_notes.dart
 
+      - name: Renomear APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/63_flutter.apk && ls -la build/app/outputs/flutter-apk/63_flutter.apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: papeleta63-arm64-v8a
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: 63_flutter-apk
+          path: build/app/outputs/flutter-apk/63_flutter.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Papeleta63 ${{ github.ref_name }}
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: build/app/outputs/flutter-apk/63_flutter.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
