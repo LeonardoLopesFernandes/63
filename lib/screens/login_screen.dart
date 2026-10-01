@@ -244,9 +244,8 @@ class _LoginScreenState extends State<LoginScreen>
   void _entrar() {
     final email = _emailController.text.trim();
     final senha = _senhaController.text;
-    if (email.isEmpty || senha.isEmpty) {
-      _toast('Preencha e-mail e senha.');
-      return;
+    if (email.isNotEmpty && senha.isNotEmpty) {
+      Session.saveCredentials(email, senha);
     }
     _abrirWebView(autoLogin: true);
   }
@@ -452,61 +451,20 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                 ),
                 onPressed: _entrar,
-                child: const Text(
-                  'ENTRAR',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            if (_validatingToken)
-              const Padding(
-                padding: EdgeInsets.only(bottom: 12),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
+                    _MicrosoftLogo(size: 20),
                     SizedBox(width: 10),
-                    Text('Validando token...',
-                        style: TextStyle(fontSize: 14, color: Colors.black54)),
+                    Text(
+                      'Login Microsoft',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            SizedBox(
-              height: 52,
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: primaryRed,
-                  side: const BorderSide(color: primaryRed, width: 1.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                icon: Icon(
-                  _waitingBrowserReturn
-                      ? Icons.hourglass_top_rounded
-                      : Icons.open_in_browser,
-                  size: 20,
-                ),
-                label: Text(
-                  _waitingBrowserReturn
-                      ? 'JÁ COPIEI O TOKEN, TENTAR NOVAMENTE'
-                      : 'ENTRAR VIA NAVEGADOR',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onPressed: _waitingBrowserReturn
-                    ? _checkClipboardForToken
-                    : _handleOpenBrowser,
               ),
             ),
             const SizedBox(height: 16),
@@ -550,5 +508,41 @@ class _LoginScreenState extends State<LoginScreen>
     _emailController.dispose();
     _senhaController.dispose();
     super.dispose();
+  }
+}
+
+/// Logo 2x2 da Microsoft (4 quadrados coloridos).
+class _MicrosoftLogo extends StatelessWidget {
+  final double size;
+  const _MicrosoftLogo({this.size = 20});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = size / 2 - 1;
+    final tiles = [
+      Container(color: const Color(0xFFF25022)),
+      Container(color: const Color(0xFF7FBA00)),
+      Container(color: const Color(0xFF00A4EF)),
+      Container(color: const Color(0xFFFFBA08)),
+    ];
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Column(
+        children: [
+          Row(children: [
+            SizedBox(width: c, height: c, child: tiles[0]),
+            const SizedBox(width: 2),
+            SizedBox(width: c, height: c, child: tiles[1]),
+          ]),
+          const SizedBox(height: 2),
+          Row(children: [
+            SizedBox(width: c, height: c, child: tiles[2]),
+            const SizedBox(width: 2),
+            SizedBox(width: c, height: c, child: tiles[3]),
+          ]),
+        ],
+      ),
+    );
   }
 }
