@@ -305,7 +305,7 @@ String _brCurrency(double numero) {
   return '${out.reversed.join('')},${centavos.toString().padLeft(2, '0')}';
 }
 
-Future<ui.Image> renderA4Image(List<PapeletaData> dados) async {
+Future<ui.Image> renderA4Image(List<PapeletaData> dados, {double scale = 1.0}) async {
   ui.Image? logo;
   try {
     final data = await rootBundle.load('assets/logo.png');
@@ -315,9 +315,10 @@ Future<ui.Image> renderA4Image(List<PapeletaData> dados) async {
   }
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder);
+  if (scale != 1.0) canvas.scale(scale);
   PapeletaPainter(dados, logo: logo).paint(canvas, Size(A4_W.toDouble(), A4_H.toDouble()));
   final picture = recorder.endRecording();
-  return picture.toImage(A4_W, A4_H);
+  return picture.toImage((A4_W * scale).round(), (A4_H * scale).round());
 }
 
 Future<Uint8List> renderA4Png(List<PapeletaData> dados) async {
@@ -326,20 +327,32 @@ Future<Uint8List> renderA4Png(List<PapeletaData> dados) async {
   return bytes!.buffer.asUint8List();
 }
 
-/// Gera um PDF A4 (595x842 pt) contendo a imagem renderizada, espelhando gerarPdf do Kotlin.
+/// Gera um PDF A4 (595x842 pt) com a papeleta renderizada em alta resolução
+/// (600 DPI), para ficar nítida na impressão e no compartilhamento.
+/// Se a renderização em alta falhar (memória), cai para 300 DPI.
 Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados) async {
-  final png = await renderA4Png(dados);
+  Object? lastError;
+  for (final scale in const [2.0, 1.0]) {
+    try {
+      return await _gerarPdfComEscala(dados, scale);
+    } catch (e) {
+      lastError = e;
+    }
+  }
+  throw lastError ?? Exception('Falha ao gerar PDF');
+}
+
+Future<Uint8List> _gerarPdfComEscala(List<PapeletaData> dados, double scale) async {
+  final img = await renderA4Image(dados, scale: scale);
+  final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+  img.dispose();
+  final png = byteData!.buffer.asUint8List();
   final pdfDoc = pw.Document();
   pdfDoc.addPage(
     pw.Page(
       pageFormat: pdf.PdfPageFormat.a4,
-      build: (context) => pw.Center(
-        child: pw.SizedBox(
-          width: 595,
-          height: 842,
-          child: pw.Image(pw.MemoryImage(png), fit: pw.BoxFit.fill),
-        ),
-      ),
+      margin: pw.EdgeInsets.zero,
+      build: (context) => pw.Image(pw.MemoryImage(png), fit: pw.BoxFit.fill),
     ),
   );
   return await pdfDoc.save();
