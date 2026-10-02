@@ -57,31 +57,34 @@ void _drawText(
   tp.paint(canvas, Offset(dx, y - baseline));
 }
 
-/// Margem inferior usada apenas no PDF (o preview mantém [MARGIN_BOTTOM]).
-/// Um valor maior deixa cada quadrante um pouco mais baixo (e, como a largura
-/// já é máxima, com proporção mais larga).
+/// Ajustes usados apenas no PDF (o preview mantém [MARGIN_BOTTOM]/[MARGIN_H]).
+/// [PDF_MARGIN_H] deixa uma borda nas laterais da folha; [PDF_MARGIN_BOTTOM]
+/// deixa cada quadrante um pouco mais baixo.
+const int PDF_MARGIN_H = 30; // ~2,5mm (borda lateral)
 const int PDF_MARGIN_BOTTOM = 300;
 
 class PapeletaPainter extends CustomPainter {
   final List<PapeletaData> dados;
   final ui.Image? logo;
   final int marginBottom;
+  final int marginH;
 
-  PapeletaPainter(this.dados, {this.logo, this.marginBottom = MARGIN_BOTTOM});
+  PapeletaPainter(this.dados,
+      {this.logo, this.marginBottom = MARGIN_BOTTOM, this.marginH = MARGIN_H});
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawColor(Colors.white, BlendMode.src);
 
     const gap = GAP;
-    final qw = (A4_W - 2 * MARGIN_H) / 2.0;
+    final qw = (A4_W - 2 * marginH) / 2.0;
     final qh = (A4_H - MARGIN - marginBottom - gap) / 2.0;
 
     for (var i = 0; i < dados.length && i < 4; i++) {
       final item = dados[i];
       final col = i % 2;
       final row = i ~/ 2;
-      final ox = MARGIN_H + col * qw;
+      final ox = marginH + col * qw;
       final oy = MARGIN + row * (qh + gap);
       canvas.save();
       canvas.translate(ox, oy);
@@ -93,8 +96,8 @@ class PapeletaPainter extends CustomPainter {
     final cy = MARGIN + qh + gap / 2.0;
     final contentTop = MARGIN.toDouble();
     final contentBottom = MARGIN + 2 * qh + gap;
-    final contentLeft = MARGIN_H.toDouble();
-    final contentRight = (A4_W - MARGIN_H).toDouble();
+    final contentLeft = marginH.toDouble();
+    final contentRight = (A4_W - marginH).toDouble();
 
     final dashPaint = Paint()
       ..color = Colors.grey.shade700
@@ -106,7 +109,7 @@ class PapeletaPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     scLinePaint.layout();
-    for (var x = MARGIN_H; x < A4_W - MARGIN_H; x += 80) {
+    for (var x = marginH; x < A4_W - marginH; x += 80) {
       scLinePaint.paint(canvas, Offset(x.toDouble(), cy + 10 - (scLinePaint.height)));
     }
     canvas.drawLine(Offset(contentLeft, cy + 18), Offset(contentRight, cy + 18), dashPaint);
@@ -312,7 +315,9 @@ String _brCurrency(double numero) {
 }
 
 Future<ui.Image> renderA4Image(List<PapeletaData> dados,
-    {double scale = 1.0, int marginBottom = MARGIN_BOTTOM}) async {
+    {double scale = 1.0,
+    int marginBottom = MARGIN_BOTTOM,
+    int marginH = MARGIN_H}) async {
   ui.Image? logo;
   try {
     final data = await rootBundle.load('assets/logo.png');
@@ -323,7 +328,8 @@ Future<ui.Image> renderA4Image(List<PapeletaData> dados,
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder);
   if (scale != 1.0) canvas.scale(scale);
-  PapeletaPainter(dados, logo: logo, marginBottom: marginBottom)
+  PapeletaPainter(dados,
+          logo: logo, marginBottom: marginBottom, marginH: marginH)
       .paint(canvas, Size(A4_W.toDouble(), A4_H.toDouble()));
   final picture = recorder.endRecording();
   return picture.toImage((A4_W * scale).round(), (A4_H * scale).round());
@@ -351,7 +357,8 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados) async {
 }
 
 Future<Uint8List> _gerarPdfComEscala(List<PapeletaData> dados, double scale) async {
-  final img = await renderA4Image(dados, scale: scale, marginBottom: PDF_MARGIN_BOTTOM);
+  final img = await renderA4Image(dados,
+      scale: scale, marginBottom: PDF_MARGIN_BOTTOM, marginH: PDF_MARGIN_H);
   final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
   img.dispose();
   final png = byteData!.buffer.asUint8List();
