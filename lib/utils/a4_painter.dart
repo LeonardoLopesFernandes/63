@@ -57,11 +57,17 @@ void _drawText(
   tp.paint(canvas, Offset(dx, y - baseline));
 }
 
+/// Margem inferior usada apenas no PDF (o preview mantém [MARGIN_BOTTOM]).
+/// Um valor maior deixa cada quadrante um pouco mais baixo (e, como a largura
+/// já é máxima, com proporção mais larga).
+const int PDF_MARGIN_BOTTOM = 300;
+
 class PapeletaPainter extends CustomPainter {
   final List<PapeletaData> dados;
   final ui.Image? logo;
+  final int marginBottom;
 
-  PapeletaPainter(this.dados, {this.logo});
+  PapeletaPainter(this.dados, {this.logo, this.marginBottom = MARGIN_BOTTOM});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -69,7 +75,7 @@ class PapeletaPainter extends CustomPainter {
 
     const gap = GAP;
     final qw = (A4_W - 2 * MARGIN_H) / 2.0;
-    final qh = (A4_H - MARGIN - MARGIN_BOTTOM - gap) / 2.0;
+    final qh = (A4_H - MARGIN - marginBottom - gap) / 2.0;
 
     for (var i = 0; i < dados.length && i < 4; i++) {
       final item = dados[i];
@@ -305,7 +311,8 @@ String _brCurrency(double numero) {
   return '${out.reversed.join('')},${centavos.toString().padLeft(2, '0')}';
 }
 
-Future<ui.Image> renderA4Image(List<PapeletaData> dados, {double scale = 1.0}) async {
+Future<ui.Image> renderA4Image(List<PapeletaData> dados,
+    {double scale = 1.0, int marginBottom = MARGIN_BOTTOM}) async {
   ui.Image? logo;
   try {
     final data = await rootBundle.load('assets/logo.png');
@@ -316,7 +323,8 @@ Future<ui.Image> renderA4Image(List<PapeletaData> dados, {double scale = 1.0}) a
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder);
   if (scale != 1.0) canvas.scale(scale);
-  PapeletaPainter(dados, logo: logo).paint(canvas, Size(A4_W.toDouble(), A4_H.toDouble()));
+  PapeletaPainter(dados, logo: logo, marginBottom: marginBottom)
+      .paint(canvas, Size(A4_W.toDouble(), A4_H.toDouble()));
   final picture = recorder.endRecording();
   return picture.toImage((A4_W * scale).round(), (A4_H * scale).round());
 }
@@ -343,7 +351,7 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados) async {
 }
 
 Future<Uint8List> _gerarPdfComEscala(List<PapeletaData> dados, double scale) async {
-  final img = await renderA4Image(dados, scale: scale);
+  final img = await renderA4Image(dados, scale: scale, marginBottom: PDF_MARGIN_BOTTOM);
   final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
   img.dispose();
   final png = byteData!.buffer.asUint8List();
