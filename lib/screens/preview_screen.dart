@@ -5,9 +5,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:papeleta63/api/endpoints.dart';
-import 'package:papeleta63/api/models.dart';
-import 'package:papeleta63/api/session.dart';
 import 'package:papeleta63/utils/a4_painter.dart';
 import 'package:papeleta63/utils/celulares.dart';
 
@@ -55,39 +52,6 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
       await Share.shareXFiles([XFile(file.path)], subject: 'Papeleta A4', text: 'Papeleta A4');
     } catch (e) {
       _toast('Erro ao compartilhar: ${e.toString()}');
-    } finally {
-      if (mounted) setState(() => _busyAction = null);
-    }
-  }
-
-  Future<void> _enviar() async {
-    setState(() => _busyAction = 'enviar');
-    try {
-      final now = DateTime.now();
-      final date = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-      final products = widget.dados.map((d) {
-        return PapeletaPrintingData(
-          productName: '${d.modelo} ${d.armazenamento}',
-          price: parsePrice(d.precoComDesconto),
-          installmentPrice: parsePrice(d.valorParcela),
-          installmentQuantity: d.qtdParcelas,
-          codSap: d.codSap,
-          ean: d.ean,
-          referenceDate: date,
-          unit: 'UN',
-        );
-      }).toList();
-      await sendPriceSigns(storeId: Session.getUserStore(), request: SendPriceSignRequest(products: products));
-      _toast('Enviado com sucesso!');
-    } catch (e) {
-      final msg = e.toString();
-      if (msg.contains('401')) {
-        _toast('Sessão expirada.');
-      } else if (msg.contains('403')) {
-        _toast('Acesso negado.');
-      } else {
-        _toast('Erro ao enviar: $msg');
-      }
     } finally {
       if (mounted) setState(() => _busyAction = null);
     }
@@ -169,21 +133,6 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _busyAction != null ? null : _enviar,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF0D47A1),
-                      side: const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
-                      fixedSize: const Size.fromHeight(56),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                    child: _busyAction == 'enviar'
-                        ? _busyIcon(Icons.send, const Color(0xFF0D47A1))
-                        : _badgeLabel(Icons.send, 'ENVIAR', const Color(0xFF0D47A1)),
-                  ),
-                ),
-                const SizedBox(width: 8),
                 Expanded(
                   child: OutlinedButton(
                     onPressed: _busyAction != null ? null : _imprimir,
