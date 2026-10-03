@@ -399,6 +399,18 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados) async {
     logo = null;
   }
 
+  // Fonte do sistema (Roboto) embutida, para o PDF ficar igual ao preview.
+  pw.ThemeData? theme;
+  try {
+    final base =
+        pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Regular.ttf'));
+    final bold =
+        pw.Font.ttf(await rootBundle.load('assets/fonts/Roboto-Bold.ttf'));
+    theme = pw.ThemeData.withFont(base: base, bold: bold);
+  } catch (_) {
+    theme = null;
+  }
+
   final children = <pw.Widget>[];
 
   pw.Positioned txt(double leftPx, double basePx, String text, double size,
@@ -660,7 +672,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados) async {
         width: 1, height: (contentBottom - contentTop) * s, color: grey700),
   ));
 
-  final doc = pw.Document(title: 'Papeleta A4');
+  final doc = pw.Document(title: 'Papeleta A4', theme: theme);
   doc.addPage(pw.Page(
     pageFormat: page,
     margin: pw.EdgeInsets.zero,
