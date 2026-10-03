@@ -60,17 +60,22 @@ void _drawText(
 /// Ajustes usados apenas no PDF (o preview mantém [MARGIN_BOTTOM]/[MARGIN_H]).
 /// [PDF_MARGIN_H] deixa uma borda nas laterais da folha; [PDF_MARGIN_BOTTOM]
 /// deixa cada quadrante um pouco mais baixo.
-const int PDF_MARGIN_H = 30; // ~2,5mm (borda lateral)
+const int PDF_MARGIN_TOP = 250; // ~21mm (borda superior)
+const int PDF_MARGIN_H = 180; // ~15mm (borda lateral)
 const int PDF_MARGIN_BOTTOM = 300;
 
 class PapeletaPainter extends CustomPainter {
   final List<PapeletaData> dados;
   final ui.Image? logo;
+  final int marginTop;
   final int marginBottom;
   final int marginH;
 
   PapeletaPainter(this.dados,
-      {this.logo, this.marginBottom = MARGIN_BOTTOM, this.marginH = MARGIN_H});
+      {this.logo,
+      this.marginTop = MARGIN,
+      this.marginBottom = MARGIN_BOTTOM,
+      this.marginH = MARGIN_H});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -78,14 +83,14 @@ class PapeletaPainter extends CustomPainter {
 
     const gap = GAP;
     final qw = (A4_W - 2 * marginH) / 2.0;
-    final qh = (A4_H - MARGIN - marginBottom - gap) / 2.0;
+    final qh = (A4_H - marginTop - marginBottom - gap) / 2.0;
 
     for (var i = 0; i < dados.length && i < 4; i++) {
       final item = dados[i];
       final col = i % 2;
       final row = i ~/ 2;
       final ox = marginH + col * qw;
-      final oy = MARGIN + row * (qh + gap);
+      final oy = marginTop + row * (qh + gap);
       canvas.save();
       canvas.translate(ox, oy);
       _drawCardOnCanvas(canvas, qw, qh, item);
@@ -93,9 +98,9 @@ class PapeletaPainter extends CustomPainter {
     }
 
     final cx = A4_W / 2.0;
-    final cy = MARGIN + qh + gap / 2.0;
-    final contentTop = MARGIN.toDouble();
-    final contentBottom = MARGIN + 2 * qh + gap;
+    final cy = marginTop + qh + gap / 2.0;
+    final contentTop = marginTop.toDouble();
+    final contentBottom = marginTop + 2 * qh + gap;
     final contentLeft = marginH.toDouble();
     final contentRight = (A4_W - marginH).toDouble();
 
@@ -316,6 +321,7 @@ String _brCurrency(double numero) {
 
 Future<ui.Image> renderA4Image(List<PapeletaData> dados,
     {double scale = 1.0,
+    int marginTop = MARGIN,
     int marginBottom = MARGIN_BOTTOM,
     int marginH = MARGIN_H}) async {
   ui.Image? logo;
@@ -329,7 +335,10 @@ Future<ui.Image> renderA4Image(List<PapeletaData> dados,
   final canvas = Canvas(recorder);
   if (scale != 1.0) canvas.scale(scale);
   PapeletaPainter(dados,
-          logo: logo, marginBottom: marginBottom, marginH: marginH)
+          logo: logo,
+          marginTop: marginTop,
+          marginBottom: marginBottom,
+          marginH: marginH)
       .paint(canvas, Size(A4_W.toDouble(), A4_H.toDouble()));
   final picture = recorder.endRecording();
   return picture.toImage((A4_W * scale).round(), (A4_H * scale).round());
@@ -363,7 +372,10 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
 
 Future<Uint8List> _gerarPdfComEscala(List<PapeletaData> dados, double scale) async {
   final img = await renderA4Image(dados,
-      scale: scale, marginBottom: PDF_MARGIN_BOTTOM, marginH: PDF_MARGIN_H);
+      scale: scale,
+      marginTop: PDF_MARGIN_TOP,
+      marginBottom: PDF_MARGIN_BOTTOM,
+      marginH: PDF_MARGIN_H);
   final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
   img.dispose();
   final png = byteData!.buffer.asUint8List();
