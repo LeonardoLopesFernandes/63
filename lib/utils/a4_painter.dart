@@ -169,6 +169,7 @@ class PapeletaPainter extends CustomPainter {
       qtdParcelasInt = (precoDescNum / minP).floor();
       if (qtdParcelasInt < 1) qtdParcelasInt = 1;
     }
+    if (qtdParcelasInt > 10) qtdParcelasInt = 10;
     final rawParc = precoDescNum / (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
     final valorParcNum = (rawParc * 100).ceil() / 100;
     final valorParcFmt = _brCurrency(valorParcNum);
@@ -503,6 +504,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
       qtdParcelasInt = (precoDescNum / minP).floor();
       if (qtdParcelasInt < 1) qtdParcelasInt = 1;
     }
+    if (qtdParcelasInt > 10) qtdParcelasInt = 10;
     final rawParc = precoDescNum / (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
     final valorParcFmt = _brCurrency((rawParc * 100).ceil() / 100);
 

@@ -180,7 +180,7 @@ class Pair<T1, T2> {
 
 Pair<int, double> calcParcelas(double price, {bool daSemana = false}) {
   const minParcela = 49.99;
-  final maxQuantity = daSemana ? 15 : 12;
+  const maxQuantity = 10;
   var quantity = (price / minParcela).floor();
   if (quantity > maxQuantity) quantity = maxQuantity;
   if (quantity < 1) quantity = 1;
