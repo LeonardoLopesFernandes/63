@@ -40,5 +40,4 @@ flutter:
     - assets/celulares.json
     - assets/logo.png
     - assets/ic_papeleta.png
-    - assets/fonts/
     - shorebird.yaml
