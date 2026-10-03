@@ -224,7 +224,7 @@ class PapeletaPainter extends CustomPainter {
         badgeBP);
     _drawText(canvas, b1Line1, cx, badge1Top + w * 0.024, fontSize: w * 0.026,
         fontWeight: FontWeight.bold, color: Colors.grey.shade700, align: TextAlign.center);
-    _drawText(canvas, b1Line2, cx, badge1Top + w * 0.050, fontSize: w * 0.022,
+    _drawText(canvas, b1Line2, cx, badge1Top + w * 0.050, fontSize: w * 0.025,
         color: Colors.grey.shade700, align: TextAlign.center);
 
     // black section
@@ -268,7 +268,7 @@ class PapeletaPainter extends CustomPainter {
 
     final iLine1 = instTop + instH * 0.42;
     final iLine2 = instTop + instH * 0.78;
-    final iSm = w * 0.024;
+    final iSm = w * 0.027;
 
     _drawText(canvas, '${qtdParcelasInt}x', ovalL + w * 0.04, iLine2, fontSize: w * 0.07,
         fontWeight: FontWeight.bold, color: Colors.white, align: TextAlign.left);
@@ -329,7 +329,7 @@ class PapeletaPainter extends CustomPainter {
         fontWeight: FontWeight.bold, color: Colors.white, align: TextAlign.left);
 
     // fine print
-    final fineSizeW = w * 0.032;
+    final fineSizeW = w * 0.034;
     final fineY = h - w * 0.095;
     final fineLeading = fineSizeW * 1.3;
     _drawText(canvas, 'Oferta válida apenas para pagamento com cartão de crédito.', cx, fineY,
@@ -453,7 +453,9 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
 
   pw.MemoryImage? logo;
   try {
-    final b = await rootBundle.load('assets/logo.png');
+    // O asset original é branco (no preview é pintado de preto); usamos a
+    // versão preta pra aparecer no card branco do PDF.
+    final b = await rootBundle.load('assets/logo_preto.png');
     logo = pw.MemoryImage(b.buffer.asUint8List());
   } catch (_) {
     logo = null;
@@ -580,7 +582,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         w * 0.026,
         bold: true, color: grey700, align: pw.TextAlign.center, widthPx: w));
     children.add(txt(ox, oy + badge1Top + w * 0.050,
-        'consulte operadora (CLARO ou TIM) e modalidade', w * 0.022,
+        'consulte operadora (CLARO ou TIM) e modalidade', w * 0.025,
         color: grey700, align: pw.TextAlign.center, widthPx: w));
 
     // seção preta
@@ -638,7 +640,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     ));
     final iLine1 = instTop + instH * 0.42;
     final iLine2 = instTop + instH * 0.78;
-    final iSm = w * 0.024;
+    final iSm = w * 0.027;
     children.add(txt(ox + ovalL + w * 0.04, oy + iLine2, '${qtdParcelasInt}x',
         w * 0.07,
         bold: true, color: white));
@@ -715,7 +717,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         bold: true, color: white));
 
     // letra miúda
-    final fineSizeW = w * 0.032;
+    final fineSizeW = w * 0.034;
     final fineY = h - w * 0.095;
     final fineLeading = fineSizeW * 1.3;
     children.add(txt(ox, oy + fineY,
@@ -748,6 +750,20 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     child: pw.Container(
         width: 1, height: (contentBottom - contentTop) * s, color: grey700),
   ));
+
+  // tesouras de corte (vetorial) ao longo da linha central
+  const scissorsSvg =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">'
+      '<path fill="#616161" d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.89-2-2s.9-2 2-2 2 .89 2 2-.9 2-2 2zm0 12c-1.1 0-2-.89-2-2s.9-2 2-2 2 .89 2 2-.9 2-2 2zm6-7.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5.5.22.5.5-.22.5-.5.5zM19 3l-6 6 2 2 7-7V3z"/>'
+      '</svg>';
+  const scW = 32.0;
+  for (var x = PDF_MARGIN_H; x < A4_W - PDF_MARGIN_H; x += 80) {
+    children.add(pw.Positioned(
+      left: x * s,
+      top: (cyPx - scW + 6) * s,
+      child: pw.SvgImage(svg: scissorsSvg, width: scW * s, height: scW * s),
+    ));
+  }
 
   final doc = pw.Document(title: 'Papeleta A4', theme: theme);
   doc.addPage(pw.Page(

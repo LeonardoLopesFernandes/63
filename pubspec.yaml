@@ -39,6 +39,7 @@ flutter:
   assets:
     - assets/celulares.json
     - assets/logo.png
+    - assets/logo_preto.png
     - assets/ic_papeleta.png
     - assets/fonts/
     - shorebird.yaml
