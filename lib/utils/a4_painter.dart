@@ -542,7 +542,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados) async {
     // preço com desconto (à vista)
     final discTop = blackTop + h * 0.05;
     final dBigS = w * 0.14;
-    final dLine1 = discTop + dBigS * 0.30;
+    final dLine1 = discTop + dBigS * 0.16;
     final dLine2 = discTop + dBigS * 0.72;
     final dLabelW = _measureText('à vista', w * 0.035,
                 weight: FontWeight.bold) >
@@ -633,7 +633,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados) async {
     // preço original
     final origTop = badge2Top + b2H + h * 0.02;
     final oBigS = w * 0.115;
-    final oLine1 = origTop + oBigS * 0.28;
+    final oLine1 = origTop + oBigS * 0.14;
     final oLine2 = origTop + oBigS * 0.72;
     final oLabelW = _measureText('à vista', w * 0.03, weight: FontWeight.bold) >
             _measureText('R\$', w * 0.048, weight: FontWeight.bold)
