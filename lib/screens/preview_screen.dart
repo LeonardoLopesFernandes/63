@@ -18,6 +18,27 @@ class PreviewScreen extends StatefulWidget {
 
 class _PreviewScreenState extends State<PreviewScreen> {
   String? _busyAction;
+  double _minParcela = 49.99;
+  bool _mostrarExclusivo = true;
+  late Future<Uint8List> _future;
+
+  static const _minsParcela = [49.99, 39.99, 29.99, 19.99, 9.99];
+
+  @override
+  void initState() {
+    super.initState();
+    _gerarPreview();
+  }
+
+  void _gerarPreview() {
+    setState(() {
+      _future = renderA4Png(widget.dados,
+          minParcela: _minParcela, mostrarExclusivo: _mostrarExclusivo);
+    });
+  }
+
+  String _fmtMin(double v) =>
+      'R\$ ${v.toStringAsFixed(2).replaceAll('.', ',')}';
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
@@ -45,7 +66,8 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
   Future<void> _compartilhar() async {
     setState(() => _busyAction = 'compartilhar');
     try {
-      final bytes = await gerarPdfBytes(widget.dados);
+      final bytes = await gerarPdfBytes(widget.dados,
+          minParcela: _minParcela, mostrarExclusivo: _mostrarExclusivo);
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/papeleta_a4.pdf');
       await file.writeAsBytes(bytes);
@@ -60,7 +82,10 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
   Future<void> _imprimir() async {
     setState(() => _busyAction = 'imprimir');
     try {
-      final bytes = await gerarPdfBytes(widget.dados, altaNitidez: false);
+      final bytes = await gerarPdfBytes(widget.dados,
+          altaNitidez: false,
+          minParcela: _minParcela,
+          mostrarExclusivo: _mostrarExclusivo);
       final socket = await Socket.connect('10.25.168.24', 9100, timeout: const Duration(seconds: 10));
       try {
         final pjl = <int>[0x1B, 0x25, 0x2D, 0x31, 0x32, 0x33, 0x34, 0x35, 0x58];
@@ -114,7 +139,7 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 12),
               child: Center(
                 child: FutureBuilder<Uint8List>(
-                  future: renderA4Png(widget.dados),
+                  future: _future,
                   builder: (ctx, snap) {
                     if (snap.connectionState != ConnectionState.done) {
                       return const Padding(padding: EdgeInsets.all(40), child: CircularProgressIndicator());
@@ -126,6 +151,67 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
                   },
                 ),
               ),
+            ),
+          ),
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 2),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Text('Parcela mínima',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Spacer(),
+                    DropdownButton<double>(
+                      value: _minParcela,
+                      underline: const SizedBox.shrink(),
+                      items: _minsParcela
+                          .map((v) => DropdownMenuItem(
+                              value: v,
+                              child: Text(_fmtMin(v),
+                                  style: const TextStyle(fontSize: 14))))
+                          .toList(),
+                      onChanged: (v) {
+                        if (v != null) setState(() => _minParcela = v);
+                      },
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text('"Exclusivo no cartão cliente a"',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 13)),
+                    ),
+                    Switch(
+                      value: _mostrarExclusivo,
+                      activeTrackColor: const Color(0xFFD32F2F),
+                      onChanged: (v) =>
+                          setState(() => _mostrarExclusivo = v),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: _gerarPreview,
+                    icon: const Icon(Icons.refresh, size: 18),
+                    label: const Text('GERAR PREVIEW'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF0D47A1),
+                      side:
+                          const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
+                      fixedSize: const Size.fromHeight(44),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+              ],
             ),
           ),
           Container(

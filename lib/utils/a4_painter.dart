@@ -86,11 +86,21 @@ class PapeletaPainter extends CustomPainter {
   final int marginBottom;
   final int marginH;
 
+  /// Parcela mínima (R$). Quando informada, o nº de parcelas é calculado a
+  /// partir do preço do aparelho (preço / parcela mínima). Null = usa o
+  /// qtdParcelas já calculado.
+  final double? minParcela;
+
+  /// Mostra o texto "exclusivo no cartão cliente a".
+  final bool mostrarExclusivo;
+
   PapeletaPainter(this.dados,
       {this.logo,
       this.marginTop = MARGIN,
       this.marginBottom = MARGIN_BOTTOM,
-      this.marginH = MARGIN_H});
+      this.marginH = MARGIN_H,
+      this.minParcela,
+      this.mostrarExclusivo = true});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -150,11 +160,16 @@ class PapeletaPainter extends CustomPainter {
     final precoDescFmt = formatarMoeda(item.precoComDesconto);
     final precoOrigFmt = formatarMoeda(item.precoOriginal);
 
-    final qtdParcelasInt = int.tryParse(item.qtdParcelas.toString()) ?? 1;
-    final rawParc = (double.tryParse(
+    final precoDescNum = double.tryParse(
                 item.precoComDesconto.replaceAll('.', '').replaceAll(',', '.')) ??
-            0.0) /
-        (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
+            0.0;
+    var qtdParcelasInt = int.tryParse(item.qtdParcelas.toString()) ?? 1;
+    final minP = minParcela;
+    if (minP != null && minP > 0) {
+      qtdParcelasInt = (precoDescNum / minP).floor();
+      if (qtdParcelasInt < 1) qtdParcelasInt = 1;
+    }
+    final rawParc = precoDescNum / (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
     final valorParcNum = (rawParc * 100).ceil() / 100;
     final valorParcFmt = _brCurrency(valorParcNum);
 
@@ -260,8 +275,10 @@ class PapeletaPainter extends CustomPainter {
     _drawText(canvas, 'R\$ $valorParcFmt', ovalCx, iLine2, fontSize: w * 0.075,
         fontWeight: FontWeight.bold, color: Colors.white, align: TextAlign.center);
 
-    _drawText(canvas, 'exclusivo no', ovalR - w * 0.04, iLine1, fontSize: iSm, color: Colors.white, align: TextAlign.right);
-    _drawText(canvas, 'cartão cliente a', ovalR - w * 0.04, iLine2, fontSize: iSm, color: Colors.white, align: TextAlign.right);
+    if (mostrarExclusivo) {
+      _drawText(canvas, 'exclusivo no', ovalR - w * 0.04, iLine1, fontSize: iSm, color: Colors.white, align: TextAlign.right);
+      _drawText(canvas, 'cartão cliente a', ovalR - w * 0.04, iLine2, fontSize: iSm, color: Colors.white, align: TextAlign.right);
+    }
 
     // badge "preço sem plano controle"
     final badge2Top = instTop + instH + h * 0.02;
@@ -338,7 +355,9 @@ Future<ui.Image> renderA4Image(List<PapeletaData> dados,
     {double scale = 1.0,
     int marginTop = MARGIN,
     int marginBottom = MARGIN_BOTTOM,
-    int marginH = MARGIN_H}) async {
+    int marginH = MARGIN_H,
+    double? minParcela,
+    bool mostrarExclusivo = true}) async {
   ui.Image? logo;
   try {
     final data = await rootBundle.load('assets/logo.png');
@@ -353,14 +372,18 @@ Future<ui.Image> renderA4Image(List<PapeletaData> dados,
           logo: logo,
           marginTop: marginTop,
           marginBottom: marginBottom,
-          marginH: marginH)
+          marginH: marginH,
+          minParcela: minParcela,
+          mostrarExclusivo: mostrarExclusivo)
       .paint(canvas, Size(A4_W.toDouble(), A4_H.toDouble()));
   final picture = recorder.endRecording();
   return picture.toImage((A4_W * scale).round(), (A4_H * scale).round());
 }
 
-Future<Uint8List> renderA4Png(List<PapeletaData> dados) async {
-  final img = await renderA4Image(dados);
+Future<Uint8List> renderA4Png(List<PapeletaData> dados,
+    {double? minParcela, bool mostrarExclusivo = true}) async {
+  final img = await renderA4Image(dados,
+      minParcela: minParcela, mostrarExclusivo: mostrarExclusivo);
   final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
   return bytes!.buffer.asUint8List();
 }
@@ -372,13 +395,16 @@ Future<Uint8List> renderA4Png(List<PapeletaData> dados) async {
 /// pois a impressora dimensiona a imagem pelos pixels — em 600 DPI ela
 /// imprimiria com o dobro do tamanho.
 Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
-    {bool altaNitidez = true}) async {
+    {bool altaNitidez = true,
+    double? minParcela,
+    bool mostrarExclusivo = true}) async {
   // Compartilhar: PDF vetorial (rápido, nítido, com a fonte do aparelho
   // embutida). Imprimir: raster 300 DPI (a impressora dimensiona pela imagem;
   // 600 DPI sairia no dobro do tamanho).
   if (altaNitidez) {
     try {
-      return await gerarPdfVetorial(dados);
+      return await gerarPdfVetorial(dados,
+          minParcela: minParcela, mostrarExclusivo: mostrarExclusivo);
     } catch (_) {
       // se o vetorial falhar, cai no raster abaixo
     }
@@ -387,7 +413,8 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
   Object? lastError;
   for (final scale in escalas) {
     try {
-      return await _gerarPdfComEscala(dados, scale);
+      return await _gerarPdfComEscala(dados, scale,
+          minParcela: minParcela, mostrarExclusivo: mostrarExclusivo);
     } catch (e) {
       lastError = e;
     }
@@ -397,7 +424,8 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
 
 /// PDF vetorial (texto/vetores) — nítido em qualquer zoom e rápido, ao
 /// contrário do raster. Usa a fonte do aparelho (SF Pro Display) embutida.
-Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados) async {
+Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
+    {double? minParcela, bool mostrarExclusivo = true}) async {
   const page = pdf.PdfPageFormat.a4;
   final s = page.width / A4_W; // px (300 DPI) -> pontos
   final qw = (A4_W - 2 * PDF_MARGIN_H) / 2.0;
@@ -466,11 +494,16 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados) async {
 
     final precoDescFmt = formatarMoeda(item.precoComDesconto);
     final precoOrigFmt = formatarMoeda(item.precoOriginal);
-    final qtdParcelasInt = int.tryParse(item.qtdParcelas.toString()) ?? 1;
-    final rawParc = (double.tryParse(
+    final precoDescNum = double.tryParse(
                 item.precoComDesconto.replaceAll('.', '').replaceAll(',', '.')) ??
-            0.0) /
-        (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
+            0.0;
+    var qtdParcelasInt = int.tryParse(item.qtdParcelas.toString()) ?? 1;
+    final minP = minParcela;
+    if (minP != null && minP > 0) {
+      qtdParcelasInt = (precoDescNum / minP).floor();
+      if (qtdParcelasInt < 1) qtdParcelasInt = 1;
+    }
+    final rawParc = precoDescNum / (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
     final valorParcFmt = _brCurrency((rawParc * 100).ceil() / 100);
 
     // borda do quadrante
@@ -602,10 +635,12 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados) async {
         color: white,
         align: pw.TextAlign.center,
         widthPx: w));
-    children.add(txt(ox, oy + iLine1, 'exclusivo no', iSm,
-        color: white, align: pw.TextAlign.right, widthPx: ovalR - w * 0.04));
-    children.add(txt(ox, oy + iLine2, 'cartão cliente a', iSm,
-        color: white, align: pw.TextAlign.right, widthPx: ovalR - w * 0.04));
+    if (mostrarExclusivo) {
+      children.add(txt(ox, oy + iLine1, 'exclusivo no', iSm,
+          color: white, align: pw.TextAlign.right, widthPx: ovalR - w * 0.04));
+      children.add(txt(ox, oy + iLine2, 'cartão cliente a', iSm,
+          color: white, align: pw.TextAlign.right, widthPx: ovalR - w * 0.04));
+    }
 
     // badge "preço sem plano controle"
     final badge2Top = instTop + instH + h * 0.02;
@@ -703,12 +738,15 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados) async {
   return await doc.save();
 }
 
-Future<Uint8List> _gerarPdfComEscala(List<PapeletaData> dados, double scale) async {
+Future<Uint8List> _gerarPdfComEscala(List<PapeletaData> dados, double scale,
+    {double? minParcela, bool mostrarExclusivo = true}) async {
   final img = await renderA4Image(dados,
       scale: scale,
       marginTop: PDF_MARGIN_TOP,
       marginBottom: PDF_MARGIN_BOTTOM,
-      marginH: PDF_MARGIN_H);
+      marginH: PDF_MARGIN_H,
+      minParcela: minParcela,
+      mostrarExclusivo: mostrarExclusivo);
   final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
   img.dispose();
   final png = byteData!.buffer.asUint8List();
