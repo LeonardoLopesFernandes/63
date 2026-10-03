@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:papeleta63/api/client.dart';
 import 'package:papeleta63/api/session.dart';
+import 'package:lottie/lottie.dart';
 import 'package:papeleta63/screens/main_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -27,8 +28,7 @@ class LoginWebViewScreen extends StatefulWidget {
   State<LoginWebViewScreen> createState() => _LoginWebViewScreenState();
 }
 
-class _LoginWebViewScreenState extends State<LoginWebViewScreen>
-    with SingleTickerProviderStateMixin {
+class _LoginWebViewScreenState extends State<LoginWebViewScreen> {
   late final WebViewController _controller;
   bool _argsRead = false;
   bool _autoLogin = false;
@@ -40,19 +40,9 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
   Timer? _injectTimer;
   Timer? _timeoutTimer;
 
-  late final AnimationController _pulseController;
-  late final Animation<double> _pulseAnim;
-
   @override
   void initState() {
     super.initState();
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    )..repeat(reverse: true);
-    _pulseAnim = Tween<double>(begin: 0.85, end: 1.15).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
   }
 
   @override
@@ -288,16 +278,16 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ScaleTransition(
-              scale: _pulseAnim,
-              child: Image.asset(
-                'assets/ic_papeleta.png',
-                width: 120,
-                height: 120,
+            SizedBox(
+              width: 240,
+              height: 160,
+              child: Lottie.asset(
+                'assets/lottie/conectando.json',
                 fit: BoxFit.contain,
+                repeat: true,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             const Text(
               'Conectando...',
               style: TextStyle(
@@ -352,7 +342,6 @@ class _LoginWebViewScreenState extends State<LoginWebViewScreen>
   void dispose() {
     _injectTimer?.cancel();
     _timeoutTimer?.cancel();
-    _pulseController.dispose();
     super.dispose();
   }
 }
