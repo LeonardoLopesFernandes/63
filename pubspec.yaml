@@ -26,7 +26,6 @@ dependencies:
   image_picker: ^1.0.7
   pdf: ^3.11.1
   share_plus: ^10.0.0
-  lottie: ^3.1.2
   flutter_localizations:
     sdk: flutter
 
@@ -41,6 +40,5 @@ flutter:
     - assets/celulares.json
     - assets/logo.png
     - assets/ic_papeleta.png
-    - assets/lottie/
     - assets/fonts/
     - shorebird.yaml
