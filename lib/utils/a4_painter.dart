@@ -446,6 +446,8 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados) async {
           child: pw.Text(
             text,
             textAlign: align,
+            softWrap: false,
+            maxLines: 1,
             style: pw.TextStyle(
               fontSize: size * s,
               fontWeight: bold ? pw.FontWeight.bold : pw.FontWeight.normal,
