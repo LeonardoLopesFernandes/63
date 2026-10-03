@@ -86,10 +86,12 @@ class PapeletaPainter extends CustomPainter {
   final int marginBottom;
   final int marginH;
 
-  /// Parcela mínima (R$). Quando informada, o nº de parcelas é calculado a
-  /// partir do preço do aparelho (preço / parcela mínima). Null = usa o
-  /// qtdParcelas já calculado.
+  /// Parcela mínima (R$) usada para calcular o nº de parcelas
+  /// (preço / parcela mínima). Null = usa o qtdParcelas já calculado.
   final double? minParcela;
+
+  /// Nº máximo de parcelas (10 ou 12).
+  final int maxParcelas;
 
   /// Mostra o texto "exclusivo no cartão cliente a".
   final bool mostrarExclusivo;
@@ -100,6 +102,7 @@ class PapeletaPainter extends CustomPainter {
       this.marginBottom = MARGIN_BOTTOM,
       this.marginH = MARGIN_H,
       this.minParcela,
+      this.maxParcelas = 10,
       this.mostrarExclusivo = true});
 
   @override
@@ -167,9 +170,9 @@ class PapeletaPainter extends CustomPainter {
     final minP = minParcela;
     if (minP != null && minP > 0) {
       qtdParcelasInt = (precoDescNum / minP).floor();
-      if (qtdParcelasInt < 1) qtdParcelasInt = 1;
     }
-    if (qtdParcelasInt > 10) qtdParcelasInt = 10;
+    if (qtdParcelasInt > maxParcelas) qtdParcelasInt = maxParcelas;
+    if (qtdParcelasInt < 1) qtdParcelasInt = 1;
     final rawParc = precoDescNum / (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
     final valorParcNum = (rawParc * 100).ceil() / 100;
     final valorParcFmt = _brCurrency(valorParcNum);
@@ -358,6 +361,7 @@ Future<ui.Image> renderA4Image(List<PapeletaData> dados,
     int marginBottom = MARGIN_BOTTOM,
     int marginH = MARGIN_H,
     double? minParcela,
+    int maxParcelas = 10,
     bool mostrarExclusivo = true}) async {
   ui.Image? logo;
   try {
@@ -375,6 +379,7 @@ Future<ui.Image> renderA4Image(List<PapeletaData> dados,
           marginBottom: marginBottom,
           marginH: marginH,
           minParcela: minParcela,
+          maxParcelas: maxParcelas,
           mostrarExclusivo: mostrarExclusivo)
       .paint(canvas, Size(A4_W.toDouble(), A4_H.toDouble()));
   final picture = recorder.endRecording();
@@ -382,9 +387,11 @@ Future<ui.Image> renderA4Image(List<PapeletaData> dados,
 }
 
 Future<Uint8List> renderA4Png(List<PapeletaData> dados,
-    {double? minParcela, bool mostrarExclusivo = true}) async {
+    {double? minParcela, int maxParcelas = 10, bool mostrarExclusivo = true}) async {
   final img = await renderA4Image(dados,
-      minParcela: minParcela, mostrarExclusivo: mostrarExclusivo);
+      minParcela: minParcela,
+      maxParcelas: maxParcelas,
+      mostrarExclusivo: mostrarExclusivo);
   final bytes = await img.toByteData(format: ui.ImageByteFormat.png);
   return bytes!.buffer.asUint8List();
 }
@@ -398,6 +405,7 @@ Future<Uint8List> renderA4Png(List<PapeletaData> dados,
 Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
     {bool altaNitidez = true,
     double? minParcela,
+    int maxParcelas = 10,
     bool mostrarExclusivo = true}) async {
   // Compartilhar: PDF vetorial (rápido, nítido, com a fonte do aparelho
   // embutida). Imprimir: raster 300 DPI (a impressora dimensiona pela imagem;
@@ -405,7 +413,9 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
   if (altaNitidez) {
     try {
       return await gerarPdfVetorial(dados,
-          minParcela: minParcela, mostrarExclusivo: mostrarExclusivo);
+          minParcela: minParcela,
+          maxParcelas: maxParcelas,
+          mostrarExclusivo: mostrarExclusivo);
     } catch (_) {
       // se o vetorial falhar, cai no raster abaixo
     }
@@ -415,7 +425,9 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
   for (final scale in escalas) {
     try {
       return await _gerarPdfComEscala(dados, scale,
-          minParcela: minParcela, mostrarExclusivo: mostrarExclusivo);
+          minParcela: minParcela,
+          maxParcelas: maxParcelas,
+          mostrarExclusivo: mostrarExclusivo);
     } catch (e) {
       lastError = e;
     }
@@ -426,7 +438,7 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
 /// PDF vetorial (texto/vetores) — nítido em qualquer zoom e rápido, ao
 /// contrário do raster. Usa a fonte do aparelho (SF Pro Display) embutida.
 Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
-    {double? minParcela, bool mostrarExclusivo = true}) async {
+    {double? minParcela, int maxParcelas = 10, bool mostrarExclusivo = true}) async {
   const page = pdf.PdfPageFormat.a4;
   final s = page.width / A4_W; // px (300 DPI) -> pontos
   final qw = (A4_W - 2 * PDF_MARGIN_H) / 2.0;
@@ -502,9 +514,9 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     final minP = minParcela;
     if (minP != null && minP > 0) {
       qtdParcelasInt = (precoDescNum / minP).floor();
-      if (qtdParcelasInt < 1) qtdParcelasInt = 1;
     }
-    if (qtdParcelasInt > 10) qtdParcelasInt = 10;
+    if (qtdParcelasInt > maxParcelas) qtdParcelasInt = maxParcelas;
+    if (qtdParcelasInt < 1) qtdParcelasInt = 1;
     final rawParc = precoDescNum / (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
     final valorParcFmt = _brCurrency((rawParc * 100).ceil() / 100);
 
@@ -743,13 +755,14 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
 }
 
 Future<Uint8List> _gerarPdfComEscala(List<PapeletaData> dados, double scale,
-    {double? minParcela, bool mostrarExclusivo = true}) async {
+    {double? minParcela, int maxParcelas = 10, bool mostrarExclusivo = true}) async {
   final img = await renderA4Image(dados,
       scale: scale,
       marginTop: PDF_MARGIN_TOP,
       marginBottom: PDF_MARGIN_BOTTOM,
       marginH: PDF_MARGIN_H,
       minParcela: minParcela,
+      maxParcelas: maxParcelas,
       mostrarExclusivo: mostrarExclusivo);
   final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
   img.dispose();

@@ -17,12 +17,13 @@ class PreviewScreen extends StatefulWidget {
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
+  static const double _minParcela = 49.99;
+  static const _maxParcelasOpts = [10, 12];
+
   String? _busyAction;
-  double _minParcela = 49.99;
+  int _maxParcelas = 10;
   bool _mostrarExclusivo = true;
   late Future<Uint8List> _future;
-
-  static const _minsParcela = [49.99, 39.99, 29.99, 19.99, 9.99];
 
   @override
   void initState() {
@@ -33,12 +34,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
   void _gerarPreview() {
     setState(() {
       _future = renderA4Png(widget.dados,
-          minParcela: _minParcela, mostrarExclusivo: _mostrarExclusivo);
+          minParcela: _minParcela,
+          maxParcelas: _maxParcelas,
+          mostrarExclusivo: _mostrarExclusivo);
     });
   }
-
-  String _fmtMin(double v) =>
-      'R\$ ${v.toStringAsFixed(2).replaceAll('.', ',')}';
 
   void _toast(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
@@ -67,7 +67,9 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
     setState(() => _busyAction = 'compartilhar');
     try {
       final bytes = await gerarPdfBytes(widget.dados,
-          minParcela: _minParcela, mostrarExclusivo: _mostrarExclusivo);
+          minParcela: _minParcela,
+          maxParcelas: _maxParcelas,
+          mostrarExclusivo: _mostrarExclusivo);
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/papeleta_a4.pdf');
       await file.writeAsBytes(bytes);
@@ -85,6 +87,7 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
       final bytes = await gerarPdfBytes(widget.dados,
           altaNitidez: false,
           minParcela: _minParcela,
+          maxParcelas: _maxParcelas,
           mostrarExclusivo: _mostrarExclusivo);
       final socket = await Socket.connect('10.25.168.24', 9100, timeout: const Duration(seconds: 10));
       try {
@@ -160,21 +163,21 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
               children: [
                 Row(
                   children: [
-                    const Text('Parcela mínima',
+                    const Text('Parcelas',
                         style: TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 13)),
                     const Spacer(),
-                    DropdownButton<double>(
-                      value: _minParcela,
+                    DropdownButton<int>(
+                      value: _maxParcelas,
                       underline: const SizedBox.shrink(),
-                      items: _minsParcela
+                      items: _maxParcelasOpts
                           .map((v) => DropdownMenuItem(
                               value: v,
-                              child: Text(_fmtMin(v),
+                              child: Text('${v}x',
                                   style: const TextStyle(fontSize: 14))))
                           .toList(),
                       onChanged: (v) {
-                        if (v != null) setState(() => _minParcela = v);
+                        if (v != null) setState(() => _maxParcelas = v);
                       },
                     ),
                   ],
