@@ -168,6 +168,25 @@ class _MainScreenState extends State<MainScreen> {
     _toast('Modelo removido');
   }
 
+  Future<void> _onPhonesDeleted(List<CelularSpec> phones) async {
+    if (phones.isEmpty) return;
+    final prefs = await SharedPreferences.getInstance();
+    final ids = phones.map((p) => p.id).toSet();
+    for (final id in ids) {
+      await prefs.setBool('phone_deleted_$id', true);
+    }
+    _celulares.removeWhere((p) => ids.contains(p.id));
+    for (var i = 0; i < _states.length; i++) {
+      final sel = _states[i].selectedPhone;
+      if (sel != null && ids.contains(sel.id)) {
+        _states[i] = _states[i].copyWith(selectedPhone: null);
+      }
+    }
+    _saveAll();
+    if (mounted) setState(() {});
+    _toast('${ids.length} modelo(s) removido(s)');
+  }
+
   Future<void> _onPhoneEdited(CelularSpec phone, List<String> newSpecs) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('phone_specs_${phone.id}', newSpecs);
@@ -241,7 +260,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -672,108 +691,130 @@ void _openScanner(int index) async {
       onPopInvokedWithResult: (didPop, result) => _onBackPressed(context),
       child: Scaffold(
         backgroundColor: const Color(0xFFF4F8FE),
-        appBar: AppBar(
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 12),
-            child: Image.asset('assets/ic_papeleta.png', width: 36, height: 36),
-          ),
-          title: Center(
-            child: RichText(
-              text: const TextSpan(
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                children: [
-                  TextSpan(
-                    text: 'Plano de ',
-                    style: TextStyle(color: Color(0xFFD32F2F)),
-                  ),
-                  TextSpan(
-                    text: 'Telefonia',
-                    style: TextStyle(color: Color(0xFF0040A0)),
-                  ),
-                ],
+        body: CustomScrollView(
+          controller: _scroll,
+          slivers: [
+            // Toolbar que some ao rolar para baixo e volta ao rolar pra cima.
+            SliverAppBar(
+              floating: true,
+              snap: true,
+              elevation: 0,
+              centerTitle: true,
+              backgroundColor: const Color(0xFFF4F8FE),
+              foregroundColor: const Color(0xFF1D1B20),
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child:
+                    Image.asset('assets/ic_papeleta.png', width: 34, height: 34),
               ),
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          foregroundColor: const Color(0xFF1D1B20),
-          elevation: 0,
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.person, color: Color(0xFFD32F2F)),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              title: Center(
+                child: RichText(
+                  text: const TextSpan(
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    children: [
+                      TextSpan(
+                        text: 'Plano de ',
+                        style: TextStyle(color: Color(0xFFD32F2F)),
+                      ),
+                      TextSpan(
+                        text: 'Telefonia',
+                        style: TextStyle(color: Color(0xFF0040A0)),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.person, color: Color(0xFFD32F2F)),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scroll,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              itemCount: 4,
-              itemBuilder: (ctx, i) => Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: FormRow(
-                  index: i,
-                  state: _states[i],
-                  motorolaPhones: motorola,
-                  samsungPhones: samsung,
-                  outrosPhones: outros,
-                  allPhones: _celulares,
-                  onStateChange: (s) => _onStateChange(i, s),
-                  onScan: () => _openScanner(i),
-                  onSearchSubmit: _abrirBuscaDescricao,
-                  onSearchWeb: (i) => _openBrowser(i),
-                  onWeekToggle: (checked) {
-                    if (checked) {
-                      for (var j = 0; j < 4; j++) {
-                        _states[j] = j == i ? _states[j].copyWith(daSemana: true) : _states[j].copyWith(daSemana: false);
-                      }
-                    } else {
-                      _states[i] = _states[i].copyWith(daSemana: false);
-                    }
-                    _saveAll();
-                    setState(() {});
-                  },
-                  onPhoneRenamed: (phone, newName) => _onPhoneRenamed(phone, newName),
-                  onPhoneDeleted: (phone) => _onPhoneDeleted(phone),
-                  onPhoneEdited: (phone, newSpecs) => _onPhoneEdited(phone, newSpecs),
-                  onAddModel: _showAddModelDialog,
+            SliverPadding(
+              // Menos padding lateral -> cards mais largos. O bottom grande
+              // reserva espaço pro FAB, que fica abaixo do último card.
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 96),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (ctx, i) => Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: FormRow(
+                      index: i,
+                      state: _states[i],
+                      motorolaPhones: motorola,
+                      samsungPhones: samsung,
+                      outrosPhones: outros,
+                      allPhones: _celulares,
+                      onStateChange: (s) => _onStateChange(i, s),
+                      onScan: () => _openScanner(i),
+                      onSearchSubmit: _abrirBuscaDescricao,
+                      onSearchWeb: (i) => _openBrowser(i),
+                      onWeekToggle: (checked) {
+                        if (checked) {
+                          for (var j = 0; j < 4; j++) {
+                            _states[j] = j == i
+                                ? _states[j].copyWith(daSemana: true)
+                                : _states[j].copyWith(daSemana: false);
+                          }
+                        } else {
+                          _states[i] = _states[i].copyWith(daSemana: false);
+                        }
+                        _saveAll();
+                        setState(() {});
+                      },
+                      onPhoneRenamed: (phone, newName) =>
+                          _onPhoneRenamed(phone, newName),
+                      onPhoneDeleted: (phone) => _onPhoneDeleted(phone),
+                      onPhonesDeleted: (phones) => _onPhonesDeleted(phones),
+                      onPhoneEdited: (phone, newSpecs) =>
+                          _onPhoneEdited(phone, newSpecs),
+                      onAddModel: _showAddModelDialog,
+                    ),
+                  ),
+                  childCount: 4,
                 ),
               ),
             ),
-          ),
-          if (_errors.isNotEmpty)
-            Container(
-              margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF0F0),
-                border: Border.all(color: Colors.red, width: 2),
-                borderRadius: BorderRadius.circular(12),
+            if (_errors.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF0F0),
+                    border: Border.all(color: Colors.red, width: 2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _errors
+                        .map((e) => Text(e,
+                            style: const TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold)))
+                        .toList(),
+                  ),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: _errors.map((e) => Text(e, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold))).toList(),
-              ),
-            ),
-        ],
-      ),
-       floatingActionButton: _atBottom
-           ? SizedBox(
-               width: MediaQuery.of(context).size.width - 32,
-               child: FloatingActionButton.extended(
-                 onPressed: _gerar,
-                 backgroundColor: const Color(0xFFD32F2F),
-                 label: const Text('GERAR PAPELETA', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                 icon: const Icon(Icons.check, color: Colors.white),
-               ),
-             )
-           : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          ],
+        ),
+        floatingActionButton: _atBottom
+            ? SizedBox(
+                width: MediaQuery.of(context).size.width - 24,
+                child: FloatingActionButton.extended(
+                  onPressed: _gerar,
+                  backgroundColor: const Color(0xFFD32F2F),
+                  label: const Text('GERAR PAPELETA',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
+                  icon: const Icon(Icons.check, color: Colors.white),
+                ),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -793,6 +834,7 @@ class FormRow extends StatefulWidget {
   final void Function(int) onSearchWeb;
   final void Function(CelularSpec, String) onPhoneRenamed;
   final void Function(CelularSpec) onPhoneDeleted;
+  final void Function(List<CelularSpec>) onPhonesDeleted;
   final void Function(CelularSpec, List<String>) onPhoneEdited;
   final VoidCallback onAddModel;
 
@@ -811,6 +853,7 @@ class FormRow extends StatefulWidget {
     required this.onSearchWeb,
     required this.onPhoneRenamed,
     required this.onPhoneDeleted,
+    required this.onPhonesDeleted,
     required this.onPhoneEdited,
     required this.onAddModel,
   });
@@ -855,59 +898,55 @@ class _FormRowState extends State<FormRow> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('PAPELETA ${widget.index + 1}', style: const TextStyle(color: Color(0xFFD32F2F), fontWeight: FontWeight.bold, fontSize: 16)),
-            Row(
-              children: [
-                IconButton.filled(
-                  onPressed: () => widget.onSearchWeb(widget.index),
-                  style: IconButton.styleFrom(backgroundColor: const Color(0xFF0D47A1)),
-                  icon: const Icon(Icons.public, color: Colors.white, size: 20),
-                  tooltip: 'Buscar ficha técnica na internet',
-                ),
-                const SizedBox(width: 4),
-                IconButton.filled(
-                  onPressed: widget.onScan,
-                  style: IconButton.styleFrom(backgroundColor: const Color(0xFFD32F2F)),
-                  icon: const Icon(Icons.qr_code_scanner, color: Colors.white, size: 20),
-                  tooltip: 'Escanear código de barras',
-                ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
         Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: Color(0x1AD32F2F))),
           color: Colors.white,
           elevation: 4,
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextField(
-                  controller: _searchCtrl,
-                  onSubmitted: (q) => widget.onSearchSubmit(widget.index, q),
-                  style: const TextStyle(fontSize: 14),
-                  decoration: InputDecoration(
-                    hintText: 'Buscar aparelho (Depto 63)...',
-                    hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                    prefixIcon: const Icon(Icons.search, color: Color(0xFFD32F2F), size: 20),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.arrow_forward, color: Color(0xFFD32F2F), size: 18),
-                      onPressed: () => widget.onSearchSubmit(widget.index, _searchCtrl.text),
+                // Header compacto: PAPELETA X + busca + ícones na mesma faixa.
+                Row(
+                  children: [
+                    Text('PAPELETA ${widget.index + 1}',
+                        style: const TextStyle(
+                            color: Color(0xFFD32F2F),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchCtrl,
+                        onSubmitted: (q) => widget.onSearchSubmit(widget.index, q),
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          hintText: 'Buscar aparelho...',
+                          hintStyle: const TextStyle(fontSize: 13, color: Colors.grey),
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          prefixIcon: const Icon(Icons.search, color: Color(0xFFD32F2F), size: 20),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.arrow_forward, color: Color(0xFFD32F2F), size: 18),
+                            onPressed: () => widget.onSearchSubmit(widget.index, _searchCtrl.text),
+                          ),
+                          filled: true,
+                          fillColor: const Color(0xFFFFEBEE).withOpacity(0.5),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                        ),
+                      ),
                     ),
-                    filled: true,
-                    fillColor: const Color(0xFFFFEBEE).withOpacity(0.5),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                  ),
+                    const SizedBox(width: 6),
+                    _miniIcon(Icons.public, const Color(0xFF0D47A1),
+                        'Buscar ficha técnica na internet',
+                        () => widget.onSearchWeb(widget.index)),
+                    const SizedBox(width: 6),
+                    _miniIcon(Icons.qr_code_scanner, const Color(0xFFD32F2F),
+                        'Escanear código de barras', widget.onScan),
+                  ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 const Text('Modelo', style: TextStyle(color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 13)),
                 const SizedBox(height: 6),
                 PhoneDropdown(
@@ -918,6 +957,7 @@ class _FormRowState extends State<FormRow> {
                   onPhoneSelected: (p) => widget.onStateChange(widget.state.copyWith(selectedPhone: p)),
                   onPhoneRenamed: (phone, newName) => widget.onPhoneRenamed(phone, newName),
                   onPhoneDeleted: (phone) => widget.onPhoneDeleted(phone),
+                  onPhonesDeleted: (phones) => widget.onPhonesDeleted(phones),
                   onPhoneEdited: (phone, newSpecs) => widget.onPhoneEdited(phone, newSpecs),
                   onAddModel: widget.onAddModel,
                 ),
@@ -959,6 +999,24 @@ class _FormRowState extends State<FormRow> {
     );
   }
 
+  Widget _miniIcon(IconData icon, Color color, String tooltip, VoidCallback onTap) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: color,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(7),
+            child: Icon(icon, color: Colors.white, size: 18),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _currencyField(TextEditingController ctrl, void Function(String) onDigits) {
     return TextField(
       controller: ctrl,
@@ -990,6 +1048,7 @@ class PhoneDropdown extends StatefulWidget {
   final void Function(CelularSpec?) onPhoneSelected;
   final void Function(CelularSpec, String) onPhoneRenamed;
   final void Function(CelularSpec) onPhoneDeleted;
+  final void Function(List<CelularSpec>) onPhonesDeleted;
   final void Function(CelularSpec, List<String>) onPhoneEdited;
   final VoidCallback onAddModel;
 
@@ -1002,6 +1061,7 @@ class PhoneDropdown extends StatefulWidget {
     required this.onPhoneSelected,
     required this.onPhoneRenamed,
     required this.onPhoneDeleted,
+    required this.onPhonesDeleted,
     required this.onPhoneEdited,
     required this.onAddModel,
   });
@@ -1042,7 +1102,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
           onTap: () => setState(() => _expanded = !_expanded),
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: BoxDecoration(
               color: const Color(0xFFF0F4F9),
               borderRadius: BorderRadius.circular(12),
@@ -1059,7 +1119,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
         if (_expanded)
           Container(
             margin: const EdgeInsets.only(top: 4),
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade300)),
             constraints: const BoxConstraints(maxHeight: 320),
             child: SingleChildScrollView(
@@ -1211,7 +1271,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
               textColor: Colors.red.shade600,
               onTap: () {
                 Navigator.pop(ctx);
-                _confirmDelete(phone);
+                _showRemoveModelsDialog(phone);
               },
             ),
             const SizedBox(height: 24),
@@ -1279,6 +1339,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
         title: const Text('Renomear modelo'),
         content: TextField(
           controller: controller,
@@ -1438,27 +1499,80 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
     );
   }
 
-  void _confirmDelete(CelularSpec phone) {
+  void _showRemoveModelsDialog(CelularSpec phone) {
+    final todos = <CelularSpec>[
+      ...widget.motorolaPhones,
+      ...widget.samsungPhones,
+      ...widget.outrosPhones,
+    ];
+    final selecionados = <String>{phone.id};
     showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Remover modelo?'),
-        content: Text('Tem certeza que deseja remover "${phone.modelo} ${phone.armazenamento}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, set) => AlertDialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
+          title: const Text('Remover modelos'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Selecione os modelos que deseja remover:',
+                    style: TextStyle(fontSize: 13, color: Colors.black54)),
+                const SizedBox(height: 8),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: todos.map((p) {
+                        final sel = selecionados.contains(p.id);
+                        return CheckboxListTile(
+                          dense: true,
+                          value: sel,
+                          activeColor: const Color(0xFFD32F2F),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text('${p.modelo} ${p.armazenamento}',
+                              style: const TextStyle(fontSize: 14)),
+                          onChanged: (v) => set(() {
+                            if (v == true) {
+                              selecionados.add(p.id);
+                            } else {
+                              selecionados.remove(p.id);
+                            }
+                          }),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          TextButton(
-            onPressed: () {
-              widget.onPhoneDeleted(phone);
-              Navigator.pop(ctx);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Remover'),
-          ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: selecionados.isEmpty
+                  ? null
+                  : () {
+                      final remover = todos
+                          .where((p) => selecionados.contains(p.id))
+                          .toList();
+                      Navigator.pop(ctx);
+                      widget.onPhonesDeleted(remover);
+                    },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: Text('Remover (${selecionados.length})'),
+            ),
+          ],
+        ),
       ),
     );
   }
+
+
 }
