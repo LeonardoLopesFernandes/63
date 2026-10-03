@@ -171,7 +171,9 @@ class PapeletaPainter extends CustomPainter {
     if (minP != null && minP > 0) {
       qtdParcelasInt = (precoDescNum / minP).floor();
     }
-    if (qtdParcelasInt > maxParcelas) qtdParcelasInt = maxParcelas;
+    // Celular da semana parcela em até 15x; os demais usam o máximo escolhido.
+    final capParcelas = item.daSemana ? 15 : maxParcelas;
+    if (qtdParcelasInt > capParcelas) qtdParcelasInt = capParcelas;
     if (qtdParcelasInt < 1) qtdParcelasInt = 1;
     final rawParc = precoDescNum / (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
     final valorParcNum = (rawParc * 100).ceil() / 100;
@@ -515,7 +517,9 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     if (minP != null && minP > 0) {
       qtdParcelasInt = (precoDescNum / minP).floor();
     }
-    if (qtdParcelasInt > maxParcelas) qtdParcelasInt = maxParcelas;
+    // Celular da semana parcela em até 15x; os demais usam o máximo escolhido.
+    final capParcelas = item.daSemana ? 15 : maxParcelas;
+    if (qtdParcelasInt > capParcelas) qtdParcelasInt = capParcelas;
     if (qtdParcelasInt < 1) qtdParcelasInt = 1;
     final rawParc = precoDescNum / (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
     final valorParcFmt = _brCurrency((rawParc * 100).ceil() / 100);
