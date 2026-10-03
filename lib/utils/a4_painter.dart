@@ -657,7 +657,9 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         alignment: pw.Alignment.center,
         decoration: pw.BoxDecoration(
           border: pw.Border.all(color: white, width: 2 * s),
-          borderRadius: pw.BorderRadius.circular(w * 0.04 * s),
+          // Raio limitado à metade da altura (como o Skia faz no preview);
+          // sem isso, raio > altura/2 gera pontas estranhas no PDF.
+          borderRadius: pw.BorderRadius.circular(b2H / 2 * s),
         ),
         child: pw.Text('preço sem plano controle',
             style: pw.TextStyle(
