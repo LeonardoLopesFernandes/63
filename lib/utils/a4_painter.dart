@@ -296,7 +296,7 @@ class PapeletaPainter extends CustomPainter {
     final b2L = cx - b2W / 2;
     canvas.drawRRect(
         RRect.fromRectAndRadius(Rect.fromLTWH(b2L, badge2Top, b2W, b2H),
-            Radius.circular(w * 0.03)),
+            Radius.circular(w * 0.04)),
         whiteStroke);
     // Centraliza o texto no badge (horizontal e vertical).
     final b2TextX = b2L + (b2W - b2Paint.width) / 2;
@@ -657,7 +657,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         alignment: pw.Alignment.center,
         decoration: pw.BoxDecoration(
           border: pw.Border.all(color: white, width: 2 * s),
-          borderRadius: pw.BorderRadius.circular(w * 0.03 * s),
+          borderRadius: pw.BorderRadius.circular(w * 0.04 * s),
         ),
         child: pw.Text('preço sem plano controle',
             style: pw.TextStyle(
