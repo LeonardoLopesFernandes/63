@@ -1135,42 +1135,141 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
     );
   }
 
+  static const _azul = Color(0xFF0D47A1);
+
   void _showOptionsDialog(CelularSpec phone) {
-    showDialog<void>(
+    showModalBottomSheet<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('${phone.modelo} ${phone.armazenamento}'),
-        content: const Text('O que deseja fazer?'),
-        actions: [
-          TextButton.icon(
-            icon: const Icon(Icons.edit, color: Color(0xFF0D47A1)),
-            label: const Text('Renomear', style: TextStyle(color: Color(0xFF0D47A1))),
-            onPressed: () {
-              Navigator.pop(ctx);
-              _showRenameDialog(phone);
-            },
+      isScrollControlled: true,
+      backgroundColor: Colors.grey.shade100,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.only(
+          bottom: 24.0,
+          left: 24.0,
+          right: 24.0,
+          top: 12.0,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Indicador de arraste
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              '${phone.modelo} ${phone.armazenamento}',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'O que deseja fazer?',
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            _optionButton(
+              icon: Icons.edit,
+              iconColor: _azul,
+              label: 'Renomear',
+              onTap: () {
+                Navigator.pop(ctx);
+                _showRenameDialog(phone);
+              },
+            ),
+            const SizedBox(height: 8),
+            _optionButton(
+              icon: Icons.build_rounded,
+              iconColor: _azul,
+              label: 'Editar Especificações',
+              onTap: () {
+                Navigator.pop(ctx);
+                _showEditSpecsDialog(phone);
+              },
+            ),
+            const SizedBox(height: 8),
+            _optionButton(
+              icon: Icons.delete,
+              iconColor: Colors.red.shade600,
+              label: 'Remover',
+              textColor: Colors.red.shade600,
+              onTap: () {
+                Navigator.pop(ctx);
+                _confirmDelete(phone);
+              },
+            ),
+            const SizedBox(height: 24),
+            Divider(color: Colors.grey.shade300, height: 1),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: _azul,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _optionButton({
+    required IconData icon,
+    required Color iconColor,
+    required String label,
+    Color? textColor,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+          child: Row(
+            children: [
+              Icon(icon, color: iconColor, size: 24),
+              const SizedBox(width: 16),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: textColor ?? Colors.black87,
+                ),
+              ),
+            ],
           ),
-          TextButton.icon(
-            icon: const Icon(Icons.build, color: Color(0xFF0D47A1)),
-            label: const Text('Editar specs', style: TextStyle(color: Color(0xFF0D47A1))),
-            onPressed: () {
-              Navigator.pop(ctx);
-              _showEditSpecsDialog(phone);
-            },
-          ),
-          TextButton.icon(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            label: const Text('Remover', style: TextStyle(color: Colors.red)),
-            onPressed: () {
-              Navigator.pop(ctx);
-              _confirmDelete(phone);
-            },
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
-          ),
-        ],
+        ),
       ),
     );
   }
