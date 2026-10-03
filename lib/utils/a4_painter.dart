@@ -341,12 +341,17 @@ Future<Uint8List> renderA4Png(List<PapeletaData> dados) async {
   return bytes!.buffer.asUint8List();
 }
 
-/// Gera um PDF A4 (595x842 pt) com a papeleta renderizada em alta resolução
-/// (600 DPI), para ficar nítida na impressão e no compartilhamento.
-/// Se a renderização em alta falhar (memória), cai para 300 DPI.
-Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados) async {
+/// Gera um PDF A4 (595x842 pt) com a papeleta renderizada.
+///
+/// [altaNitidez] = true (compartilhar): 600 DPI (cai para 300 se faltar
+/// memória). [altaNitidez] = false (impressão direta via socket): 300 DPI,
+/// pois a impressora dimensiona a imagem pelos pixels — em 600 DPI ela
+/// imprimiria com o dobro do tamanho.
+Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
+    {bool altaNitidez = true}) async {
+  final escalas = altaNitidez ? const [2.0, 1.0] : const [1.0];
   Object? lastError;
-  for (final scale in const [2.0, 1.0]) {
+  for (final scale in escalas) {
     try {
       return await _gerarPdfComEscala(dados, scale);
     } catch (e) {

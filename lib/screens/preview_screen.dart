@@ -60,7 +60,7 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
   Future<void> _imprimir() async {
     setState(() => _busyAction = 'imprimir');
     try {
-      final bytes = await gerarPdfBytes(widget.dados);
+      final bytes = await gerarPdfBytes(widget.dados, altaNitidez: false);
       final socket = await Socket.connect('10.25.168.24', 9100, timeout: const Duration(seconds: 10));
       try {
         final pjl = <int>[0x1B, 0x25, 0x2D, 0x31, 0x32, 0x33, 0x34, 0x35, 0x58];
