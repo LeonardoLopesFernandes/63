@@ -178,18 +178,20 @@ class PapeletaPainter extends CustomPainter {
     _drawText(canvas, '${item.modelo} ${item.armazenamento}', cx, h * 0.08, fontSize: w * 0.06,
         fontWeight: FontWeight.bold, align: TextAlign.center);
 
-    // specs
+    // specs (máximo 6; reserva fixa p/ todos os cartões iguais)
     final specX = w * 0.07;
-    var specY = h * 0.08 + 3 * line;
+    final specY0 = h * 0.08 + 3 * line;
     final specLeading = w * 0.033 * 1.3;
-    for (final spec in item.specs) {
+    var specY = specY0;
+    for (final spec in item.specs.take(6)) {
       _drawText(canvas, '• $spec', specX, specY, fontSize: w * 0.033, fontWeight: FontWeight.bold);
       specY += specLeading;
     }
 
     // badge "preço com plano controle"
-    // ~2 linhas de espaço da última spec (Tela) até o badge
-    final badge1Top = specY + line;
+    // posição fixa (reserva de 6 specs): todos os cartões iguais,
+    // tendo 5, 6 ou mais specs
+    final badge1Top = specY0 + 6 * specLeading + line;
     final b1Line1 = 'preço com plano controle';
     final b1Line2 = 'consulte operadora (CLARO ou TIM) e modalidade';
     final b1L = w * 0.06;
@@ -548,17 +550,19 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         w * 0.06,
         bold: true, align: pw.TextAlign.center, widthPx: w));
 
-    // specs
-    var specY = h * 0.08 + 3 * line;
+    // specs (máximo 6; reserva fixa p/ todos os cartões iguais)
+    final specY0 = h * 0.08 + 3 * line;
     final specLeading = w * 0.033 * 1.3;
-    for (final spec in item.specs) {
+    var specY = specY0;
+    for (final spec in item.specs.take(6)) {
       children.add(txt(ox + w * 0.07, oy + specY, '• $spec', w * 0.033, bold: true));
       specY += specLeading;
     }
 
     // badge "preço com plano controle"
-    // ~2 linhas de espaço da última spec (Tela) até o badge
-    final badge1Top = specY + line;
+    // posição fixa (reserva de 6 specs): todos os cartões iguais,
+    // tendo 5, 6 ou mais specs
+    final badge1Top = specY0 + 6 * specLeading + line;
     final b1H = w * 0.065;
     children.add(pw.Positioned(
       left: (ox + w * 0.06) * s,
