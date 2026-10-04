@@ -180,7 +180,7 @@ class PapeletaPainter extends CustomPainter {
 
     // specs (máximo 6; reserva fixa p/ todos os cartões iguais)
     final specX = w * 0.07;
-    final specY0 = h * 0.08 + 3 * line;
+    final specY0 = h * 0.08 + line;
     final specLeading = w * 0.033 * 1.3;
     var specY = specY0;
     for (final spec in item.specs.take(6)) {
@@ -189,9 +189,9 @@ class PapeletaPainter extends CustomPainter {
     }
 
     // badge "preço com plano controle"
-    // posição fixa (reserva de 6 specs): todos os cartões iguais,
-    // tendo 5, 6 ou mais specs
-    final badge1Top = specY0 + 6 * specLeading + line;
+    // posição fixa (reserva de 6 specs): todos os cartões iguais;
+    // ~1 linha da Tela até o badge
+    final badge1Top = specY0 + 6 * specLeading;
     final b1Line1 = 'preço com plano controle';
     final b1Line2 = 'consulte operadora (CLARO ou TIM) e modalidade';
     final b1L = w * 0.06;
@@ -293,8 +293,8 @@ class PapeletaPainter extends CustomPainter {
     b2Paint.paint(canvas, Offset(b2TextX, b2TextY));
 
     // original price
-    // ~3 linhas de espaço do badge até o valor original
-    final origTop = badge2Top + b2H + 3 * line;
+    // ~1 linha do badge até o valor original
+    final origTop = badge2Top + b2H + line;
     final oBigS = w * 0.115;
     final oLine1 = origTop + oBigS * 0.28;
     final oLine2 = origTop + oBigS * 0.72;
@@ -314,8 +314,8 @@ class PapeletaPainter extends CustomPainter {
 
     // fine print
     final fineSizeW = w * 0.034;
-    // duas linhas de espaço do valor original até a letra miúda
-    final fineY = oLine2 + 2 * line;
+    // 1 linha do valor original até a letra miúda
+    final fineY = oLine2 + line;
     final fineLeading = fineSizeW * 1.3;
     _drawText(canvas, 'Oferta válida apenas para pagamento com cartão de crédito.', cx, fineY,
         fontSize: fineSizeW, color: Colors.grey.shade300, align: TextAlign.center);
@@ -551,7 +551,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         bold: true, align: pw.TextAlign.center, widthPx: w));
 
     // specs (máximo 6; reserva fixa p/ todos os cartões iguais)
-    final specY0 = h * 0.08 + 3 * line;
+    final specY0 = h * 0.08 + line;
     final specLeading = w * 0.033 * 1.3;
     var specY = specY0;
     for (final spec in item.specs.take(6)) {
@@ -560,9 +560,9 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     }
 
     // badge "preço com plano controle"
-    // posição fixa (reserva de 6 specs): todos os cartões iguais,
-    // tendo 5, 6 ou mais specs
-    final badge1Top = specY0 + 6 * specLeading + line;
+    // posição fixa (reserva de 6 specs): todos os cartões iguais;
+    // ~1 linha da Tela até o badge
+    final badge1Top = specY0 + 6 * specLeading;
     final b1H = w * 0.065;
     children.add(pw.Positioned(
       left: (ox + w * 0.06) * s,
@@ -688,8 +688,8 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     ));
 
     // preço original
-    // ~3 linhas de espaço do badge até o valor original
-    final origTop = badge2Top + b2H + 3 * line;
+    // ~1 linha do badge até o valor original
+    final origTop = badge2Top + b2H + line;
     final oBigS = w * 0.115;
     final oLine1 = origTop + oBigS * 0.06;
     final oLine2 = origTop + oBigS * 0.72;
@@ -717,8 +717,8 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
 
     // letra miúda
     final fineSizeW = w * 0.034;
-    // duas linhas de espaço do valor original até a letra miúda
-    final fineY = oLine2 + 2 * line;
+    // 1 linha do valor original até a letra miúda
+    final fineY = oLine2 + line;
     final fineLeading = fineSizeW * 1.3;
     children.add(txt(ox, oy + fineY,
         'Oferta válida apenas para pagamento com cartão de crédito.', fineSizeW,
