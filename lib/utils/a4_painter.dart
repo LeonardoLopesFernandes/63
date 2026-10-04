@@ -13,7 +13,7 @@ const int A4_H = 3508;
 const int MARGIN = 150; // ~12,7mm (superior)
 const int MARGIN_BOTTOM = 260; // reduz altura dos quadrantes
 const int MARGIN_H = 0; // laterais zeradas (largura máxima)
-const double GAP = 80; // ~7mm faixa de corte central
+const double GAP = 0; // quadrantes juntos (sem faixa de corte)
 
 double _measureText(String text, double fontSize, {FontWeight weight = FontWeight.normal}) {
   final tp = TextPainter(
@@ -125,28 +125,6 @@ class PapeletaPainter extends CustomPainter {
       canvas.restore();
     }
 
-    final cx = A4_W / 2.0;
-    final cy = marginTop + qh + gap / 2.0;
-    final contentTop = marginTop.toDouble();
-    final contentBottom = marginTop + 2 * qh + gap;
-    final contentLeft = marginH.toDouble();
-    final contentRight = (A4_W - marginH).toDouble();
-
-    final dashPaint = Paint()
-      ..color = Colors.grey.shade700
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke;
-
-    final scLinePaint = TextPainter(
-      text: const TextSpan(text: '✂', style: TextStyle(fontSize: 36, color: Colors.grey)),
-      textDirection: TextDirection.ltr,
-    );
-    scLinePaint.layout();
-    for (var x = marginH; x < A4_W - marginH; x += 80) {
-      scLinePaint.paint(canvas, Offset(x.toDouble(), cy + 10 - (scLinePaint.height)));
-    }
-    canvas.drawLine(Offset(contentLeft, cy + 18), Offset(contentRight, cy + 18), dashPaint);
-    canvas.drawLine(Offset(cx, contentTop), Offset(cx, contentBottom), dashPaint);
   }
 
   void _drawCardOnCanvas(Canvas canvas, double qw, double qh, PapeletaData item) {
@@ -730,39 +708,6 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         '(ativação, migração ou portabilidade) em que a oferta é válida.',
         fineSizeW,
         color: grey300, align: pw.TextAlign.center, widthPx: w));
-  }
-
-  // linhas de corte centrais
-  final cyPx = PDF_MARGIN_TOP + qh + GAP / 2.0;
-  final contentTop = PDF_MARGIN_TOP.toDouble();
-  final contentBottom = PDF_MARGIN_TOP + 2 * qh + GAP;
-  final contentLeft = PDF_MARGIN_H.toDouble();
-  final contentRight = (A4_W - PDF_MARGIN_H).toDouble();
-  children.add(pw.Positioned(
-    left: contentLeft * s,
-    top: (cyPx + 18) * s,
-    child: pw.Container(
-        width: (contentRight - contentLeft) * s, height: 1, color: grey700),
-  ));
-  children.add(pw.Positioned(
-    left: (A4_W / 2.0) * s,
-    top: contentTop * s,
-    child: pw.Container(
-        width: 1, height: (contentBottom - contentTop) * s, color: grey700),
-  ));
-
-  // tesouras de corte (vetorial) ao longo da linha central
-  const scissorsSvg =
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">'
-      '<path fill="#616161" d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.89-2-2s.9-2 2-2 2 .89 2 2-.9 2-2 2zm0 12c-1.1 0-2-.89-2-2s.9-2 2-2 2 .89 2 2-.9 2-2 2zm6-7.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5.5.22.5.5-.22.5-.5.5zM19 3l-6 6 2 2 7-7V3z"/>'
-      '</svg>';
-  const scW = 32.0;
-  for (var x = PDF_MARGIN_H; x < A4_W - PDF_MARGIN_H; x += 80) {
-    children.add(pw.Positioned(
-      left: x * s,
-      top: (cyPx - scW + 6) * s,
-      child: pw.SvgImage(svg: scissorsSvg, width: scW * s, height: scW * s),
-    ));
   }
 
   final doc = pw.Document(title: 'Papeleta A4', theme: theme);
