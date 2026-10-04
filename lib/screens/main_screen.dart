@@ -927,10 +927,6 @@ class _FormRowState extends State<FormRow> {
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           prefixIcon: const Icon(Icons.search, color: Color(0xFFD32F2F), size: 20),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.arrow_forward, color: Color(0xFFD32F2F), size: 18),
-                            onPressed: () => widget.onSearchSubmit(widget.index, _searchCtrl.text),
-                          ),
                           filled: true,
                           fillColor: const Color(0xFFFFEBEE).withOpacity(0.5),
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
