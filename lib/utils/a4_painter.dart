@@ -186,7 +186,7 @@ class PapeletaPainter extends CustomPainter {
     }
 
     // badge "preço com plano controle"
-    final badge1Top = h * 0.38;
+    final badge1Top = h * 0.33;
     final b1Line1 = 'preço com plano controle';
     final b1Line2 = 'consulte operadora (CLARO ou TIM) e modalidade';
     final b1L = w * 0.06;
@@ -308,7 +308,7 @@ class PapeletaPainter extends CustomPainter {
 
     // fine print
     final fineSizeW = w * 0.034;
-    final fineY = h - w * 0.095;
+    final fineY = h - w * 0.16;
     final fineLeading = fineSizeW * 1.3;
     _drawText(canvas, 'Oferta válida apenas para pagamento com cartão de crédito.', cx, fineY,
         fontSize: fineSizeW, color: Colors.grey.shade300, align: TextAlign.center);
@@ -542,7 +542,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     }
 
     // badge "preço com plano controle"
-    final badge1Top = h * 0.38;
+    final badge1Top = h * 0.33;
     final b1H = w * 0.065;
     children.add(pw.Positioned(
       left: (ox + w * 0.06) * s,
@@ -696,7 +696,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
 
     // letra miúda
     final fineSizeW = w * 0.034;
-    final fineY = h - w * 0.095;
+    final fineY = h - w * 0.16;
     final fineLeading = fineSizeW * 1.3;
     children.add(txt(ox, oy + fineY,
         'Oferta válida apenas para pagamento com cartão de crédito.', fineSizeW,
