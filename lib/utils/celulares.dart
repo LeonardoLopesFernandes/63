@@ -178,6 +178,42 @@ class Pair<T1, T2> {
   const Pair(this.first, this.second);
 }
 
+/// Separa uma descrição (ex.: "MOTO G04S 4G 128GB") em marca/modelo/armazenamento.
+({String marca, String modelo, String armazenamento}) parseModeloDescricao(
+    String desc,
+    {String marcaPadrao = 'Desconhecido',
+    String armazenamentoPadrao = 'Não informado'}) {
+  final upper = desc.toUpperCase();
+  var marca = marcaPadrao;
+  if (upper.contains('SAMSUNG') || upper.contains('GALAXY')) {
+    marca = 'Samsung';
+  } else if (upper.contains('MOTOROLA') ||
+      upper.contains('MOTO') ||
+      upper.contains('EDGE')) {
+    marca = 'Motorola';
+  } else if (upper.contains('XIAOMI') ||
+      upper.contains('REDMI') ||
+      upper.contains('POCO')) {
+    marca = 'Xiaomi';
+  } else if (upper.contains('APPLE') || upper.contains('IPHONE')) {
+    marca = 'Apple';
+  }
+  var armazenamento = armazenamentoPadrao;
+  final storageMatch = RegExp(r'(\d{2,4})\s?GB').firstMatch(upper);
+  if (storageMatch != null) armazenamento = '${storageMatch.group(1)}GB';
+  var modelo = desc;
+  if (armazenamento != armazenamentoPadrao) {
+    modelo = modelo
+        .replaceAll(RegExp(r'\d{2,4}\s?GB', caseSensitive: false), '')
+        .trim();
+  }
+  return (
+    marca: marca,
+    modelo: modelo.toUpperCase(),
+    armazenamento: armazenamento,
+  );
+}
+
 Pair<int, double> calcParcelas(double price, {bool daSemana = false}) {
   const minParcela = 49.99;
   final maxQuantity = daSemana ? 15 : 12;

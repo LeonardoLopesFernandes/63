@@ -151,6 +151,20 @@ class _MainScreenState extends State<MainScreen> {
     _toast('Modelo renomeado para "$newName"');
   }
 
+  Future<void> _onPhoneUpdated(CelularSpec updated) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('phone_name_${updated.id}', updated.modelo);
+    final idx = _celulares.indexWhere((p) => p.id == updated.id);
+    if (idx != -1) _celulares[idx] = updated;
+    for (var i = 0; i < _states.length; i++) {
+      if (_states[i].selectedPhone?.id == updated.id) {
+        _states[i] = _states[i].copyWith(selectedPhone: updated);
+      }
+    }
+    _saveAll();
+    if (mounted) setState(() {});
+  }
+
   Future<void> _onPhoneDeleted(CelularSpec phone) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('phone_deleted_${phone.id}', true);
@@ -782,6 +796,7 @@ void _openScanner(int index) async {
                           _onPhoneRenamed(phone, newName),
                       onPhoneDeleted: (phone) => _onPhoneDeleted(phone),
                       onPhonesDeleted: (phones) => _onPhonesDeleted(phones),
+                      onPhoneUpdated: (phone) => _onPhoneUpdated(phone),
                       onPhoneEdited: (phone, newSpecs) =>
                           _onPhoneEdited(phone, newSpecs),
                       onAddModel: _showAddModelDialog,
@@ -848,6 +863,7 @@ class FormRow extends StatefulWidget {
   final void Function(CelularSpec, String) onPhoneRenamed;
   final void Function(CelularSpec) onPhoneDeleted;
   final void Function(List<CelularSpec>) onPhonesDeleted;
+  final void Function(CelularSpec) onPhoneUpdated;
   final void Function(CelularSpec, List<String>) onPhoneEdited;
   final VoidCallback onAddModel;
 
@@ -867,6 +883,7 @@ class FormRow extends StatefulWidget {
     required this.onPhoneRenamed,
     required this.onPhoneDeleted,
     required this.onPhonesDeleted,
+    required this.onPhoneUpdated,
     required this.onPhoneEdited,
     required this.onAddModel,
   });
@@ -957,18 +974,26 @@ class _FormRowState extends State<FormRow> {
                 ),
                 const SizedBox(height: 10),
                 InputDecorator(
-                  decoration: const InputDecoration(
+                  isEmpty: false,
+                  decoration: InputDecoration(
                     labelText: 'Modelo',
-                    labelStyle: TextStyle(
+                    labelStyle: const TextStyle(
                         color: Color(0xFF49454F),
                         fontWeight: FontWeight.w600,
-                        fontSize: 13),
-                    floatingLabelStyle: TextStyle(
+                        fontSize: 14),
+                    floatingLabelStyle: const TextStyle(
                         color: Color(0xFF0D47A1),
                         fontWeight: FontWeight.w600,
-                        fontSize: 12),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(top: 4, bottom: 0),
+                        fontSize: 14),
+                    filled: true,
+                    fillColor: const Color(0xFFF0F4F9),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF0D47A1))),
+                    contentPadding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
                   ),
                   child: PhoneDropdown(
                     selectedPhone: widget.state.selectedPhone,
@@ -981,6 +1006,7 @@ class _FormRowState extends State<FormRow> {
                         widget.onPhoneRenamed(phone, newName),
                     onPhoneDeleted: (phone) => widget.onPhoneDeleted(phone),
                     onPhonesDeleted: (phones) => widget.onPhonesDeleted(phones),
+                    onPhoneUpdated: (phone) => widget.onPhoneUpdated(phone),
                     onPhoneEdited: (phone, newSpecs) =>
                         widget.onPhoneEdited(phone, newSpecs),
                     onAddModel: widget.onAddModel,
@@ -1054,9 +1080,9 @@ class _FormRowState extends State<FormRow> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(
-            color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 13),
+            color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 14),
         floatingLabelStyle: const TextStyle(
-            color: Color(0xFF0D47A1), fontWeight: FontWeight.w600, fontSize: 12),
+            color: Color(0xFF0D47A1), fontWeight: FontWeight.w600, fontSize: 14),
         hintText: 'digite o valor',
         filled: true,
         fillColor: const Color(0xFFF0F4F9),
@@ -1082,6 +1108,7 @@ class PhoneDropdown extends StatefulWidget {
   final void Function(CelularSpec, String) onPhoneRenamed;
   final void Function(CelularSpec) onPhoneDeleted;
   final void Function(List<CelularSpec>) onPhonesDeleted;
+  final void Function(CelularSpec) onPhoneUpdated;
   final void Function(CelularSpec, List<String>) onPhoneEdited;
   final VoidCallback onAddModel;
 
@@ -1095,6 +1122,7 @@ class PhoneDropdown extends StatefulWidget {
     required this.onPhoneRenamed,
     required this.onPhoneDeleted,
     required this.onPhonesDeleted,
+    required this.onPhoneUpdated,
     required this.onPhoneEdited,
     required this.onAddModel,
   });
@@ -1135,16 +1163,19 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
           onTap: () => setState(() => _expanded = !_expanded),
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0F4F9),
-              borderRadius: BorderRadius.circular(12),
-            ),
+            padding: const EdgeInsets.only(right: 4, top: 2, bottom: 2),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: Text(selectedText.isEmpty ? 'Selecione o modelo...' : selectedText, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500))),
-                const Icon(Icons.arrow_drop_down, color: Color(0xFFD32F2F)),
+                Expanded(
+                    child: Text(
+                        selectedText.isEmpty
+                            ? 'Selecione o modelo...'
+                            : selectedText,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500))),
+                Icon(_expanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                    color: const Color(0xFFD32F2F)),
               ],
             ),
           ),
@@ -1420,12 +1451,29 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
     }
 
     // Extrai as specs do texto colado (ficha técnica) e preenche os campos.
+    // Também atualiza o modelo/descrição do aparelho com a descrição extraída.
     void extrair() {
       final texto = pasteController.text;
       if (texto.trim().isEmpty) return;
       final specs = parseSpecsDeFicha(texto);
       for (var i = 0; i < specs.length && i < 6; i++) {
         specsControllers[i].text = specs[i];
+      }
+      final desc = extrairDescricao(texto, '');
+      if (desc.isNotEmpty) {
+        final atual = '${phone.modelo} ${phone.armazenamento}'.toUpperCase();
+        if (desc.toUpperCase() != atual) {
+          final p = parseModeloDescricao(desc,
+              marcaPadrao: phone.marca,
+              armazenamentoPadrao: phone.armazenamento);
+          widget.onPhoneUpdated(CelularSpec(
+            id: phone.id,
+            marca: p.marca,
+            modelo: p.modelo,
+            armazenamento: p.armazenamento,
+            specs: phone.specs,
+          ));
+        }
       }
     }
 
