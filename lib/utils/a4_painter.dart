@@ -186,7 +186,7 @@ class PapeletaPainter extends CustomPainter {
     }
 
     // badge "preço com plano controle"
-    final badge1Top = h * 0.33;
+    final badge1Top = specY + w * 0.015;
     final b1Line1 = 'preço com plano controle';
     final b1Line2 = 'consulte operadora (CLARO ou TIM) e modalidade';
     final b1L = w * 0.06;
@@ -206,7 +206,7 @@ class PapeletaPainter extends CustomPainter {
         color: Colors.grey.shade700, align: TextAlign.center);
 
     // black section
-    final blackTop = h * 0.460;
+    final blackTop = badge1Top + b1H + w * 0.03;
     final blackPaint = Paint()..color = Colors.black;
     canvas.drawRect(Rect.fromLTWH(0, blackTop, w, h - blackTop), blackPaint);
 
@@ -308,7 +308,7 @@ class PapeletaPainter extends CustomPainter {
 
     // fine print
     final fineSizeW = w * 0.034;
-    final fineY = h - w * 0.16;
+    final fineY = oLine2 + oBigS * 0.30;
     final fineLeading = fineSizeW * 1.3;
     _drawText(canvas, 'Oferta válida apenas para pagamento com cartão de crédito.', cx, fineY,
         fontSize: fineSizeW, color: Colors.grey.shade300, align: TextAlign.center);
@@ -542,7 +542,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     }
 
     // badge "preço com plano controle"
-    final badge1Top = h * 0.33;
+    final badge1Top = specY + w * 0.015;
     final b1H = w * 0.065;
     children.add(pw.Positioned(
       left: (ox + w * 0.06) * s,
@@ -564,7 +564,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         color: grey700, align: pw.TextAlign.center, widthPx: w));
 
     // seção preta
-    final blackTop = h * 0.460;
+    final blackTop = badge1Top + b1H + w * 0.03;
     children.add(pw.Positioned(
       left: ox * s,
       top: (oy + blackTop) * s,
@@ -696,7 +696,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
 
     // letra miúda
     final fineSizeW = w * 0.034;
-    final fineY = h - w * 0.16;
+    final fineY = oLine2 + oBigS * 0.30;
     final fineLeading = fineSizeW * 1.3;
     children.add(txt(ox, oy + fineY,
         'Oferta válida apenas para pagamento com cartão de crédito.', fineSizeW,
