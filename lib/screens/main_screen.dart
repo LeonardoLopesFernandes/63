@@ -325,14 +325,22 @@ class _MainScreenState extends State<MainScreen> {
                 const SizedBox(height: 8),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton.icon(
+                  child: ElevatedButton(
                     onPressed: extrair,
-                    icon: const Icon(Icons.auto_awesome, size: 18),
-                    label: const Text('Extrair specs automaticamente'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0D47A1),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.auto_awesome, size: 18),
+                        Expanded(
+                          child: Text('Extrair specs automaticamente',
+                              textAlign: TextAlign.center),
+                        ),
+                        Icon(Icons.auto_awesome, size: 18),
+                      ],
                     ),
                   ),
                 ),
@@ -1485,14 +1493,22 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
                 const SizedBox(height: 8),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton.icon(
+                  child: ElevatedButton(
                     onPressed: extrair,
-                    icon: const Icon(Icons.auto_awesome, size: 18),
-                    label: const Text('Extrair specs automaticamente'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0D47A1),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.auto_awesome, size: 18),
+                        Expanded(
+                          child: Text('Extrair specs automaticamente',
+                              textAlign: TextAlign.center),
+                        ),
+                        Icon(Icons.auto_awesome, size: 18),
+                      ],
                     ),
                   ),
                 ),
