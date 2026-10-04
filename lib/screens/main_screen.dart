@@ -1409,6 +1409,27 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 4),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      final q =
+                          '${phone.marca} ${phone.modelo} ${phone.armazenamento}';
+                      Navigator.of(ctx).push(MaterialPageRoute(
+                          builder: (_) => BrowserScreen(initialQuery: q)));
+                    },
+                    icon: const Icon(Icons.public, size: 18),
+                    label: const Text('Buscar ficha no navegador'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF0D47A1),
+                      side:
+                          const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 const Text('Colar ficha técnica (extrai as specs automaticamente)',
                     style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0D47A1))),
                 const SizedBox(height: 6),

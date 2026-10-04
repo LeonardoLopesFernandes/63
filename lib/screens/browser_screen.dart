@@ -46,7 +46,7 @@ class _BrowserScreenState extends State<BrowserScreen> {
 
 String _buildSearchUrl(String query) {
     // Prompt otimizado p/ retornar as specs no formato que o app extrai.
-    final prompt = 'Liste as especificações de $query neste formato exato '
+    final prompt = 'especificações básicas de $query neste formato exato '
         '(uma por linha, em português):\n'
         'Descrição:\n'
         'Câmera traseira:\n'
