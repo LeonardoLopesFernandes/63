@@ -175,12 +175,12 @@ class PapeletaPainter extends CustomPainter {
     }
 
     // title
-    _drawText(canvas, '${item.modelo} ${item.armazenamento}', cx, h * 0.10, fontSize: w * 0.06,
+    _drawText(canvas, '${item.modelo} ${item.armazenamento}', cx, h * 0.08, fontSize: w * 0.06,
         fontWeight: FontWeight.bold, align: TextAlign.center);
 
     // specs
     final specX = w * 0.07;
-    var specY = h * 0.10 + line;
+    var specY = h * 0.08 + 3 * line;
     final specLeading = w * 0.033 * 1.3;
     for (final spec in item.specs) {
       _drawText(canvas, '• $spec', specX, specY, fontSize: w * 0.033, fontWeight: FontWeight.bold);
@@ -188,8 +188,8 @@ class PapeletaPainter extends CustomPainter {
     }
 
     // badge "preço com plano controle"
-    // uma linha de espaço da última spec até o badge
-    final badge1Top = specY;
+    // ~2 linhas de espaço da última spec (Tela) até o badge
+    final badge1Top = specY + line;
     final b1Line1 = 'preço com plano controle';
     final b1Line2 = 'consulte operadora (CLARO ou TIM) e modalidade';
     final b1L = w * 0.06;
@@ -209,12 +209,12 @@ class PapeletaPainter extends CustomPainter {
         color: Colors.grey.shade700, align: TextAlign.center);
 
     // black section
-    final blackTop = badge1Top + b1H + w * 0.03;
+    final blackTop = badge1Top + b1H + line * 0.3;
     final blackPaint = Paint()..color = Colors.black;
     canvas.drawRect(Rect.fromLTWH(0, blackTop, w, h - blackTop), blackPaint);
 
     // discounted price
-    final discTop = blackTop + w * 0.03;
+    final discTop = blackTop + line * 0.3;
     final dBigS = w * 0.14;
     final dLine1 = discTop + dBigS * 0.30;
     final dLine2 = discTop + dBigS * 0.72;
@@ -233,7 +233,7 @@ class PapeletaPainter extends CustomPainter {
         fontWeight: FontWeight.bold, color: Colors.white, align: TextAlign.left);
 
     // installment oval
-    final instTop = discTop + dBigS + w * 0.02;
+    final instTop = discTop + dBigS + line * 0.3;
     final instH = w * 0.10;
     final ovalL = w * 0.06;
     final ovalR = w * 0.94;
@@ -268,7 +268,7 @@ class PapeletaPainter extends CustomPainter {
     }
 
     // badge "preço sem plano controle"
-    final badge2Top = instTop + instH + w * 0.02;
+    final badge2Top = instTop + instH + line * 0.3;
     final b2Text = 'preço sem plano controle';
     final b2Paint = TextPainter(
       text: TextSpan(
@@ -291,7 +291,8 @@ class PapeletaPainter extends CustomPainter {
     b2Paint.paint(canvas, Offset(b2TextX, b2TextY));
 
     // original price
-    final origTop = badge2Top + b2H + w * 0.02;
+    // ~3 linhas de espaço do badge até o valor original
+    final origTop = badge2Top + b2H + 3 * line;
     final oBigS = w * 0.115;
     final oLine1 = origTop + oBigS * 0.28;
     final oLine2 = origTop + oBigS * 0.72;
@@ -322,7 +323,7 @@ class PapeletaPainter extends CustomPainter {
         fontSize: fineSizeW, color: Colors.grey.shade300, align: TextAlign.center);
 
     // recorta a barra preta que sobrar após a letra miúda
-    final blackEnd = fineY + fineLeading * 2 + line * 0.5;
+    final blackEnd = fineY + fineLeading * 2 + line * 0.3;
     if (blackEnd < h) {
       canvas.drawRect(Rect.fromLTWH(0, blackEnd, w, h - blackEnd),
           Paint()..color = Colors.white);
@@ -543,12 +544,12 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     }
 
     // título
-    children.add(txt(ox, oy + h * 0.10, '${item.modelo} ${item.armazenamento}',
+    children.add(txt(ox, oy + h * 0.08, '${item.modelo} ${item.armazenamento}',
         w * 0.06,
         bold: true, align: pw.TextAlign.center, widthPx: w));
 
     // specs
-    var specY = h * 0.10 + line;
+    var specY = h * 0.08 + 3 * line;
     final specLeading = w * 0.033 * 1.3;
     for (final spec in item.specs) {
       children.add(txt(ox + w * 0.07, oy + specY, '• $spec', w * 0.033, bold: true));
@@ -556,8 +557,8 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     }
 
     // badge "preço com plano controle"
-    // uma linha de espaço da última spec até o badge
-    final badge1Top = specY;
+    // ~2 linhas de espaço da última spec (Tela) até o badge
+    final badge1Top = specY + line;
     final b1H = w * 0.065;
     children.add(pw.Positioned(
       left: (ox + w * 0.06) * s,
@@ -579,7 +580,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         color: grey700, align: pw.TextAlign.center, widthPx: w));
 
     // seção preta
-    final blackTop = badge1Top + b1H + w * 0.03;
+    final blackTop = badge1Top + b1H + line * 0.3;
     children.add(pw.Positioned(
       left: ox * s,
       top: (oy + blackTop) * s,
@@ -588,7 +589,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     ));
 
     // preço com desconto (à vista)
-    final discTop = blackTop + w * 0.03;
+    final discTop = blackTop + line * 0.3;
     final dBigS = w * 0.14;
     final dLine1 = discTop + dBigS * 0.08;
     final dLine2 = discTop + dBigS * 0.72;
@@ -616,7 +617,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         bold: true, color: white));
 
     // parcela
-    final instTop = discTop + dBigS + w * 0.02;
+    final instTop = discTop + dBigS + line * 0.3;
     final instH = w * 0.10;
     final ovalL = w * 0.06, ovalR = w * 0.94;
     children.add(pw.Positioned(
@@ -656,7 +657,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     }
 
     // badge "preço sem plano controle"
-    final badge2Top = instTop + instH + w * 0.02;
+    final badge2Top = instTop + instH + line * 0.3;
     final b2W = _measureText('preço sem plano controle', w * 0.026,
                 weight: FontWeight.bold) +
         w * 0.06;
@@ -683,7 +684,8 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     ));
 
     // preço original
-    final origTop = badge2Top + b2H + w * 0.02;
+    // ~3 linhas de espaço do badge até o valor original
+    final origTop = badge2Top + b2H + 3 * line;
     final oBigS = w * 0.115;
     final oLine1 = origTop + oBigS * 0.06;
     final oLine2 = origTop + oBigS * 0.72;
@@ -726,7 +728,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         color: grey300, align: pw.TextAlign.center, widthPx: w));
 
     // recorta a barra preta que sobrar após a letra miúda
-    final blackEnd = fineY + fineLeading * 2 + line * 0.5;
+    final blackEnd = fineY + fineLeading * 2 + line * 0.3;
     if (blackEnd < h) {
       children.add(pw.Positioned(
         left: ox * s,
