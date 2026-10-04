@@ -539,8 +539,13 @@ void _openScanner(int index) async {
     final query = selected == null
         ? 'celular'
         : '${selected.marca} ${selected.modelo} ${selected.armazenamento}';
+    final desc = selected == null
+        ? null
+        : '${selected.modelo} ${selected.armazenamento}';
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => BrowserScreen(initialQuery: query)),
+      MaterialPageRoute(
+          builder: (_) =>
+              BrowserScreen(initialQuery: query, initialDescription: desc)),
     );
   }
 
@@ -1443,8 +1448,10 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
                     onPressed: () {
                       final q =
                           '${phone.marca} ${phone.modelo} ${phone.armazenamento}';
+                      final d = '${phone.modelo} ${phone.armazenamento}';
                       Navigator.of(ctx).push(MaterialPageRoute(
-                          builder: (_) => BrowserScreen(initialQuery: q)));
+                          builder: (_) => BrowserScreen(
+                              initialQuery: q, initialDescription: d)));
                     },
                     icon: const Icon(Icons.public, size: 18),
                     label: const Text('Buscar ficha no navegador'),

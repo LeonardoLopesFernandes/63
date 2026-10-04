@@ -5,7 +5,9 @@ import 'package:webview_flutter/webview_flutter.dart';
 /// de aparelhos rapidamente sem sair do app.
 class BrowserScreen extends StatefulWidget {
   final String initialQuery;
-  const BrowserScreen({super.key, required this.initialQuery});
+  final String? initialDescription;
+  const BrowserScreen(
+      {super.key, required this.initialQuery, this.initialDescription});
 
   @override
   State<BrowserScreen> createState() => _BrowserScreenState();
@@ -19,7 +21,8 @@ class _BrowserScreenState extends State<BrowserScreen> {
   @override
   void initState() {
     super.initState();
-    final url = _buildSearchUrl(widget.initialQuery);
+    final url =
+        _buildSearchUrl(widget.initialQuery, widget.initialDescription);
     _urlCtrl.text = url;
 
     _controller = WebViewController()
@@ -44,11 +47,14 @@ class _BrowserScreenState extends State<BrowserScreen> {
       ..loadRequest(Uri.parse(url));
   }
 
-String _buildSearchUrl(String query) {
+String _buildSearchUrl(String query, [String? description]) {
     // Prompt otimizado p/ retornar as specs no formato que o app extrai.
+    // A Descrição já vai preenchida com o modelo p/ extração correta.
+    final desc =
+        (description != null && description.isNotEmpty) ? description : query;
     final prompt = 'especificações básicas de $query neste formato exato '
         '(uma por linha, em português):\n'
-        'Descrição:\n'
+        'Descrição: $desc\n'
         'Câmera traseira:\n'
         'Câmera frontal:\n'
         'Bateria:\n'
@@ -153,7 +159,8 @@ String _buildSearchUrl(String query) {
               ),
               IconButton(
                 icon: const Icon(Icons.home, color: Colors.black54, size: 20),
-                onPressed: () => _controller.loadRequest(Uri.parse(_buildSearchUrl(widget.initialQuery))),
+                onPressed: () => _controller.loadRequest(Uri.parse(
+                    _buildSearchUrl(widget.initialQuery, widget.initialDescription))),
               ),
             ],
           ),
