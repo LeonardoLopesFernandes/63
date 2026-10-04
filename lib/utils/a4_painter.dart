@@ -131,6 +131,8 @@ class PapeletaPainter extends CustomPainter {
     final w = qw;
     final h = qh;
     final cx = w / 2;
+    // uma "linha" de espaço entre blocos
+    final line = w * 0.045;
 
     final borderPaint = Paint()
       ..color = Colors.black
@@ -178,7 +180,7 @@ class PapeletaPainter extends CustomPainter {
 
     // specs
     final specX = w * 0.07;
-    var specY = h * 0.13;
+    var specY = h * 0.10 + line;
     final specLeading = w * 0.033 * 1.3;
     for (final spec in item.specs) {
       _drawText(canvas, '• $spec', specX, specY, fontSize: w * 0.033, fontWeight: FontWeight.bold);
@@ -186,7 +188,8 @@ class PapeletaPainter extends CustomPainter {
     }
 
     // badge "preço com plano controle"
-    final badge1Top = specY + w * 0.015;
+    // uma linha de espaço da última spec até o badge
+    final badge1Top = specY;
     final b1Line1 = 'preço com plano controle';
     final b1Line2 = 'consulte operadora (CLARO ou TIM) e modalidade';
     final b1L = w * 0.06;
@@ -308,7 +311,8 @@ class PapeletaPainter extends CustomPainter {
 
     // fine print
     final fineSizeW = w * 0.034;
-    final fineY = oLine2 + oBigS * 0.30;
+    // duas linhas de espaço do valor original até a letra miúda
+    final fineY = oLine2 + 2 * line;
     final fineLeading = fineSizeW * 1.3;
     _drawText(canvas, 'Oferta válida apenas para pagamento com cartão de crédito.', cx, fineY,
         fontSize: fineSizeW, color: Colors.grey.shade300, align: TextAlign.center);
@@ -316,6 +320,14 @@ class PapeletaPainter extends CustomPainter {
         fontSize: fineSizeW, color: Colors.grey.shade300, align: TextAlign.center);
     _drawText(canvas, '(ativação, migração ou portabilidade) em que a oferta é válida.', cx, fineY + fineLeading * 2,
         fontSize: fineSizeW, color: Colors.grey.shade300, align: TextAlign.center);
+
+    // recorta a barra preta que sobrar após a letra miúda
+    final blackEnd = fineY + fineLeading * 2 + line * 0.5;
+    if (blackEnd < h) {
+      canvas.drawRect(Rect.fromLTWH(0, blackEnd, w, h - blackEnd),
+          Paint()..color = Colors.white);
+      canvas.drawRect(Rect.fromLTWH(0, 0, w, h), borderPaint);
+    }
   }
 
   @override
@@ -486,6 +498,8 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     final ox = PDF_MARGIN_H + col * qw;
     final oy = PDF_MARGIN_TOP + row * (qh + GAP);
     final w = qw, h = qh, cx = w / 2;
+    // uma "linha" de espaço entre blocos
+    final line = w * 0.045;
 
     final precoDescFmt = formatarMoeda(item.precoComDesconto);
     final precoOrigFmt = formatarMoeda(item.precoOriginal);
@@ -534,7 +548,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         bold: true, align: pw.TextAlign.center, widthPx: w));
 
     // specs
-    var specY = h * 0.13;
+    var specY = h * 0.10 + line;
     final specLeading = w * 0.033 * 1.3;
     for (final spec in item.specs) {
       children.add(txt(ox + w * 0.07, oy + specY, '• $spec', w * 0.033, bold: true));
@@ -542,7 +556,8 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     }
 
     // badge "preço com plano controle"
-    final badge1Top = specY + w * 0.015;
+    // uma linha de espaço da última spec até o badge
+    final badge1Top = specY;
     final b1H = w * 0.065;
     children.add(pw.Positioned(
       left: (ox + w * 0.06) * s,
@@ -696,7 +711,8 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
 
     // letra miúda
     final fineSizeW = w * 0.034;
-    final fineY = oLine2 + oBigS * 0.30;
+    // duas linhas de espaço do valor original até a letra miúda
+    final fineY = oLine2 + 2 * line;
     final fineLeading = fineSizeW * 1.3;
     children.add(txt(ox, oy + fineY,
         'Oferta válida apenas para pagamento com cartão de crédito.', fineSizeW,
@@ -708,6 +724,30 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         '(ativação, migração ou portabilidade) em que a oferta é válida.',
         fineSizeW,
         color: grey300, align: pw.TextAlign.center, widthPx: w));
+
+    // recorta a barra preta que sobrar após a letra miúda
+    final blackEnd = fineY + fineLeading * 2 + line * 0.5;
+    if (blackEnd < h) {
+      children.add(pw.Positioned(
+        left: ox * s,
+        top: (oy + blackEnd) * s,
+        child: pw.Container(
+            width: w * s,
+            height: (h - blackEnd) * s,
+            color: pdf.PdfColors.white),
+      ));
+      children.add(pw.Positioned(
+        left: ox * s,
+        top: oy * s,
+        child: pw.Container(
+          width: w * s,
+          height: h * s,
+          decoration: pw.BoxDecoration(
+            border: pw.Border.all(color: pdf.PdfColors.black, width: 14 * s),
+          ),
+        ),
+      ));
+    }
   }
 
   final doc = pw.Document(title: 'Papeleta A4', theme: theme);
