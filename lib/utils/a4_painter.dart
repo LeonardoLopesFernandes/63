@@ -178,7 +178,7 @@ class PapeletaPainter extends CustomPainter {
 
     // specs
     final specX = w * 0.07;
-    var specY = h * 0.16;
+    var specY = h * 0.13;
     final specLeading = w * 0.033 * 1.3;
     for (final spec in item.specs) {
       _drawText(canvas, '• $spec', specX, specY, fontSize: w * 0.033, fontWeight: FontWeight.bold);
@@ -211,7 +211,7 @@ class PapeletaPainter extends CustomPainter {
     canvas.drawRect(Rect.fromLTWH(0, blackTop, w, h - blackTop), blackPaint);
 
     // discounted price
-    final discTop = blackTop + h * 0.05;
+    final discTop = blackTop + w * 0.03;
     final dBigS = w * 0.14;
     final dLine1 = discTop + dBigS * 0.30;
     final dLine2 = discTop + dBigS * 0.72;
@@ -230,7 +230,7 @@ class PapeletaPainter extends CustomPainter {
         fontWeight: FontWeight.bold, color: Colors.white, align: TextAlign.left);
 
     // installment oval
-    final instTop = discTop + dBigS + h * 0.02;
+    final instTop = discTop + dBigS + w * 0.02;
     final instH = w * 0.10;
     final ovalL = w * 0.06;
     final ovalR = w * 0.94;
@@ -265,7 +265,7 @@ class PapeletaPainter extends CustomPainter {
     }
 
     // badge "preço sem plano controle"
-    final badge2Top = instTop + instH + h * 0.02;
+    final badge2Top = instTop + instH + w * 0.02;
     final b2Text = 'preço sem plano controle';
     final b2Paint = TextPainter(
       text: TextSpan(
@@ -288,7 +288,7 @@ class PapeletaPainter extends CustomPainter {
     b2Paint.paint(canvas, Offset(b2TextX, b2TextY));
 
     // original price
-    final origTop = badge2Top + b2H + h * 0.02;
+    final origTop = badge2Top + b2H + w * 0.02;
     final oBigS = w * 0.115;
     final oLine1 = origTop + oBigS * 0.28;
     final oLine2 = origTop + oBigS * 0.72;
@@ -534,7 +534,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         bold: true, align: pw.TextAlign.center, widthPx: w));
 
     // specs
-    var specY = h * 0.16;
+    var specY = h * 0.13;
     final specLeading = w * 0.033 * 1.3;
     for (final spec in item.specs) {
       children.add(txt(ox + w * 0.07, oy + specY, '• $spec', w * 0.033, bold: true));
@@ -573,7 +573,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     ));
 
     // preço com desconto (à vista)
-    final discTop = blackTop + h * 0.05;
+    final discTop = blackTop + w * 0.03;
     final dBigS = w * 0.14;
     final dLine1 = discTop + dBigS * 0.08;
     final dLine2 = discTop + dBigS * 0.72;
@@ -601,7 +601,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         bold: true, color: white));
 
     // parcela
-    final instTop = discTop + dBigS + h * 0.02;
+    final instTop = discTop + dBigS + w * 0.02;
     final instH = w * 0.10;
     final ovalL = w * 0.06, ovalR = w * 0.94;
     children.add(pw.Positioned(
@@ -641,7 +641,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     }
 
     // badge "preço sem plano controle"
-    final badge2Top = instTop + instH + h * 0.02;
+    final badge2Top = instTop + instH + w * 0.02;
     final b2W = _measureText('preço sem plano controle', w * 0.026,
                 weight: FontWeight.bold) +
         w * 0.06;
@@ -668,7 +668,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     ));
 
     // preço original
-    final origTop = badge2Top + b2H + h * 0.02;
+    final origTop = badge2Top + b2H + w * 0.02;
     final oBigS = w * 0.115;
     final oLine1 = origTop + oBigS * 0.06;
     final oLine2 = origTop + oBigS * 0.72;
