@@ -942,29 +942,47 @@ class _FormRowState extends State<FormRow> {
                         'Escanear código de barras', widget.onScan),
                   ],
                 ),
-                const SizedBox(height: 14),
-                const Text('Modelo', style: TextStyle(color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 13)),
-                const SizedBox(height: 6),
-                PhoneDropdown(
-                  selectedPhone: widget.state.selectedPhone,
-                  motorolaPhones: widget.motorolaPhones,
-                  samsungPhones: widget.samsungPhones,
-                  outrosPhones: widget.outrosPhones,
-                  onPhoneSelected: (p) => widget.onStateChange(widget.state.copyWith(selectedPhone: p)),
-                  onPhoneRenamed: (phone, newName) => widget.onPhoneRenamed(phone, newName),
-                  onPhoneDeleted: (phone) => widget.onPhoneDeleted(phone),
-                  onPhonesDeleted: (phones) => widget.onPhonesDeleted(phones),
-                  onPhoneEdited: (phone, newSpecs) => widget.onPhoneEdited(phone, newSpecs),
-                  onAddModel: widget.onAddModel,
+                const SizedBox(height: 10),
+                InputDecorator(
+                  decoration: const InputDecoration(
+                    labelText: 'Modelo',
+                    labelStyle: TextStyle(
+                        color: Color(0xFF49454F),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13),
+                    floatingLabelStyle: TextStyle(
+                        color: Color(0xFF0D47A1),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(top: 4, bottom: 0),
+                  ),
+                  child: PhoneDropdown(
+                    selectedPhone: widget.state.selectedPhone,
+                    motorolaPhones: widget.motorolaPhones,
+                    samsungPhones: widget.samsungPhones,
+                    outrosPhones: widget.outrosPhones,
+                    onPhoneSelected: (p) =>
+                        widget.onStateChange(widget.state.copyWith(selectedPhone: p)),
+                    onPhoneRenamed: (phone, newName) =>
+                        widget.onPhoneRenamed(phone, newName),
+                    onPhoneDeleted: (phone) => widget.onPhoneDeleted(phone),
+                    onPhonesDeleted: (phones) => widget.onPhonesDeleted(phones),
+                    onPhoneEdited: (phone, newSpecs) =>
+                        widget.onPhoneEdited(phone, newSpecs),
+                    onAddModel: widget.onAddModel,
+                  ),
                 ),
-                const SizedBox(height: 16),
-                const Text('DIGITE O PREÇO DO APARELHO', style: TextStyle(color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 12, letterSpacing: 0.5)),
-                const SizedBox(height: 6),
-                _currencyField(_priceCtrl, (digits) => widget.onStateChange(widget.state.copyWith(priceText: digits))),
-                const SizedBox(height: 16),
-                const Text('DIGITE O DESCONTO DO PLANO CONTROLE', style: TextStyle(color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 12, letterSpacing: 0.5)),
-                const SizedBox(height: 6),
-                _currencyField(_discountCtrl, (digits) => widget.onStateChange(widget.state.copyWith(discountText: digits))),
+                const SizedBox(height: 12),
+                _currencyField(_priceCtrl,
+                    (digits) => widget.onStateChange(
+                        widget.state.copyWith(priceText: digits)),
+                    label: 'DIGITE O PREÇO DO APARELHO'),
+                const SizedBox(height: 12),
+                _currencyField(_discountCtrl,
+                    (digits) => widget.onStateChange(
+                        widget.state.copyWith(discountText: digits)),
+                    label: 'DIGITE O DESCONTO DO PLANO CONTROLE'),
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
@@ -1013,13 +1031,19 @@ class _FormRowState extends State<FormRow> {
     );
   }
 
-  Widget _currencyField(TextEditingController ctrl, void Function(String) onDigits) {
+  Widget _currencyField(TextEditingController ctrl, void Function(String) onDigits,
+      {required String label}) {
     return TextField(
       controller: ctrl,
       textAlign: TextAlign.center,
       keyboardType: TextInputType.number,
       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(
+            color: Color(0xFF49454F), fontWeight: FontWeight.w600, fontSize: 13),
+        floatingLabelStyle: const TextStyle(
+            color: Color(0xFF0D47A1), fontWeight: FontWeight.w600, fontSize: 12),
         hintText: 'digite o valor',
         filled: true,
         fillColor: const Color(0xFFF0F4F9),
