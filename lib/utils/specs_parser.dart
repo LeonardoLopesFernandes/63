@@ -45,45 +45,101 @@ List<String> parseSpecsDeFicha(String texto) {
     return '';
   }
 
-  // Câmera traseira
+  // Remove prefixos já presentes no valor (evita "câmera câmera ...").
+  String semPrefixo(String v, List<String> prefixos) {
+    var r = v.trim();
+    for (final p in prefixos) {
+      final m = RegExp('^$p\\s*[:\\-]?\\s*', caseSensitive: false).firstMatch(r);
+      if (m != null) {
+        r = r.substring(m.end).trim();
+        break;
+      }
+    }
+    return r;
+  }
+
+  // Normaliza unidades: "50 mp" -> "50MP", "4 gb" -> "4GB",
+  // "5000 mah" -> "5000mAh", com espaços ao redor do "+".
+  String normUnidade(String v) {
+    var r = v;
+    r = r.replaceAllMapped(RegExp(r'(\d)\s*mp\b', caseSensitive: false),
+        (m) => '${m.group(1)}MP');
+    r = r.replaceAllMapped(RegExp(r'(\d)\s*gb\b', caseSensitive: false),
+        (m) => '${m.group(1)}GB');
+    r = r.replaceAllMapped(RegExp(r'(\d)\s*mah\b', caseSensitive: false),
+        (m) => '${m.group(1)}mAh');
+    if (r.contains('+')) r = r.split('+').map((s) => s.trim()).join(' + ');
+    return r.trim();
+  }
+
+  // Câmera traseira -> "Câmera traseira: câmera 50MP + 5MP"
   var cam = valorDe('Câmera traseira');
-  if (cam.isEmpty) cam = valorDe('Câmera');
-  specs[0] = cam;
+  if (cam.isEmpty) {
+    for (final linha in linhas) {
+      final lower = linha.toLowerCase();
+      if (lower.startsWith('câmera') && !lower.startsWith('câmera frontal')) {
+        var v = linha.substring('câmera'.length).trim();
+        v = v.replaceAll(RegExp(r'^[:=\-]+'), '').trim();
+        if (v.isNotEmpty) {
+          cam = v;
+          break;
+        }
+      }
+    }
+  }
+  cam = normUnidade(semPrefixo(cam, ['câmera traseira', 'traseira', 'câmera']));
+  specs[0] = cam.isEmpty ? '' : 'Câmera traseira: câmera $cam';
 
-  // Câmera frontal
-  specs[1] = valorDe('Câmera frontal');
+  // Câmera frontal -> "Câmera frontal: câmera frontal 16MP"
+  var front = valorDe('Câmera frontal');
+  front =
+      normUnidade(semPrefixo(front, ['câmera frontal', 'frontal', 'câmera']));
+  specs[1] = front.isEmpty ? '' : 'Câmera frontal: câmera frontal $front';
 
-  // RAM
+  // RAM -> "RAM: ram de 4GB"
   var ram = valorDe('RAM');
   if (ram.isEmpty) {
     final m = RegExp(r'(\d{1,2})\s?GB[^,;]*RAM', caseSensitive: false).firstMatch(texto);
     if (m != null) ram = '${m.group(1)} GB de RAM';
   }
-  specs[2] = ram;
+  ram = semPrefixo(ram, ['ram de', 'ram']);
+  ram = ram.replaceAll(RegExp(r'\s*de\s*ram\s*$', caseSensitive: false), '').trim();
+  ram = normUnidade(ram);
+  specs[2] = ram.isEmpty ? '' : 'RAM: ram de $ram';
 
-  // Bateria
+  // Bateria -> "Bateria: bateria 5000mAh"
   var bat = valorDe('Bateria');
   if (bat.isEmpty) {
     final m = RegExp(r'(\d{3,5})\s?mAh', caseSensitive: false).firstMatch(texto);
     if (m != null) bat = '${m.group(1)} mAh';
   }
-  specs[3] = bat;
+  bat = normUnidade(semPrefixo(bat, ['bateria']));
+  specs[3] = bat.isEmpty ? '' : 'Bateria: bateria $bat';
 
-  // Processador
+  // Processador -> "Processador: processador T606 Octa-Core"
   var cpu = valorDe('Processador');
   if (cpu.isEmpty) {
     final m = RegExp(r'(\d+\s?Core[^;,\n]*)', caseSensitive: false).firstMatch(texto);
     if (m != null) cpu = m.group(1)!.trim();
   }
-  specs[4] = cpu;
+  cpu = semPrefixo(cpu, ['processador']);
+  specs[4] = cpu.isEmpty ? '' : 'Processador: processador $cpu';
 
-  // Tela
+  // Tela -> 'Tela: tela 6,6"'
   var tela = valorDe('Tela');
   if (tela.isEmpty) {
     final m = RegExp(r'(\d{1,2}[,.]\d{1,2})[\s\"]*', caseSensitive: false).firstMatch(texto);
     if (m != null) tela = '${m.group(1)}"';
   }
-  specs[5] = tela;
+  tela = semPrefixo(tela, ['tela']);
+  final mt = RegExp(r'(\d{1,2})[,.](\d{1,2})').firstMatch(tela);
+  if (mt != null) {
+    tela = '${mt.group(1)},${mt.group(2)}"';
+  } else {
+    tela = '${tela.replaceAll('"', '').trim()}"';
+    if (tela == '"') tela = '';
+  }
+  specs[5] = tela.isEmpty ? '' : 'Tela: tela $tela';
 
   return specs;
 }
