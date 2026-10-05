@@ -305,6 +305,26 @@ class _MainScreenState extends State<MainScreen> {
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                   ),
                 ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      final q = descController.text.trim();
+                      Navigator.of(ctx).push(MaterialPageRoute(
+                          builder: (_) => BrowserScreen(
+                              initialQuery: q.isEmpty ? 'celular' : q,
+                              initialDescription: q.isEmpty ? null : q)));
+                    },
+                    icon: const Icon(Icons.public, size: 18),
+                    label: const Text('Buscar specs na internet'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF0D47A1),
+                      side: const BorderSide(color: Color(0xFF0D47A1), width: 1.5),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
                 const Text('Colar ficha técnica (busquei no navegador)',
                     style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0D47A1))),
@@ -1023,8 +1043,7 @@ class _FormRowState extends State<FormRow> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                InputDecorator(
-                  isEmpty: false,
+                PhoneDropdown(
                   decoration: InputDecoration(
                     labelText: 'Modelo',
                     labelStyle: const TextStyle(
@@ -1045,22 +1064,20 @@ class _FormRowState extends State<FormRow> {
                         borderSide: const BorderSide(color: Color(0xFF0D47A1))),
                     contentPadding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
                   ),
-                  child: PhoneDropdown(
-                    selectedPhone: widget.state.selectedPhone,
-                    motorolaPhones: widget.motorolaPhones,
-                    samsungPhones: widget.samsungPhones,
-                    outrosPhones: widget.outrosPhones,
-                    onPhoneSelected: (p) =>
-                        widget.onStateChange(widget.state.copyWith(selectedPhone: p)),
-                    onPhoneRenamed: (phone, newName) =>
-                        widget.onPhoneRenamed(phone, newName),
-                    onPhoneDeleted: (phone) => widget.onPhoneDeleted(phone),
-                    onPhonesDeleted: (phones) => widget.onPhonesDeleted(phones),
-                    onPhoneUpdated: (phone) => widget.onPhoneUpdated(phone),
-                    onPhoneEdited: (phone, newSpecs) =>
-                        widget.onPhoneEdited(phone, newSpecs),
-                    onAddModel: widget.onAddModel,
-                  ),
+                  selectedPhone: widget.state.selectedPhone,
+                  motorolaPhones: widget.motorolaPhones,
+                  samsungPhones: widget.samsungPhones,
+                  outrosPhones: widget.outrosPhones,
+                  onPhoneSelected: (p) =>
+                      widget.onStateChange(widget.state.copyWith(selectedPhone: p)),
+                  onPhoneRenamed: (phone, newName) =>
+                      widget.onPhoneRenamed(phone, newName),
+                  onPhoneDeleted: (phone) => widget.onPhoneDeleted(phone),
+                  onPhonesDeleted: (phones) => widget.onPhonesDeleted(phones),
+                  onPhoneUpdated: (phone) => widget.onPhoneUpdated(phone),
+                  onPhoneEdited: (phone, newSpecs) =>
+                      widget.onPhoneEdited(phone, newSpecs),
+                  onAddModel: widget.onAddModel,
                 ),
                 const SizedBox(height: 12),
                 _currencyField(_priceCtrl,
@@ -1150,6 +1167,7 @@ class _FormRowState extends State<FormRow> {
 }
 
 class PhoneDropdown extends StatefulWidget {
+  final InputDecoration? decoration;
   final CelularSpec? selectedPhone;
   final List<CelularSpec> motorolaPhones;
   final List<CelularSpec> samsungPhones;
@@ -1164,6 +1182,7 @@ class PhoneDropdown extends StatefulWidget {
 
   const PhoneDropdown({
     super.key,
+    this.decoration,
     required this.selectedPhone,
     required this.motorolaPhones,
     required this.samsungPhones,
@@ -1207,26 +1226,30 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
   Widget build(BuildContext context) {
     final selectedText = widget.selectedPhone == null ? '' : '${widget.selectedPhone!.modelo} ${widget.selectedPhone!.armazenamento}';
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        GestureDetector(
-          onTap: () => setState(() => _expanded = !_expanded),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(right: 4, top: 2, bottom: 2),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                    child: Text(
-                        selectedText.isEmpty
-                            ? 'Selecione o modelo...'
-                            : selectedText,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500))),
-                Icon(_expanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                    color: const Color(0xFFD32F2F)),
-              ],
+        InputDecorator(
+          isEmpty: false,
+          decoration: widget.decoration ?? const InputDecoration(),
+          child: GestureDetector(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.only(right: 4, top: 2, bottom: 2),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                      child: Text(
+                          selectedText.isEmpty
+                              ? 'Selecione o modelo...'
+                              : selectedText,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500))),
+                  Icon(_expanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                      color: const Color(0xFFD32F2F)),
+                ],
+              ),
             ),
           ),
         ),
