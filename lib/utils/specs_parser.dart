@@ -72,7 +72,8 @@ List<String> parseSpecsDeFicha(String texto) {
     return r.trim();
   }
 
-  // Câmera traseira -> "Câmera traseira: câmera 50MP + 5MP"
+  // Nome da spec à esquerda do valor, sem repetir o tópico do campo.
+  // Câmera traseira -> "câmera 50MP + 5MP"
   var cam = valorDe('Câmera traseira');
   if (cam.isEmpty) {
     for (final linha in linhas) {
@@ -88,44 +89,43 @@ List<String> parseSpecsDeFicha(String texto) {
     }
   }
   cam = normUnidade(semPrefixo(cam, ['câmera traseira', 'traseira', 'câmera']));
-  specs[0] = cam.isEmpty ? '' : 'Câmera traseira: câmera $cam';
+  specs[0] = cam.isEmpty ? '' : 'câmera $cam';
 
-  // Câmera frontal -> "Câmera frontal: câmera frontal 16MP"
+  // Câmera frontal -> "câmera frontal 16MP"
   var front = valorDe('Câmera frontal');
   front =
       normUnidade(semPrefixo(front, ['câmera frontal', 'frontal', 'câmera']));
-  specs[1] = front.isEmpty ? '' : 'Câmera frontal: câmera frontal $front';
+  specs[1] = front.isEmpty ? '' : 'câmera frontal $front';
 
-  // RAM -> "RAM: ram de 4GB"
+  // RAM -> "RAM 4GB de RAM"
   var ram = valorDe('RAM');
   if (ram.isEmpty) {
     final m = RegExp(r'(\d{1,2})\s?GB[^,;]*RAM', caseSensitive: false).firstMatch(texto);
     if (m != null) ram = '${m.group(1)} GB de RAM';
   }
   ram = semPrefixo(ram, ['ram de', 'ram']);
-  ram = ram.replaceAll(RegExp(r'\s*de\s*ram\s*$', caseSensitive: false), '').trim();
   ram = normUnidade(ram);
-  specs[2] = ram.isEmpty ? '' : 'RAM: ram de $ram';
+  specs[2] = ram.isEmpty ? '' : 'RAM $ram';
 
-  // Bateria -> "Bateria: bateria 5000mAh"
+  // Bateria -> "bateria 5000mAh"
   var bat = valorDe('Bateria');
   if (bat.isEmpty) {
     final m = RegExp(r'(\d{3,5})\s?mAh', caseSensitive: false).firstMatch(texto);
     if (m != null) bat = '${m.group(1)} mAh';
   }
   bat = normUnidade(semPrefixo(bat, ['bateria']));
-  specs[3] = bat.isEmpty ? '' : 'Bateria: bateria $bat';
+  specs[3] = bat.isEmpty ? '' : 'bateria $bat';
 
-  // Processador -> "Processador: processador T606 Octa-Core"
+  // Processador -> "processador T606 Octa-Core"
   var cpu = valorDe('Processador');
   if (cpu.isEmpty) {
     final m = RegExp(r'(\d+\s?Core[^;,\n]*)', caseSensitive: false).firstMatch(texto);
     if (m != null) cpu = m.group(1)!.trim();
   }
   cpu = semPrefixo(cpu, ['processador']);
-  specs[4] = cpu.isEmpty ? '' : 'Processador: processador $cpu';
+  specs[4] = cpu.isEmpty ? '' : 'processador $cpu';
 
-  // Tela -> 'Tela: tela 6,6"'
+  // Tela -> 'tela 6,6"'
   var tela = valorDe('Tela');
   if (tela.isEmpty) {
     final m = RegExp(r'(\d{1,2}[,.]\d{1,2})[\s\"]*', caseSensitive: false).firstMatch(texto);
@@ -139,7 +139,7 @@ List<String> parseSpecsDeFicha(String texto) {
     tela = '${tela.replaceAll('"', '').trim()}"';
     if (tela == '"') tela = '';
   }
-  specs[5] = tela.isEmpty ? '' : 'Tela: tela $tela';
+  specs[5] = tela.isEmpty ? '' : 'tela $tela';
 
   return specs;
 }
