@@ -229,8 +229,8 @@ class _MainScreenState extends State<MainScreen> {
     _toast('Specs do "${phone.modelo}" atualizadas!');
   }
 
-  Future<void> _showAddModelDialog() async {
-    final descController = TextEditingController();
+  Future<void> _showAddModelDialog({String? initialDesc}) async {
+    final descController = TextEditingController(text: initialDesc ?? '');
     final priceController = TextEditingController();
     final pasteController = TextEditingController();
     final specsControllers = List.generate(6, (_) => TextEditingController());
@@ -580,7 +580,14 @@ void _openScanner(int index) async {
         final dept = item.department.toLowerCase();
         return dept.contains('63') || dept.contains('telefonia');
       }).toList();
-      await _mostrarDialogoResultados(index, dept63Items.isNotEmpty ? dept63Items : resp.items);
+      final resultados = dept63Items.isNotEmpty ? dept63Items : resp.items;
+      if (resultados.isEmpty) {
+        // Não achou na lista: abre o cadastro manual já preenchido.
+        _toast('Não encontrado — cadastre manualmente');
+        await _showAddModelDialog(initialDesc: q);
+        return;
+      }
+      await _mostrarDialogoResultados(index, resultados);
     } catch (e) {
       final msg = e.toString();
       if (msg.contains('401')) {
@@ -763,7 +770,7 @@ void _openScanner(int index) async {
             SliverPadding(
               // Menos padding lateral -> cards mais largos. O bottom grande
               // reserva espaço pro FAB, que fica abaixo do último card.
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 96),
+              padding: const EdgeInsets.fromLTRB(3, 4, 3, 96),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (ctx, i) => Padding(
@@ -933,7 +940,7 @@ class _FormRowState extends State<FormRow> {
           color: Colors.white,
           elevation: 4,
           child: Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1182,6 +1189,7 @@ class _PhoneDropdownState extends State<PhoneDropdown> {
         ),
         if (_expanded)
           Container(
+            width: double.infinity,
             margin: const EdgeInsets.only(top: 4),
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade300)),
