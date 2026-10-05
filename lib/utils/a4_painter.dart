@@ -113,21 +113,26 @@ class PapeletaPainter extends CustomPainter {
     final qw = (A4_W - 2 * marginH) / 2.0;
     final qh = (A4_H - marginTop - marginBottom - gap) / 2.0;
 
+    // altura única do cartão (layout fixo => igual p/ todos);
+    // a fileira de baixo começa onde termina a de cima (emendadas)
+    var cardH = qh;
     for (var i = 0; i < dados.length && i < 4; i++) {
       final item = dados[i];
       final col = i % 2;
       final row = i ~/ 2;
       final ox = marginH + col * qw;
-      final oy = marginTop + row * (qh + gap);
+      final oy = marginTop + row * (cardH + gap);
       canvas.save();
       canvas.translate(ox, oy);
-      _drawCardOnCanvas(canvas, qw, qh, item);
+      final fh = _drawCardOnCanvas(canvas, qw, qh, item);
       canvas.restore();
+      if (row == 0) cardH = fh;
     }
 
   }
 
-  void _drawCardOnCanvas(Canvas canvas, double qw, double qh, PapeletaData item) {
+  /// Desenha o cartão e devolve a altura da moldura (conteúdo + respiro).
+  double _drawCardOnCanvas(Canvas canvas, double qw, double qh, PapeletaData item) {
     final w = qw;
     final h = qh;
     final cx = w / 2;
@@ -138,7 +143,6 @@ class PapeletaPainter extends CustomPainter {
       ..color = Colors.black
       ..style = PaintingStyle.stroke
       ..strokeWidth = 14;
-    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), borderPaint);
 
     final precoDescFmt = formatarMoeda(item.precoComDesconto);
     final precoOrigFmt = formatarMoeda(item.precoOriginal);
@@ -180,7 +184,7 @@ class PapeletaPainter extends CustomPainter {
 
     // specs (máximo 6; reserva fixa p/ todos os cartões iguais)
     final specX = w * 0.07;
-    final specY0 = h * 0.08 + line;
+    final specY0 = h * 0.08 + line * 1.5;
     final specLeading = w * 0.033 * 1.3;
     var specY = specY0;
     for (final spec in item.specs.take(6)) {
@@ -190,8 +194,8 @@ class PapeletaPainter extends CustomPainter {
 
     // badge "preço com plano controle"
     // posição fixa (reserva de 6 specs): todos os cartões iguais;
-    // ~1 linha da Tela até o badge
-    final badge1Top = specY0 + 6 * specLeading;
+    // ~1,5 linha da Tela até o badge
+    final badge1Top = specY0 + 6 * specLeading + line * 0.5;
     final b1Line1 = 'preço com plano controle';
     final b1Line2 = 'consulte operadora (CLARO ou TIM) e modalidade';
     final b1L = w * 0.06;
@@ -211,7 +215,7 @@ class PapeletaPainter extends CustomPainter {
         color: Colors.grey.shade700, align: TextAlign.center);
 
     // black section
-    final blackTop = badge1Top + b1H + line * 0.3;
+    final blackTop = badge1Top + b1H + line * 0.8;
     final blackPaint = Paint()..color = Colors.black;
     canvas.drawRect(Rect.fromLTWH(0, blackTop, w, h - blackTop), blackPaint);
 
@@ -324,13 +328,17 @@ class PapeletaPainter extends CustomPainter {
     _drawText(canvas, '(ativação, migração ou portabilidade) em que a oferta é válida.', cx, fineY + fineLeading * 2,
         fontSize: fineSizeW, color: Colors.grey.shade300, align: TextAlign.center);
 
-    // recorta a barra preta que sobrar após a letra miúda
+    // moldura cortada no conteúdo + pequeno espaço após o preto
+    // (todos os cartões têm a mesma altura)
     final blackEnd = fineY + fineLeading * 2 + line * 0.3;
+    var fh = blackEnd + line * 0.5;
+    if (fh > h) fh = h;
     if (blackEnd < h) {
       canvas.drawRect(Rect.fromLTWH(0, blackEnd, w, h - blackEnd),
           Paint()..color = Colors.white);
-      canvas.drawRect(Rect.fromLTWH(0, 0, w, h), borderPaint);
     }
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, fh), borderPaint);
+    return fh;
   }
 
   @override
@@ -495,11 +503,14 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         ),
       );
 
+  // altura única do cartão (layout fixo => igual p/ todos);
+  // a fileira de baixo começa onde termina a de cima (emendadas)
+  var cardH = qh;
   for (var i = 0; i < dados.length && i < 4; i++) {
     final item = dados[i];
     final col = i % 2, row = i ~/ 2;
     final ox = PDF_MARGIN_H + col * qw;
-    final oy = PDF_MARGIN_TOP + row * (qh + GAP);
+    final oy = PDF_MARGIN_TOP + row * (cardH + GAP);
     final w = qw, h = qh, cx = w / 2;
     // uma "linha" de espaço entre blocos
     final line = w * 0.045;
@@ -521,18 +532,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     final rawParc = precoDescNum / (qtdParcelasInt > 0 ? qtdParcelasInt : 1);
     final valorParcFmt = _brCurrency((rawParc * 100).ceil() / 100);
 
-    // borda do quadrante
-    children.add(pw.Positioned(
-      left: ox * s,
-      top: oy * s,
-      child: pw.Container(
-        width: w * s,
-        height: h * s,
-        decoration: pw.BoxDecoration(
-          border: pw.Border.all(color: pdf.PdfColors.black, width: 14 * s),
-        ),
-      ),
-    ));
+    // (a borda é desenhada no fim, cortada no conteúdo)
 
     // logo
     if (logo != null) {
@@ -551,7 +551,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         bold: true, align: pw.TextAlign.center, widthPx: w));
 
     // specs (máximo 6; reserva fixa p/ todos os cartões iguais)
-    final specY0 = h * 0.08 + line;
+    final specY0 = h * 0.08 + line * 1.5;
     final specLeading = w * 0.033 * 1.3;
     var specY = specY0;
     for (final spec in item.specs.take(6)) {
@@ -561,8 +561,8 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
 
     // badge "preço com plano controle"
     // posição fixa (reserva de 6 specs): todos os cartões iguais;
-    // ~1 linha da Tela até o badge
-    final badge1Top = specY0 + 6 * specLeading;
+    // ~1,5 linha da Tela até o badge
+    final badge1Top = specY0 + 6 * specLeading + line * 0.5;
     final b1H = w * 0.065;
     children.add(pw.Positioned(
       left: (ox + w * 0.06) * s,
@@ -584,7 +584,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         color: grey700, align: pw.TextAlign.center, widthPx: w));
 
     // seção preta
-    final blackTop = badge1Top + b1H + line * 0.3;
+    final blackTop = badge1Top + b1H + line * 0.8;
     children.add(pw.Positioned(
       left: ox * s,
       top: (oy + blackTop) * s,
@@ -731,8 +731,10 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
         fineSizeW,
         color: grey300, align: pw.TextAlign.center, widthPx: w));
 
-    // recorta a barra preta que sobrar após a letra miúda
+    // moldura cortada no conteúdo + pequeno espaço após o preto
     final blackEnd = fineY + fineLeading * 2 + line * 0.3;
+    var fh = blackEnd + line * 0.5;
+    if (fh > h) fh = h;
     if (blackEnd < h) {
       children.add(pw.Positioned(
         left: ox * s,
@@ -742,18 +744,19 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
             height: (h - blackEnd) * s,
             color: pdf.PdfColors.white),
       ));
-      children.add(pw.Positioned(
-        left: ox * s,
-        top: oy * s,
-        child: pw.Container(
-          width: w * s,
-          height: h * s,
-          decoration: pw.BoxDecoration(
-            border: pw.Border.all(color: pdf.PdfColors.black, width: 14 * s),
-          ),
-        ),
-      ));
     }
+    children.add(pw.Positioned(
+      left: ox * s,
+      top: oy * s,
+      child: pw.Container(
+        width: w * s,
+        height: fh * s,
+        decoration: pw.BoxDecoration(
+          border: pw.Border.all(color: pdf.PdfColors.black, width: 14 * s),
+        ),
+      ),
+    ));
+    if (row == 0) cardH = fh;
   }
 
   final doc = pw.Document(title: 'Papeleta A4', theme: theme);
