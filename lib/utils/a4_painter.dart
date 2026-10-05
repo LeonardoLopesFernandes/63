@@ -333,8 +333,9 @@ class PapeletaPainter extends CustomPainter {
     final blackEnd = fineY + fineLeading * 2 + line * 0.3;
     var fh = blackEnd + line * 0.5;
     if (fh > h) fh = h;
-    if (blackEnd < h) {
-      canvas.drawRect(Rect.fromLTWH(0, blackEnd, w, h - blackEnd),
+    // preto até a moldura (sem faixa branca sob a "Oferta válida")
+    if (fh < h) {
+      canvas.drawRect(Rect.fromLTWH(0, fh, w, h - fh),
           Paint()..color = Colors.white);
     }
     canvas.drawRect(Rect.fromLTWH(0, 0, w, fh), borderPaint);
@@ -595,7 +596,7 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     // preço com desconto (à vista)
     final discTop = blackTop + line * 0.3;
     final dBigS = w * 0.14;
-    final dLine1 = discTop + dBigS * 0.08;
+    final dLine1 = discTop + dBigS * 0.16;
     final dLine2 = discTop + dBigS * 0.72;
     final dLabelW = _measureText('à vista', w * 0.035,
                 weight: FontWeight.bold) >
@@ -735,13 +736,14 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     final blackEnd = fineY + fineLeading * 2 + line * 0.3;
     var fh = blackEnd + line * 0.5;
     if (fh > h) fh = h;
-    if (blackEnd < h) {
+    // preto até a moldura (sem faixa branca sob a "Oferta válida")
+    if (fh < h) {
       children.add(pw.Positioned(
         left: ox * s,
-        top: (oy + blackEnd) * s,
+        top: (oy + fh) * s,
         child: pw.Container(
             width: w * s,
-            height: (h - blackEnd) * s,
+            height: (h - fh) * s,
             color: pdf.PdfColors.white),
       ));
     }
