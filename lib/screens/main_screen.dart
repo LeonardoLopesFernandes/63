@@ -1010,11 +1010,11 @@ class _FormRowState extends State<FormRow> {
                 // Header compacto: PAPELETA X + busca + ícones na mesma faixa.
                 Row(
                   children: [
-                    Text('PAPELETA ${widget.index + 1}',
+                    Text('${widget.index + 1}',
                         style: const TextStyle(
                             color: Color(0xFFD32F2F),
                             fontWeight: FontWeight.bold,
-                            fontSize: 13)),
+                            fontSize: 16)),
                     const SizedBox(width: 8),
                     Expanded(
                       child: TextField(
