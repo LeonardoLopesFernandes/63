@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -26,7 +27,8 @@ class _MainScreenState extends State<MainScreen> {
   late List<PapeletaFormState> _states;
   bool _loaded = false;
   bool _atBottom = false;
-  List<String> _errors = [];
+  OverlayEntry? _errorsOverlay;
+  Timer? _errorsTimer;
   final ScrollController _scroll = ScrollController();
   final Random _random = Random();
 
@@ -54,6 +56,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
+    _errorsTimer?.cancel();
+    _errorsOverlay?.remove();
     _scroll.removeListener(_onScroll);
     _scroll.dispose();
     super.dispose();
@@ -510,8 +514,13 @@ class _MainScreenState extends State<MainScreen> {
         }
       }
     }
-    setState(() => _errors = newErrors);
-    if (newErrors.isEmpty && dados.length == 4) {
+    if (newErrors.isNotEmpty) {
+      // Aviso centralizado que some sozinho após 4s; se ainda faltar,
+      // aparece de novo mostrando os campos pendentes.
+      _showErrorsOverlay(newErrors);
+      return;
+    }
+    if (dados.length == 4) {
       await _saveAll();
       if (mounted) {
         Navigator.of(context).push(
@@ -519,6 +528,61 @@ class _MainScreenState extends State<MainScreen> {
         );
       }
     }
+  }
+
+  void _showErrorsOverlay(List<String> errors) {
+    _errorsTimer?.cancel();
+    _errorsOverlay?.remove();
+    _errorsOverlay = null;
+    final overlay = Overlay.of(context);
+    final entry = OverlayEntry(
+      builder: (ctx) => Positioned.fill(
+        child: IgnorePointer(
+          child: Center(
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                constraints: const BoxConstraints(maxWidth: 420),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF0F0),
+                  border: Border.all(color: Colors.red, width: 2),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black26, blurRadius: 12),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.error_outline, color: Colors.red, size: 32),
+                    const SizedBox(height: 8),
+                    ...errors.map((e) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Text(
+                            e,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    _errorsOverlay = entry;
+    overlay.insert(entry);
+    _errorsTimer = Timer(const Duration(seconds: 4), () {
+      _errorsOverlay?.remove();
+      _errorsOverlay = null;
+    });
   }
 
 void _openScanner(int index) async {
@@ -813,27 +877,6 @@ void _openScanner(int index) async {
                 ),
               ),
             ),
-            if (_errors.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Container(
-                  margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF0F0),
-                    border: Border.all(color: Colors.red, width: 2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _errors
-                        .map((e) => Text(e,
-                            style: const TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold)))
-                        .toList(),
-                  ),
-                ),
-              ),
           ],
         ),
         floatingActionButton: _atBottom
