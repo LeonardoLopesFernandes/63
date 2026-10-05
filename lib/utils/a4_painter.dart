@@ -220,10 +220,10 @@ class PapeletaPainter extends CustomPainter {
     canvas.drawRect(Rect.fromLTWH(0, blackTop, w, h - blackTop), blackPaint);
 
     // discounted price
-    final discTop = blackTop + line * 0.3;
+    final discTop = blackTop + line * 0.8;
     final dBigS = w * 0.14;
     final dLine1 = discTop + dBigS * 0.30;
-    final dLine2 = discTop + dBigS * 0.72;
+    final dLine2 = discTop + dBigS * 0.84;
     final dLabelW = _measureText('à vista', w * 0.035, weight: FontWeight.bold) >
             _measureText('R\$', w * 0.055, weight: FontWeight.bold)
         ? _measureText('à vista', w * 0.035, weight: FontWeight.bold)
@@ -594,10 +594,10 @@ Future<Uint8List> gerarPdfVetorial(List<PapeletaData> dados,
     ));
 
     // preço com desconto (à vista)
-    final discTop = blackTop + line * 0.3;
+    final discTop = blackTop + line * 0.8;
     final dBigS = w * 0.14;
-    final dLine1 = discTop + dBigS * 0.16;
-    final dLine2 = discTop + dBigS * 0.72;
+    final dLine1 = discTop + dBigS * 0.30;
+    final dLine2 = discTop + dBigS * 0.84;
     final dLabelW = _measureText('à vista', w * 0.035,
                 weight: FontWeight.bold) >
             _measureText('R\$', w * 0.055, weight: FontWeight.bold)
