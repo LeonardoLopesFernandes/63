@@ -28,6 +28,12 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // App é arm64 só (engine Flutter); evita empacotar libs de terceiros
+        // (ex.: ML Kit) em x86_64/armeabi-v7a — economiza ~9 MB.
+        ndk {
+            abiFilters.clear()
+            abiFilters.add("arm64-v8a")
+        }
     }
 
     signingConfigs {

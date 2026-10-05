@@ -27,11 +27,6 @@ jobs:
         with:
           channel: stable
 
-      - name: Install Shorebird CLI
-        uses: shorebirdtech/setup-shorebird@v1
-        with:
-          cache: true
-
       - name: Install dependencies
         run: flutter pub get
 
@@ -55,26 +50,16 @@ jobs:
       - name: Flutter pub get (after clean)
         run: flutter pub get
 
-      - name: Shorebird release (APK arm64, release registrado p/ OTA)
+      - name: Build APK (arm64, release)
         env:
-          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
-          shorebird doctor
-          shorebird release android \
-            --artifact=apk \
+          flutter build apk --release \
             --target-platform android-arm64 \
             --build-number=${{ github.run_number }} \
-            --build-name=1.0.0 \
-            -- --android-skip-build-dependency-validation --no-tree-shake-icons
-
-      - name: Publicar changelog nas notes do Shorebird
-        if: success()
-        env:
-          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-        run: dart run scripts/update_shorebird_notes.dart
+            --build-name=1.0.0
 
       - name: Renomear APK
         run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/63_flutter.apk && ls -la build/app/outputs/flutter-apk/63_flutter.apk
