@@ -84,9 +84,10 @@ Widget _busyIcon(IconData icon, Color color) => TweenAnimationBuilder<double>(
   Future<void> _imprimir() async {
     setState(() => _busyAction = 'imprimir');
     try {
-      // Impressão: usa o PDF vetorial (texto nítido). Como a página é A4
-      // vetorial, a impressora mantém o tamanho certo.
+      // Impressão: PDF raster 300 DPI (imagem) — a impressora dimensiona pela
+      // imagem; vetorial com fonte embutida era rejeitado (INVALIDFONT).
       final bytes = await gerarPdfBytes(widget.dados,
+          altaNitidez: false,
           minParcela: _minParcela,
           maxParcelas: _maxParcelas,
           mostrarExclusivo: _mostrarExclusivo);

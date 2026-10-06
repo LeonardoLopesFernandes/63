@@ -411,19 +411,10 @@ Future<Uint8List> gerarPdfBytes(List<PapeletaData> dados,
     double? minParcela,
     int maxParcelas = 10,
     bool mostrarExclusivo = true}) async {
-  // Compartilhar: PDF vetorial (rápido, nítido, com a fonte do aparelho
-  // embutida). Imprimir: raster 300 DPI (a impressora dimensiona pela imagem;
-  // 600 DPI sairia no dobro do tamanho).
-  if (altaNitidez) {
-    try {
-      return await gerarPdfVetorial(dados,
-          minParcela: minParcela,
-          maxParcelas: maxParcelas,
-          mostrarExclusivo: mostrarExclusivo);
-    } catch (_) {
-      // se o vetorial falhar, cai no raster abaixo
-    }
-  }
+  // Raster (imagem): universal — imprime em qualquer impressora e abre em
+  // qualquer leitor. (O PDF vetorial com a fonte SF Pro embutida dava
+  // "PDF Error 8: PostScript Error: INVALIDFONT" na impressora e saía vazio
+  // em alguns leitores.)
   final escalas = altaNitidez ? const [2.0, 1.0] : const [1.0];
   Object? lastError;
   for (final scale in escalas) {
