@@ -242,12 +242,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _entrar() {
-    final email = _emailController.text.trim();
-    final senha = _senhaController.text;
-    if (email.isNotEmpty && senha.isNotEmpty) {
-      Session.saveCredentials(email, senha);
-    }
-    _abrirWebView(autoLogin: true);
+    _abrirWebView(autoLogin: false);
   }
 
   void _toast(String msg) {
@@ -368,78 +363,16 @@ class _LoginScreenState extends State<LoginScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'E-mail',
-                style: TextStyle(
-                  color: Color(0xFF49454F),
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
+            const Text(
+              'americanas.io',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Color(0xFF1F1F1F),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 4),
-            SizedBox(
-              height: 48,
-              child: TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  hintText: 'Email Microsoft',
-                  hintStyle: const TextStyle(color: Color(0xFF9CA3AF)),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: inputBorder,
-                  enabledBorder: inputBorder,
-                  focusedBorder: inputBorder,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Senha',
-                style: TextStyle(
-                  color: Color(0xFF49454F),
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            SizedBox(
-              height: 48,
-              child: TextField(
-                controller: _senhaController,
-                obscureText: !_mostrarSenha,
-                decoration: InputDecoration(
-                  hintText: 'Senha',
-                  hintStyle: const TextStyle(color: Color(0xFF9CA3AF)),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: inputBorder,
-                  enabledBorder: inputBorder,
-                  focusedBorder: inputBorder,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _mostrarSenha
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Colors.grey[700],
-                    ),
-                    onPressed: () =>
-                        setState(() => _mostrarSenha = !_mostrarSenha),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             SizedBox(
               height: 52,
               child: ElevatedButton(

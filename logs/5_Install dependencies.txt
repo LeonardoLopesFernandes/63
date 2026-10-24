@@ -1,0 +1,64 @@
+﻿2026-09-18T22:34:01.0962472Z ##[group]Run flutter pub get
+2026-09-18T22:34:01.0962728Z [36;1mflutter pub get[0m
+2026-09-18T22:34:01.0996018Z shell: /usr/bin/bash -e {0}
+2026-09-18T22:34:01.0996230Z env:
+2026-09-18T22:34:01.0996482Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:34:01.0996877Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:34:01.0997242Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.5-x64/flutter
+2026-09-18T22:34:01.0997531Z   PUB_CACHE: /home/runner/.pub-cache
+2026-09-18T22:34:01.0997740Z ##[endgroup]
+2026-09-18T22:34:04.2097990Z Resolving dependencies...
+2026-09-18T22:34:04.5452577Z Downloading packages...
+2026-09-18T22:34:08.6329467Z   app_links 6.4.1 (7.2.1 available)
+2026-09-18T22:34:08.6329985Z   app_links_platform_interface 2.0.2 (2.0.4 available)
+2026-09-18T22:34:08.6330386Z   archive 4.0.9 (4.3.0 available)
+2026-09-18T22:34:08.6330698Z > characters 1.4.1 (was 1.4.0)
+2026-09-18T22:34:08.6330998Z   clock 1.1.2 (1.1.3 available)
+2026-09-18T22:34:08.6331366Z   code_assets 1.2.1 (2.1.0 available)
+2026-09-18T22:34:08.6331588Z   dio 5.11.0 (5.11.1 available)
+2026-09-18T22:34:08.6331789Z   dio_web_adapter 2.2.1 (2.2.2 available)
+2026-09-18T22:34:08.6332013Z + file_selector_linux 0.9.4+1
+2026-09-18T22:34:08.6332225Z + file_selector_macos 0.9.5+1
+2026-09-18T22:34:08.6332427Z + file_selector_platform_interface 2.7.0
+2026-09-18T22:34:08.6332646Z + file_selector_windows 0.9.3+6
+2026-09-18T22:34:08.6332851Z + flutter_plugin_android_lifecycle 2.0.35
+2026-09-18T22:34:08.6333075Z   hooks 2.0.2 (2.2.0 available)
+2026-09-18T22:34:08.6333319Z   image 4.9.2 (4.10.1 available)
+2026-09-18T22:34:08.6333557Z + image_picker 1.2.3
+2026-09-18T22:34:08.6333820Z + image_picker_android 0.8.13+23
+2026-09-18T22:34:08.6334146Z + image_picker_for_web 3.1.1
+2026-09-18T22:34:08.6334450Z + image_picker_ios 0.8.13+7
+2026-09-18T22:34:08.6334698Z + image_picker_linux 0.2.2
+2026-09-18T22:34:08.6334891Z + image_picker_macos 0.2.2+1
+2026-09-18T22:34:08.6335095Z + image_picker_platform_interface 2.11.1
+2026-09-18T22:34:08.6335319Z + image_picker_windows 0.2.2
+2026-09-18T22:34:08.6335512Z > intl 0.20.3 (was 0.20.2)
+2026-09-18T22:34:08.6335696Z   jni_flutter 1.0.2 (1.0.3 available)
+2026-09-18T22:34:08.6335896Z > matcher 0.12.20 (was 0.12.17)
+2026-09-18T22:34:08.6336476Z > material_color_utilities 0.13.0 (was 0.11.1) (0.13.1 available)
+2026-09-18T22:34:08.6336775Z > meta 1.19.0 (was 1.17.0)
+2026-09-18T22:34:08.6336965Z   mobile_scanner 6.0.11 (7.4.2 available)
+2026-09-18T22:34:08.6337183Z   objective_c 9.5.0 (9.6.0 available)
+2026-09-18T22:34:08.6337395Z   package_config 2.2.0 (3.0.0 available)
+2026-09-18T22:34:08.6337603Z   pdf 3.12.0 (3.13.0 available)
+2026-09-18T22:34:08.6337811Z   permission_handler 11.4.0 (13.0.2 available)
+2026-09-18T22:34:08.6338062Z   permission_handler_android 12.1.0 (14.1.0 available)
+2026-09-18T22:34:08.6338348Z   permission_handler_platform_interface 4.4.0 (4.4.1 available)
+2026-09-18T22:34:08.6338802Z   platform 3.1.6 (3.2.0 available)
+2026-09-18T22:34:08.6339008Z   qr 3.0.2 (4.0.0 available)
+2026-09-18T22:34:08.6339207Z   record_use 0.6.0 (1.1.1 available)
+2026-09-18T22:34:08.6339413Z   share_plus 10.1.4 (13.3.0 available)
+2026-09-18T22:34:08.6339651Z   share_plus_platform_interface 5.0.2 (7.2.0 available)
+2026-09-18T22:34:08.6339925Z   shared_preferences_android 2.4.23 (2.4.28 available)
+2026-09-18T22:34:08.6340166Z   stack_trace 1.12.1 (1.12.2 available)
+2026-09-18T22:34:08.6340394Z > test_api 0.7.12 (was 0.7.7) (0.7.14 available)
+2026-09-18T22:34:08.6340638Z   url_launcher_android 6.3.30 (6.3.33 available)
+2026-09-18T22:34:08.6340867Z > vector_math 2.4.2 (was 2.2.0)
+2026-09-18T22:34:08.6341089Z   webview_flutter_android 4.12.0 (4.14.1 available)
+2026-09-18T22:34:08.6341354Z   webview_flutter_wkwebview 3.25.1 (3.26.1 available)
+2026-09-18T22:34:08.6341591Z   win32 5.15.0 (6.4.0 available)
+2026-09-18T22:34:08.6341782Z   xml 6.6.1 (7.0.1 available)
+2026-09-18T22:34:08.6341984Z Changed 20 dependencies!
+2026-09-18T22:34:08.6342266Z 31 packages have newer versions incompatible with dependency constraints.
+2026-09-18T22:34:08.6342776Z Try `flutter pub outdated` for more information.
+2026-09-18T22:34:08.7642133Z Upgrading analysis_options.yaml to exclude build and platform directories.

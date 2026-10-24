@@ -1,0 +1,75 @@
+﻿2026-09-18T22:33:08.6542675Z ##[group]Run subosito/flutter-action@v2
+2026-09-18T22:33:08.6543037Z with:
+2026-09-18T22:33:08.6543263Z   channel: stable
+2026-09-18T22:33:08.6543440Z   architecture: X64
+2026-09-18T22:33:08.6543609Z   cache: false
+2026-09-18T22:33:08.6543845Z   pub-cache-path: default
+2026-09-18T22:33:08.6544145Z   dry-run: false
+2026-09-18T22:33:08.6544476Z   git-source: https://github.com/flutter/flutter.git
+2026-09-18T22:33:08.6545071Z env:
+2026-09-18T22:33:08.6545441Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:33:08.6546062Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:33:08.6546536Z ##[endgroup]
+2026-09-18T22:33:08.6596718Z ##[start-action display=Make yq tool available on Windows runners;id=__subosito_flutter-action.__run]
+2026-09-18T22:33:08.6630383Z ##[end-action id=__subosito_flutter-action.__run;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-09-18T22:33:08.6632459Z ##[start-action display=Make setup script executable;id=__subosito_flutter-action.__run_2]
+2026-09-18T22:33:08.6662182Z ##[group]Run chmod +x "$GITHUB_ACTION_PATH/setup.sh"
+2026-09-18T22:33:08.6662538Z [36;1mchmod +x "$GITHUB_ACTION_PATH/setup.sh"[0m
+2026-09-18T22:33:08.6699666Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-18T22:33:08.6699963Z env:
+2026-09-18T22:33:08.6700210Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:33:08.6700610Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:33:08.6700906Z ##[endgroup]
+2026-09-18T22:33:08.6786529Z ##[end-action id=__subosito_flutter-action.__run_2;outcome=success;conclusion=success;duration_ms=15]
+2026-09-18T22:33:08.6788352Z ##[start-action display=Set action inputs;id=__subosito_flutter-action.flutter-action]
+2026-09-18T22:33:08.6817135Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh -p \
+2026-09-18T22:33:08.6817454Z [36;1m$GITHUB_ACTION_PATH/setup.sh -p \[0m
+2026-09-18T22:33:08.6817695Z [36;1m  -n '' \[0m
+2026-09-18T22:33:08.6817886Z [36;1m  -f '' \[0m
+2026-09-18T22:33:08.6818052Z [36;1m  -a 'X64' \[0m
+2026-09-18T22:33:08.6818224Z [36;1m  -k '' \[0m
+2026-09-18T22:33:08.6818574Z [36;1m  -c '' \[0m
+2026-09-18T22:33:08.6818786Z [36;1m  -l '' \[0m
+2026-09-18T22:33:08.6818955Z [36;1m  -d 'default' \[0m
+2026-09-18T22:33:08.6819218Z [36;1m  -g 'https://github.com/flutter/flutter.git' \[0m
+2026-09-18T22:33:08.6819480Z [36;1m  stable[0m
+2026-09-18T22:33:08.6846823Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-18T22:33:08.6847090Z env:
+2026-09-18T22:33:08.6847337Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:33:08.6847721Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:33:08.6848017Z ##[endgroup]
+2026-09-18T22:33:08.8305475Z ##[end-action id=__subosito_flutter-action.flutter-action;outcome=success;conclusion=success;duration_ms=151]
+2026-09-18T22:33:08.8309766Z ##[start-action display=Cache Flutter;id=__subosito_flutter-action.cache-flutter]
+2026-09-18T22:33:08.8313567Z ##[end-action id=__subosito_flutter-action.cache-flutter;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-09-18T22:33:08.8315112Z ##[start-action display=Cache pub dependencies;id=__subosito_flutter-action.cache-pub]
+2026-09-18T22:33:08.8320238Z ##[end-action id=__subosito_flutter-action.cache-pub;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-09-18T22:33:08.8321758Z ##[start-action display=Run setup script;id=__subosito_flutter-action.__run_3]
+2026-09-18T22:33:08.8348847Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh \
+2026-09-18T22:33:08.8349119Z [36;1m$GITHUB_ACTION_PATH/setup.sh \[0m
+2026-09-18T22:33:08.8349340Z [36;1m  -n '3.47.5' \[0m
+2026-09-18T22:33:08.8349526Z [36;1m  -a 'x64' \[0m
+2026-09-18T22:33:08.8349766Z [36;1m  -c '/opt/hostedtoolcache/flutter/stable-3.47.5-x64' \[0m
+2026-09-18T22:33:08.8350051Z [36;1m  -d '/home/runner/.pub-cache' \[0m
+2026-09-18T22:33:08.8350271Z [36;1m  stable[0m
+2026-09-18T22:33:08.8381609Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-09-18T22:33:08.8381885Z env:
+2026-09-18T22:33:08.8382124Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:33:08.8382505Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-18T22:33:08.8382806Z ##[endgroup]
+2026-09-18T22:33:09.0094696Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2026-09-18T22:33:09.0095626Z                                  Dload  Upload   Total   Spent    Left  Speed
+2026-09-18T22:33:09.0095966Z 
+2026-09-18T22:33:09.3126340Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2026-09-18T22:33:10.3128796Z   1 1503M    1 17.8M    0     0  58.9M      0  0:00:25 --:--:--  0:00:25 58.8M
+2026-09-18T22:33:11.3127559Z  12 1503M   12  184M    0     0   141M      0  0:00:10  0:00:01  0:00:09  141M
+2026-09-18T22:33:12.3135377Z  21 1503M   21  328M    0     0   142M      0  0:00:10  0:00:02  0:00:08  142M
+2026-09-18T22:33:13.3127781Z  31 1503M   31  468M    0     0   141M      0  0:00:10  0:00:03  0:00:07  141M
+2026-09-18T22:33:14.3126568Z  39 1503M   39  593M    0     0   137M      0  0:00:10  0:00:04  0:00:06  137M
+2026-09-18T22:33:15.3132221Z  50 1503M   50  759M    0     0   143M      0  0:00:10  0:00:05  0:00:05  148M
+2026-09-18T22:33:16.3126614Z  59 1503M   59  898M    0     0   142M      0  0:00:10  0:00:06  0:00:04  142M
+2026-09-18T22:33:17.3130810Z  69 1503M   69 1039M    0     0   142M      0  0:00:10  0:00:07  0:00:03  142M
+2026-09-18T22:33:18.3128121Z  79 1503M   79 1194M    0     0   143M      0  0:00:10  0:00:08  0:00:02  145M
+2026-09-18T22:33:19.3131189Z  89 1503M   89 1352M    0     0   145M      0  0:00:10  0:00:09  0:00:01  151M
+2026-09-18T22:33:19.3135226Z  99 1503M   99 1503M    0     0   145M      0  0:00:10  0:00:10 --:--:--  148M
+2026-09-18T22:33:19.3135645Z 100 1503M  100 1503M    0     0   145M      0  0:00:10  0:00:10 --:--:--  151M
+2026-09-18T22:34:01.0912528Z ##[end-action id=__subosito_flutter-action.__run_3;outcome=success;conclusion=success;duration_ms=52259]

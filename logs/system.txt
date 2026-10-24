@@ -1,0 +1,8 @@
+2026-09-18T22:33:00.2600000Z Requested labels: ubuntu-latest
+2026-09-18T22:33:00.2600000Z Job defined at: LeonardoLopesFernandes/63/.github/workflows/build.yml@refs/tags/v27
+2026-09-18T22:33:00.2600000Z Waiting for a runner to pick up this job...
+2026-09-18T22:33:00.2500000Z Evaluating build.if
+2026-09-18T22:33:00.2500000Z Evaluating: success()
+2026-09-18T22:33:00.2500000Z Result: true
+2026-09-18T22:33:00.6140000Z Job is about to start running on the hosted runner: GitHub Actions 1000000751
+2026-09-18T22:33:00.6130000Z Job is waiting for a hosted runner to come online.

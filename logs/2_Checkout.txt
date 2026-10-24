@@ -1,0 +1,90 @@
+﻿2026-09-18T22:33:06.5594009Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-18T22:33:06.5600493Z ##[group]Run actions/checkout@v4
+2026-09-18T22:33:06.5600883Z with:
+2026-09-18T22:33:06.5601114Z   repository: LeonardoLopesFernandes/63
+2026-09-18T22:33:06.5603196Z   token: ***
+2026-09-18T22:33:06.5603410Z   ssh-strict: true
+2026-09-18T22:33:06.5603625Z   ssh-user: git
+2026-09-18T22:33:06.5603853Z   persist-credentials: true
+2026-09-18T22:33:06.5604093Z   clean: true
+2026-09-18T22:33:06.5604328Z   sparse-checkout-cone-mode: true
+2026-09-18T22:33:06.5604576Z   fetch-depth: 1
+2026-09-18T22:33:06.5604785Z   fetch-tags: false
+2026-09-18T22:33:06.5604998Z   show-progress: true
+2026-09-18T22:33:06.5605208Z   lfs: false
+2026-09-18T22:33:06.5605402Z   submodules: false
+2026-09-18T22:33:06.5605657Z   set-safe-directory: true
+2026-09-18T22:33:06.5605894Z   allow-unsafe-pr-checkout: false
+2026-09-18T22:33:06.5606254Z ##[endgroup]
+2026-09-18T22:33:06.6422243Z Syncing repository: LeonardoLopesFernandes/63
+2026-09-18T22:33:06.6423950Z ##[group]Getting Git version info
+2026-09-18T22:33:06.6424469Z Working directory is '/home/runner/work/63/63'
+2026-09-18T22:33:06.6425189Z [command]/usr/bin/git version
+2026-09-18T22:33:06.6483183Z git version 2.55.0
+2026-09-18T22:33:06.6510130Z ##[endgroup]
+2026-09-18T22:33:06.6515351Z Temporarily overriding HOME='/home/runner/work/_temp/5cd7c11c-ccd7-44e0-983b-583908f9f948' before making global git config changes
+2026-09-18T22:33:06.6516368Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-18T22:33:06.6520886Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/63/63
+2026-09-18T22:33:06.6561834Z Deleting the contents of '/home/runner/work/63/63'
+2026-09-18T22:33:06.6565664Z ##[group]Initializing the repository
+2026-09-18T22:33:06.6569605Z [command]/usr/bin/git init /home/runner/work/63/63
+2026-09-18T22:33:06.6639304Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-18T22:33:06.6640251Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-18T22:33:06.6641016Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-18T22:33:06.6641532Z hint: call:
+2026-09-18T22:33:06.6641938Z hint:
+2026-09-18T22:33:06.6642446Z hint: 	git config --global init.defaultBranch <name>
+2026-09-18T22:33:06.6642905Z hint:
+2026-09-18T22:33:06.6643467Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-18T22:33:06.6644197Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-18T22:33:06.6644681Z hint:
+2026-09-18T22:33:06.6645045Z hint: 	git branch -m <name>
+2026-09-18T22:33:06.6645489Z hint:
+2026-09-18T22:33:06.6646017Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-18T22:33:06.6649954Z Initialized empty Git repository in /home/runner/work/63/63/.git/
+2026-09-18T22:33:06.6657675Z [command]/usr/bin/git remote add origin https://github.com/LeonardoLopesFernandes/63
+2026-09-18T22:33:06.6700363Z ##[endgroup]
+2026-09-18T22:33:06.6700968Z ##[group]Disabling automatic garbage collection
+2026-09-18T22:33:06.6701472Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-18T22:33:06.6727601Z ##[endgroup]
+2026-09-18T22:33:06.6728257Z ##[group]Setting up auth
+2026-09-18T22:33:06.6733316Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-18T22:33:06.6761660Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-18T22:33:06.7057965Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-18T22:33:06.7090230Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-18T22:33:06.7288569Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-18T22:33:06.7319180Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-18T22:33:06.7505353Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-18T22:33:06.7536288Z ##[endgroup]
+2026-09-18T22:33:06.7536927Z ##[group]Fetching the repository
+2026-09-18T22:33:06.7543834Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +b80babb870eace428b194a76c81031bf95985a5b:refs/tags/v27
+2026-09-18T22:33:08.3959031Z From https://github.com/LeonardoLopesFernandes/63
+2026-09-18T22:33:08.3959905Z  * [new ref]         b80babb870eace428b194a76c81031bf95985a5b -> v27
+2026-09-18T22:33:08.3962078Z ##[endgroup]
+2026-09-18T22:33:08.3962700Z ##[group]Determining the checkout info
+2026-09-18T22:33:08.3977071Z ##[endgroup]
+2026-09-18T22:33:08.3977537Z [command]/usr/bin/git sparse-checkout disable
+2026-09-18T22:33:08.4017537Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-18T22:33:08.4044310Z ##[group]Checking out the ref
+2026-09-18T22:33:08.4048991Z [command]/usr/bin/git checkout --progress --force refs/tags/v27
+2026-09-18T22:33:08.4189020Z Note: switching to 'refs/tags/v27'.
+2026-09-18T22:33:08.4189272Z 
+2026-09-18T22:33:08.4189518Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-09-18T22:33:08.4190110Z changes and commit them, and you can discard any commits you make in this
+2026-09-18T22:33:08.4190694Z state without impacting any branches by switching back to a branch.
+2026-09-18T22:33:08.4191086Z 
+2026-09-18T22:33:08.4191357Z If you want to create a new branch to retain commits you create, you may
+2026-09-18T22:33:08.4191954Z do so (now or later) by using -c with the switch command. Example:
+2026-09-18T22:33:08.4192263Z 
+2026-09-18T22:33:08.4192400Z   git switch -c <new-branch-name>
+2026-09-18T22:33:08.4192590Z 
+2026-09-18T22:33:08.4192716Z Or undo this operation with:
+2026-09-18T22:33:08.4193329Z 
+2026-09-18T22:33:08.4193523Z   git switch -
+2026-09-18T22:33:08.4193748Z 
+2026-09-18T22:33:08.4194033Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-09-18T22:33:08.4194447Z 
+2026-09-18T22:33:08.4194842Z HEAD is now at b80babb fix: add --android-skip-build-dependency-validation to flutter build apk (v27)
+2026-09-18T22:33:08.4199145Z ##[endgroup]
+2026-09-18T22:33:08.4238254Z [command]/usr/bin/git log -1 --format=%H
+2026-09-18T22:33:08.4261968Z b80babb870eace428b194a76c81031bf95985a5b
