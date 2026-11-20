@@ -9,7 +9,6 @@ import 'package:papeleta63/api/models.dart';
 import 'package:papeleta63/api/session.dart';
 import 'package:papeleta63/screens/barcode_scanner_screen.dart';
 import 'package:papeleta63/screens/browser_screen.dart';
-import 'package:papeleta63/screens/celular_semana_screen.dart';
 import 'package:papeleta63/screens/login_screen.dart';
 import 'package:papeleta63/screens/preview_screen.dart';
 import 'package:papeleta63/screens/profile_screen.dart';
@@ -501,25 +500,6 @@ class _MainScreenState extends State<MainScreen> {
     _toast('Modelo "$modelo $armazenamento" adicionado e selecionado!');
   }
 
-  Future<void> _openSpinner(int i) async {
-    final s = _states[i];
-    final phone = s.selectedPhone;
-    if (phone == null) {
-      _toast('Selecione o modelo do celular');
-      return;
-    }
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => CelularSemanaScreen(
-          phone: phone,
-          priceDigits: s.priceText,
-          discountDigits: s.discountText,
-        ),
-      ),
-    );
-    if (mounted) setState(() {});
-  }
-
   void _gerar() async {
     final newErrors = <String>[];
     final dados = <PapeletaData>[];
@@ -890,7 +870,6 @@ void _openScanner(int index) async {
                       onScan: () => _openScanner(i),
                       onSearchSubmit: _abrirBuscaDescricao,
                       onSearchWeb: (i) => _openBrowser(i),
-                      onOpenSpinner: () => _openSpinner(i),
                       onWeekToggle: (checked) {
                         if (checked) {
                           for (var j = 0; j < 4; j++) {
@@ -950,7 +929,6 @@ class FormRow extends StatefulWidget {
   final VoidCallback onScan;
   final void Function(int, String) onSearchSubmit;
   final void Function(bool) onWeekToggle;
-  final VoidCallback onOpenSpinner;
   final void Function(int) onSearchWeb;
   final void Function(CelularSpec, String) onPhoneRenamed;
   final void Function(CelularSpec) onPhoneDeleted;
@@ -971,7 +949,6 @@ class FormRow extends StatefulWidget {
     required this.onScan,
     required this.onSearchSubmit,
     required this.onWeekToggle,
-    required this.onOpenSpinner,
     required this.onSearchWeb,
     required this.onPhoneRenamed,
     required this.onPhoneDeleted,
@@ -1134,27 +1111,6 @@ class _FormRowState extends State<FormRow> {
                     ),
                   ),
                 ),
-                if (widget.state.daSemana) ...[
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: widget.onOpenSpinner,
-                      icon: const Icon(Icons.auto_awesome, size: 18),
-                      label: const Text('ABRIR SPINNER • CELULAR DA SEMANA'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF0D47A1),
-                        side: const BorderSide(
-                            color: Color(0xFF0D47A1), width: 1.5),
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                        textStyle: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 12),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                    ),
-                  ),
-                ],
               ],
             ),
           ),
