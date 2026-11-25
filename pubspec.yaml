@@ -39,3 +39,12 @@ flutter:
     - assets/logo_preto.png
     - assets/ic_papeleta.png
     - assets/fonts/
+    - assets/overlays/
+
+  fonts:
+    - family: SFProDisplay
+      fonts:
+        - asset: assets/fonts/SFProDisplay-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/SFProDisplay-Bold.ttf
+          weight: 700
